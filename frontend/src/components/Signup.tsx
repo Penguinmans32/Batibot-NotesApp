@@ -78,7 +78,7 @@ const Signup: React.FC = () => {
       </div>
 
       {/* Signup Card */}
-      <div className="relative z-10 w-full max-w-md">
+      <div className="relative z-10 w-full max-w-4xl">
         <div className="bg-white/10 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border border-white/20 animate-float">
           {/* Header */}
           <div className="text-center mb-8">
@@ -122,7 +122,7 @@ const Signup: React.FC = () => {
           </div>
 
           {/* Signup Form */}
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {/* Name Field */}
             <div className="space-y-2">
               <label className="text-white/80 font-medium text-sm block">
@@ -211,7 +211,7 @@ const Signup: React.FC = () => {
 
             {/* Error Message */}
             {error && (
-              <div className="bg-red-500/20 border border-red-500/30 rounded-xl p-4 backdrop-blur-sm">
+              <div className="bg-red-500/20 border border-red-500/30 rounded-xl p-4 backdrop-blur-sm md:col-span-2">
                 <p className="text-red-200 text-sm font-medium">{error}</p>
               </div>
             )}
@@ -220,7 +220,7 @@ const Signup: React.FC = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 disabled:from-gray-600 disabled:to-gray-700 rounded-xl py-4 text-white font-semibold text-lg transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl disabled:cursor-not-allowed disabled:scale-100 relative overflow-hidden group"
+              className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 disabled:from-gray-600 disabled:to-gray-700 rounded-xl py-4 text-white font-semibold text-lg transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl disabled:cursor-not-allowed disabled:scale-100 relative overflow-hidden group md:col-span-2"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 -skew-x-12 group-hover:animate-gradient"></div>
               <span className="relative">
