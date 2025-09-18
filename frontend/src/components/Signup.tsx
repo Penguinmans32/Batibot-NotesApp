@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock, User, Sparkles, Star, Heart } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
 
 const Signup: React.FC = () => {
   const [name, setName] = useState('');
@@ -12,6 +13,7 @@ const Signup: React.FC = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,9 +43,7 @@ const Signup: React.FC = () => {
       const data = await response.json();
 
       if (response.ok) {
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('user', JSON.stringify(data.user));
-        navigate('/dashboard');
+        login(data.token, data.user);
       } else {
         setError(data.message);
       }

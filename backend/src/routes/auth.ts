@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import passport from 'passport';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
@@ -11,20 +11,36 @@ router.get('/google',
   passport.authenticate('google', { scope: ['profile', 'email'] })
 );
 
-router.get('/google/callback',
-  passport.authenticate('google', { failureRedirect: 'http://localhost:5173/login' }),
-  (req, res) => {
-    const token = jwt.sign(
-      { userId: (req.user as any).id },
-      process.env.JWT_SECRET || 'secret',
-      { expiresIn: '24h' }
-    );
-    res.redirect(`http://localhost:5173/dashboard?token=${token}`);
+router.get('/google/callback', 
+  passport.authenticate('google', { session: false }),
+  (req: any, res: Response) => { // Now this will work correctly
+    try {
+      const user = req.user;
+      
+      // Generate JWT token
+      const token = jwt.sign(
+        { userId: user.id, email: user.email },
+        process.env.JWT_SECRET!,
+        { expiresIn: '7d' }
+      );
+
+      // Redirect to frontend with token and user data in URL
+      const frontendURL = `http://localhost:5173/auth/callback?token=${token}&user=${encodeURIComponent(JSON.stringify({
+        id: user.id,
+        name: user.name,
+        email: user.email
+      }))}`;
+      
+      res.redirect(frontendURL);
+    } catch (error) {
+      console.error('Google OAuth callback error:', error);
+      res.redirect('http://localhost:5173/login?error=oauth_failed');
+    }
   }
 );
 
 // Register
-router.post('/register', async (req, res) => {
+router.post('/register', async (req: Request, res: Response) => { // Add proper typing
   try {
     const { name, email, password } = req.body;
 
@@ -55,12 +71,13 @@ router.post('/register', async (req, res) => {
       user: newUser.rows[0]
     });
   } catch (error) {
+    console.error('Register error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });
 
 // Login
-router.post('/login', async (req, res) => {
+router.post('/login', async (req: Request, res: Response) => { // Add proper typing
   try {
     const { email, password } = req.body;
 
@@ -94,6 +111,7 @@ router.post('/login', async (req, res) => {
       }
     });
   } catch (error) {
+    console.error('Login error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });

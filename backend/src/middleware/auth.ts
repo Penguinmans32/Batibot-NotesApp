@@ -27,9 +27,15 @@ export const authenticateToken = async (req: AuthRequest, res: Response, next: N
       return res.status(401).json({ message: 'Invalid token' });
     }
 
-    req.user = userResult.rows[0];
+    // Set both id and userId for compatibility
+    req.user = {
+      ...userResult.rows[0],
+      userId: userResult.rows[0].id  // Add this line!
+    };
+    
     next();
   } catch (error) {
+    console.error('Auth error:', error);
     return res.status(403).json({ message: 'Invalid token' });
   }
 };
