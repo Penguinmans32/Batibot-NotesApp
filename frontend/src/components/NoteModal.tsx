@@ -117,36 +117,36 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-      <div className="bg-white/10 backdrop-blur-xl rounded-3xl w-full max-w-4xl max-h-[90vh] shadow-2xl border border-white/20 animate-float flex flex-col">
+      <div className="bg-background-card rounded-3xl w-full max-w-4xl max-h-[90vh] shadow-2xl border border-secondary/20 animate-float flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-white/20 flex-shrink-0">
+        <div className="flex items-center justify-between p-6 border-b border-secondary/20 flex-shrink-0">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center">
+            <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
               <FileText className="w-5 h-5 text-white" />
             </div>
-            <h2 className="text-xl font-bold text-white">
+            <h2 className="text-xl font-bold text-text-primary">
               {note ? 'Edit Note' : 'Create New Note'}
             </h2>
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-white/10 rounded-xl transition-colors duration-200"
+            className="p-2 hover:bg-secondary/10 rounded-xl transition-colors duration-200"
           >
-            <X className="w-5 h-5 text-white/70" />
+            <X className="w-5 h-5 text-text-secondary" />
           </button>
         </div>
 
         <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-hidden">
           {/* Title Input */}
           <div className="p-6 pb-4 flex-shrink-0">
-            <label className="text-white/80 font-medium text-sm block mb-2">
+            <label className="text-text-secondary font-medium text-sm block mb-2">
               Title
             </label>
             <input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent backdrop-blur-sm transition-all duration-300"
+              className="w-full bg-background-light border border-secondary/20 rounded-xl px-4 py-3 text-text-primary placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300"
               placeholder="Enter note title..."
               required
             />
@@ -154,13 +154,13 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
 
           {/* Rich Text Toolbar */}
           <div className="px-6 pb-4 flex-shrink-0">
-            <div className="bg-white/5 border border-white/10 rounded-xl p-3">
+            <div className="bg-background-light border border-secondary/20 rounded-xl p-3">
               {/* First Row - Font Controls */}
-              <div className="flex items-center space-x-2 mb-3 pb-3 border-b border-white/10">
+              <div className="flex items-center space-x-2 mb-3 pb-3 border-b border-secondary/20">
                 <select
                   value={fontFamily}
                   onChange={(e) => changeFontFamily(e.target.value)}
-                  className="bg-white/10 border border-white/20 rounded-lg px-3 py-1 text-white text-sm focus:outline-none focus:ring-1 focus:ring-purple-500"
+                  className="bg-background-card border border-secondary/20 rounded-lg px-3 py-1 text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-primary"
                 >
                   <option value="Inter">Inter</option>
                   <option value="Arial">Arial</option>
@@ -173,7 +173,7 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
                 <select
                   value={fontSize}
                   onChange={(e) => changeFontSize(e.target.value)}
-                  className="bg-white/10 border border-white/20 rounded-lg px-3 py-1 text-white text-sm focus:outline-none focus:ring-1 focus:ring-purple-500"
+                  className="bg-background-card border border-secondary/20 rounded-lg px-3 py-1 text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-primary"
                 >
                   <option value="10">10px</option>
                   <option value="12">12px</option>
@@ -186,39 +186,39 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
                   <option value="32">32px</option>
                 </select>
 
-                <div className="w-px h-6 bg-white/20"></div>
+                <div className="w-px h-6 bg-secondary/20"></div>
 
                 {/* Color Picker */}
                 <div className="flex items-center space-x-1">
                   <button
                     type="button"
                     onClick={() => changeTextColor('#ff0000')}
-                    className="w-6 h-6 bg-red-500 rounded border border-white/20 hover:scale-110 transition-transform"
+                    className="w-6 h-6 bg-error rounded border border-secondary/20 hover:scale-110 transition-transform"
                   ></button>
                   <button
                     type="button"
                     onClick={() => changeTextColor('#00ff00')}
-                    className="w-6 h-6 bg-green-500 rounded border border-white/20 hover:scale-110 transition-transform"
+                    className="w-6 h-6 bg-success rounded border border-secondary/20 hover:scale-110 transition-transform"
                   ></button>
                   <button
                     type="button"
                     onClick={() => changeTextColor('#0000ff')}
-                    className="w-6 h-6 bg-blue-500 rounded border border-white/20 hover:scale-110 transition-transform"
+                    className="w-6 h-6 bg-primary rounded border border-secondary/20 hover:scale-110 transition-transform"
                   ></button>
                   <button
                     type="button"
                     onClick={() => changeTextColor('#ffff00')}
-                    className="w-6 h-6 bg-yellow-500 rounded border border-white/20 hover:scale-110 transition-transform"
+                    className="w-6 h-6 bg-yellow-500 rounded border border-secondary/20 hover:scale-110 transition-transform"
                   ></button>
                   <button
                     type="button"
                     onClick={() => changeTextColor('#ff00ff')}
-                    className="w-6 h-6 bg-purple-500 rounded border border-white/20 hover:scale-110 transition-transform"
+                    className="w-6 h-6 bg-purple-500 rounded border border-secondary/20 hover:scale-110 transition-transform"
                   ></button>
                   <button
                     type="button"
-                    onClick={() => changeTextColor('#ffffff')}
-                    className="w-6 h-6 bg-white rounded border border-white/20 hover:scale-110 transition-transform"
+                    onClick={() => changeTextColor('#000000')}
+                    className="w-6 h-6 bg-text-primary rounded border border-secondary/20 hover:scale-110 transition-transform"
                   ></button>
                 </div>
               </div>
@@ -228,7 +228,7 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
                 <button
                   type="button"
                   onClick={() => executeCommand('bold')}
-                  className="p-2 hover:bg-white/10 rounded-lg text-white/70 hover:text-white transition-all duration-200"
+                  className="p-2 hover:bg-secondary/10 rounded-lg text-text-secondary hover:text-text-primary transition-all duration-200"
                   title="Bold"
                 >
                   <Bold className="w-4 h-4" />
@@ -236,7 +236,7 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
                 <button
                   type="button"
                   onClick={() => executeCommand('italic')}
-                  className="p-2 hover:bg-white/10 rounded-lg text-white/70 hover:text-white transition-all duration-200"
+                  className="p-2 hover:bg-secondary/10 rounded-lg text-text-secondary hover:text-text-primary transition-all duration-200"
                   title="Italic"
                 >
                   <Italic className="w-4 h-4" />
@@ -244,18 +244,18 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
                 <button
                   type="button"
                   onClick={() => executeCommand('underline')}
-                  className="p-2 hover:bg-white/10 rounded-lg text-white/70 hover:text-white transition-all duration-200"
+                  className="p-2 hover:bg-secondary/10 rounded-lg text-text-secondary hover:text-text-primary transition-all duration-200"
                   title="Underline"
                 >
                   <Underline className="w-4 h-4" />
                 </button>
 
-                <div className="w-px h-6 bg-white/20 mx-2"></div>
+                <div className="w-px h-6 bg-secondary/20 mx-2"></div>
 
                 <button
                   type="button"
                   onClick={() => executeCommand('justifyLeft')}
-                  className="p-2 hover:bg-white/10 rounded-lg text-white/70 hover:text-white transition-all duration-200"
+                  className="p-2 hover:bg-secondary/10 rounded-lg text-text-secondary hover:text-text-primary transition-all duration-200"
                   title="Align Left"
                 >
                   <AlignLeft className="w-4 h-4" />
@@ -263,7 +263,7 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
                 <button
                   type="button"
                   onClick={() => executeCommand('justifyCenter')}
-                  className="p-2 hover:bg-white/10 rounded-lg text-white/70 hover:text-white transition-all duration-200"
+                  className="p-2 hover:bg-secondary/10 rounded-lg text-text-secondary hover:text-text-primary transition-all duration-200"
                   title="Align Center"
                 >
                   <AlignCenter className="w-4 h-4" />
@@ -336,17 +336,19 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
 
           {/* Rich Text Editor */}
           <div className="px-6 flex-1 flex flex-col overflow-hidden">
-            <label className="text-white/80 font-medium text-sm block mb-2">
+            <label className="text-text-secondary font-medium text-sm block mb-2">
               Content
             </label>
             <div 
               ref={contentRef}
               contentEditable
-              className="flex-1 bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent backdrop-blur-sm transition-all duration-300 overflow-y-auto"
+              className="flex-1 bg-background-light border border-secondary/20 rounded-xl px-4 py-3 text-text-primary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300 overflow-y-auto"
               style={{ 
                 minHeight: '300px',
                 fontFamily: fontFamily,
-                fontSize: fontSize + 'px'
+                fontSize: fontSize + 'px',
+                background: '#F9FAFB',
+                color: '#111827'
               }}
               onInput={() => {
                 if (contentRef.current) {
@@ -362,14 +364,14 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 bg-white/10 hover:bg-white/20 border border-white/20 rounded-xl py-3 text-white font-medium transition-all duration-300"
+              className="flex-1 bg-background-light hover:bg-secondary/10 border border-secondary/20 rounded-xl py-3 text-text-secondary font-medium transition-all duration-300"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading || !title.trim() || !contentRef.current?.innerHTML.trim()}
-              className="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 disabled:from-gray-600 disabled:to-gray-700 rounded-xl py-3 text-white font-semibold transition-all duration-300 transform hover:scale-[1.02] disabled:cursor-not-allowed disabled:scale-100 flex items-center justify-center space-x-2"
+              className="flex-1 bg-primary hover:bg-primary-light disabled:bg-secondary disabled:opacity-50 rounded-xl py-3 text-white font-semibold transition-all duration-300 transform hover:scale-[1.02] disabled:cursor-not-allowed disabled:scale-100 flex items-center justify-center space-x-2"
             >
               {loading ? (
                 <>
@@ -390,7 +392,7 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
       <style>{`
         [contenteditable="true"]:empty:before {
           content: attr(data-placeholder);
-          color: rgba(255, 255, 255, 0.5);
+          color: #6B7280;
           font-style: italic;
         }
         
@@ -399,11 +401,11 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
         }
 
         [contenteditable] blockquote {
-          border-left: 4px solid rgba(139, 92, 246, 0.5);
+          border-left: 4px solid #3B82F6;
           margin: 10px 0;
           padding-left: 15px;
           font-style: italic;
-          color: rgba(255, 255, 255, 0.8);
+          color: #6B7280;
         }
 
         [contenteditable] ul, [contenteditable] ol {
@@ -416,13 +418,13 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
         }
 
         [contenteditable] a {
-          color: #8b5cf6;
+          color: #3B82F6;
           text-decoration: underline;
         }
 
         [contenteditable] hr {
           border: none;
-          border-top: 2px solid rgba(255, 255, 255, 0.2);
+          border-top: 2px solid #6B7280;
           margin: 20px 0;
         }
       `}</style>

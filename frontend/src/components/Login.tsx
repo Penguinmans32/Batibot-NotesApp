@@ -46,36 +46,19 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Animated background elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -inset-10 opacity-50">
-          <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl animate-pulse-slow"></div>
-          <div className="absolute top-1/3 right-1/4 w-72 h-72 bg-yellow-300 rounded-full mix-blend-multiply filter blur-xl animate-pulse-slow animation-delay-2000"></div>
-          <div className="absolute bottom-1/4 left-1/3 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl animate-pulse-slow animation-delay-4000"></div>
-        </div>
-      </div>
-
-      {/* Floating stars */}
-      <div className="absolute inset-0 pointer-events-none">
-        <Star className="absolute top-10 left-10 text-yellow-300 w-4 h-4 animate-pulse" />
-        <Star className="absolute top-20 right-20 text-pink-300 w-3 h-3 animate-pulse animation-delay-1000" />
-        <Star className="absolute bottom-20 left-20 text-purple-300 w-5 h-5 animate-pulse animation-delay-2000" />
-        <Sparkles className="absolute bottom-10 right-10 text-indigo-300 w-6 h-6 animate-pulse animation-delay-3000" />
-      </div>
-
+    <div className="min-h-screen bg-background-light flex items-center justify-center p-4 relative overflow-hidden">
       {/* Login Card */}
       <div className="relative z-10 w-full max-w-md">
-        <div className="bg-white/10 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border border-white/20 animate-float">
+        <div className="bg-background-card rounded-3xl p-8 shadow-2xl border border-secondary/20 animate-float">
           {/* Header */}
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl mb-4 shadow-lg">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-primary rounded-2xl mb-4 shadow-lg">
               <Sparkles className="w-8 h-8 text-white" />
             </div>
-            <h1 className="text-3xl font-bold text-white mb-2">
+            <h1 className="text-3xl font-bold text-text-primary mb-2">
               Welcome Back
             </h1>
-            <p className="text-white/70 text-lg">
+            <p className="text-text-secondary text-lg">
               Sign in to your account
             </p>
           </div>
@@ -83,7 +66,7 @@ const Login: React.FC = () => {
           {/* Google Login Button */}
           <button
             onClick={handleGoogleLogin}
-            className="w-full bg-white/20 hover:bg-white/30 backdrop-blur-sm border border-white/30 rounded-2xl p-4 mb-6 transition-all duration-300 group hover:scale-[1.02] hover:shadow-xl"
+            className="w-full bg-background-light hover:bg-secondary/10 border border-secondary/30 rounded-2xl p-4 mb-6 transition-all duration-300 group hover:scale-[1.02] hover:shadow-xl"
           >
             <div className="flex items-center justify-center space-x-3">
               <svg className="w-6 h-6" viewBox="0 0 24 24">
@@ -92,7 +75,7 @@ const Login: React.FC = () => {
                 <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
                 <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
               </svg>
-              <span className="text-white font-semibold text-lg group-hover:text-white/90">
+              <span className="text-text-primary font-semibold text-lg group-hover:text-primary">
                 Continue with Google
               </span>
             </div>
@@ -101,10 +84,10 @@ const Login: React.FC = () => {
           {/* Divider */}
           <div className="relative flex items-center justify-center mb-6">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-white/20"></div>
+              <div className="w-full border-t border-secondary/20"></div>
             </div>
             <div className="relative bg-transparent px-4">
-              <span className="text-white/60 font-medium">or</span>
+              <span className="text-text-secondary font-medium">or</span>
             </div>
           </div>
 
@@ -112,16 +95,16 @@ const Login: React.FC = () => {
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Email Field */}
             <div className="space-y-2">
-              <label className="text-white/80 font-medium text-sm block">
+              <label className="text-text-secondary font-medium text-sm block">
                 Email Address
               </label>
               <div className="relative">
-                <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/50 w-5 h-5" />
+                <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-text-secondary w-5 h-5" />
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-white/10 border border-white/20 rounded-xl pl-12 pr-4 py-4 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent backdrop-blur-sm transition-all duration-300"
+                  className="w-full bg-background-light border border-secondary/20 rounded-xl pl-12 pr-4 py-4 text-text-primary placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300"
                   placeholder="Enter your email"
                   required
                 />
@@ -130,23 +113,23 @@ const Login: React.FC = () => {
 
             {/* Password Field */}
             <div className="space-y-2">
-              <label className="text-white/80 font-medium text-sm block">
+              <label className="text-text-secondary font-medium text-sm block">
                 Password
               </label>
               <div className="relative">
-                <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/50 w-5 h-5" />
+                <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-text-secondary w-5 h-5" />
                 <input
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-white/10 border border-white/20 rounded-xl pl-12 pr-12 py-4 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent backdrop-blur-sm transition-all duration-300"
+                  className="w-full bg-background-light border border-secondary/20 rounded-xl pl-12 pr-12 py-4 text-text-primary placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300"
                   placeholder="Enter your password"
                   required
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 transform -translate-y-1/2 text-white/50 hover:text-white/80 transition-colors duration-200"
+                  className="absolute right-4 top-1/2 transform -translate-y-1/2 text-text-secondary hover:text-text-primary transition-colors duration-200"
                 >
                   {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
@@ -155,8 +138,8 @@ const Login: React.FC = () => {
 
             {/* Error Message */}
             {error && (
-              <div className="bg-red-500/20 border border-red-500/30 rounded-xl p-4 backdrop-blur-sm">
-                <p className="text-red-200 text-sm font-medium">{error}</p>
+              <div className="bg-error/10 border border-error/30 rounded-xl p-4">
+                <p className="text-error text-sm font-medium">{error}</p>
               </div>
             )}
 
@@ -164,9 +147,8 @@ const Login: React.FC = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 disabled:from-gray-600 disabled:to-gray-700 rounded-xl py-4 text-white font-semibold text-lg transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl disabled:cursor-not-allowed disabled:scale-100 relative overflow-hidden group"
+              className="w-full bg-primary hover:bg-primary-light disabled:bg-secondary disabled:opacity-50 rounded-xl py-4 text-white font-semibold text-lg transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl disabled:cursor-not-allowed disabled:scale-100"
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 -skew-x-12 group-hover:animate-gradient"></div>
               <span className="relative">
                 {loading ? (
                   <div className="flex items-center justify-center space-x-2">
@@ -182,11 +164,11 @@ const Login: React.FC = () => {
 
           {/* Sign Up Link */}
           <div className="text-center mt-8">
-            <p className="text-white/60">
+            <p className="text-text-secondary">
               Don't have an account?{' '}
               <Link 
                 to="/signup" 
-                className="text-purple-300 hover:text-purple-200 font-semibold transition-colors duration-200 hover:underline"
+                className="text-primary hover:text-primary-light font-semibold transition-colors duration-200 hover:underline"
               >
                 Sign up
               </Link>
@@ -196,7 +178,7 @@ const Login: React.FC = () => {
 
         {/* Bottom decoration */}
         <div className="text-center mt-6">
-          <p className="text-white/40 text-sm">
+          <p className="text-text-light text-sm">
             Secure • Fast • Beautiful
           </p>
         </div>
