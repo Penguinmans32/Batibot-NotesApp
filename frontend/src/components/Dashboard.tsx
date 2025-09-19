@@ -7,13 +7,21 @@ import {
   Edit3, 
   Trash2, 
   User,
-  Sparkles,
-  Star,
-  Calendar
+  Calendar,
+  CheckSquare,
+  Square,
+  Flag,
+  Filter,
+  SortAsc,
+  ListTodo,
+  Clock,
+  AlertTriangle
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import NoteModal from './NoteModal';
-import DeleteConfirmModal from './DeleteConfirmModal'; // Add this import
+import TodoModal from './TodoModal';
+import DeleteConfirmModal from './DeleteConfirmModal';
+import { Todo, FilterType, SortType } from '../types/Todo';
 
 interface Note {
   id: number;
@@ -26,19 +34,31 @@ interface Note {
 const Dashboard: React.FC = () => {
   const { user, logout } = useAuth();
   const [notes, setNotes] = useState<Note[]>([]);
+  const [todos, setTodos] = useState<Todo[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<'notes' | 'todos'>('notes');
+
+  // Note states
+  const [isNoteModalOpen, setIsNoteModalOpen] = useState(false);
   const [editingNote, setEditingNote] = useState<Note | null>(null);
-  const [modalLoading, setModalLoading] = useState(false);
-  
-  // Add delete modal states
+  const [noteModalLoading, setNoteModalLoading] = useState(false);
+
+  // Todo states
+  const [isTodoModalOpen, setIsTodoModalOpen] = useState(false);
+  const [editingTodo, setEditingTodo] = useState<Todo | null>(null);
+  const [todoModalLoading, setTodoModalLoading] = useState(false);
+  const [todoFilter, setTodoFilter] = useState<FilterType>('all');
+  const [todoSort, setTodoSort] = useState<SortType>('due_date');
+
+  // Delete modal states
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [noteToDelete, setNoteToDelete] = useState<Note | null>(null);
+  const [itemToDelete, setItemToDelete] = useState<(Note | Todo) & { type: 'note' | 'todo' } | null>(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
 
   useEffect(() => {
     fetchNotes();
+    fetchTodos();
   }, []);
 
   const fetchNotes = async () => {
@@ -61,22 +81,41 @@ const Dashboard: React.FC = () => {
     }
   };
 
+  const fetchTodos = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch('http://localhost:5000/api/todos', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setTodos(data);
+      }
+    } catch (error) {
+      console.error('Error fetching todos:', error);
+    }
+  };
+
+  // Note functions
   const handleCreateNote = () => {
     setEditingNote(null);
-    setIsModalOpen(true);
+    setIsNoteModalOpen(true);
   };
 
   const handleEditNote = (note: Note) => {
     setEditingNote(note);
-    setIsModalOpen(true);
+    setIsNoteModalOpen(true);
   };
 
   const handleSaveNote = async (noteData: { id?: number; title: string; content: string }) => {
-    setModalLoading(true);
+    setNoteModalLoading(true);
     try {
       const token = localStorage.getItem('token');
       const isEditing = noteData.id;
-      
+
       const response = await fetch(
         `http://localhost:5000/api/notes${isEditing ? `/${noteData.id}` : ''}`,
         {
@@ -94,37 +133,102 @@ const Dashboard: React.FC = () => {
 
       if (response.ok) {
         const savedNote = await response.json();
-        
+
         if (isEditing) {
           setNotes(notes.map(note => note.id === savedNote.id ? savedNote : note));
         } else {
           setNotes([savedNote, ...notes]);
         }
-        
-        setIsModalOpen(false);
-      } else {
-        console.error('Error saving note');
+
+        setIsNoteModalOpen(false);
       }
     } catch (error) {
       console.error('Error saving note:', error);
     } finally {
-      setModalLoading(false);
+      setNoteModalLoading(false);
     }
   };
 
-  // Updated delete functions
-  const handleDeleteNote = (note: Note) => {
-    setNoteToDelete(note);
+  // Todo functions
+  const handleCreateTodo = () => {
+    setEditingTodo(null);
+    setIsTodoModalOpen(true);
+  };
+
+  const handleEditTodo = (todo: Todo) => {
+    setEditingTodo(todo);
+    setIsTodoModalOpen(true);
+  };
+
+  const handleSaveTodo = async (todoData: Partial<Todo>) => {
+    setTodoModalLoading(true);
+    try {
+      const token = localStorage.getItem('token');
+      const isEditing = todoData.id;
+
+      const response = await fetch(
+        `http://localhost:5000/api/todos${isEditing ? `/${todoData.id}` : ''}`,
+        {
+          method: isEditing ? 'PUT' : 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(todoData)
+        }
+      );
+
+      if (response.ok) {
+        const savedTodo = await response.json();
+
+        if (isEditing) {
+          setTodos(todos.map(todo => todo.id === savedTodo.id ? savedTodo : todo));
+        } else {
+          setTodos([savedTodo, ...todos]);
+        }
+
+        setIsTodoModalOpen(false);
+      }
+    } catch (error) {
+      console.error('Error saving todo:', error);
+    } finally {
+      setTodoModalLoading(false);
+    }
+  };
+
+  const handleToggleTodo = async (todoId: number) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`http://localhost:5000/api/todos/${todoId}/toggle`, {
+        method: 'PATCH',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (response.ok) {
+        const updatedTodo = await response.json();
+        setTodos(todos.map(todo => todo.id === todoId ? updatedTodo : todo));
+      }
+    } catch (error) {
+      console.error('Error toggling todo:', error);
+    }
+  };
+
+  // Delete functions
+  const handleDeleteItem = (item: Note | Todo, type: 'note' | 'todo') => {
+    setItemToDelete({ ...item, type });
     setIsDeleteModalOpen(true);
   };
 
-  const confirmDeleteNote = async () => {
-    if (!noteToDelete) return;
-    
+  const confirmDelete = async () => {
+    if (!itemToDelete) return;
+
     setDeleteLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/notes/${noteToDelete.id}`, {
+      const endpoint = itemToDelete.type === 'note' ? 'notes' : 'todos';
+      const response = await fetch(`http://localhost:5000/api/${endpoint}/${itemToDelete.id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -132,14 +236,16 @@ const Dashboard: React.FC = () => {
       });
 
       if (response.ok) {
-        setNotes(notes.filter(note => note.id !== noteToDelete.id));
+        if (itemToDelete.type === 'note') {
+          setNotes(notes.filter(note => note.id !== itemToDelete.id));
+        } else {
+          setTodos(todos.filter(todo => todo.id !== itemToDelete.id));
+        }
         setIsDeleteModalOpen(false);
-        setNoteToDelete(null);
-      } else {
-        console.error('Error deleting note');
+        setItemToDelete(null);
       }
     } catch (error) {
-      console.error('Error deleting note:', error);
+      console.error('Error deleting item:', error);
     } finally {
       setDeleteLoading(false);
     }
@@ -147,11 +253,49 @@ const Dashboard: React.FC = () => {
 
   const cancelDelete = () => {
     setIsDeleteModalOpen(false);
-    setNoteToDelete(null);
+    setItemToDelete(null);
   };
 
-  const handleLogout = () => {
-    logout();
+  // Filter and sort todos
+  const getFilteredAndSortedTodos = () => {
+    let filtered = todos.filter(todo => {
+      const matchesSearch = todo.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           (todo.description && todo.description.toLowerCase().includes(searchTerm.toLowerCase()));
+
+      if (!matchesSearch) return false;
+
+      switch (todoFilter) {
+        case 'active':
+          return !todo.completed;
+        case 'completed':
+          return todo.completed;
+        case 'overdue':
+          return !todo.completed && todo.due_date && new Date(todo.due_date) < new Date();
+        default:
+          return true;
+      }
+    });
+
+    return filtered.sort((a, b) => {
+      if (a.completed !== b.completed) {
+        return a.completed ? 1 : -1;
+      }
+
+      switch (todoSort) {
+        case 'due_date':
+          if (!a.due_date && !b.due_date) return 0;
+          if (!a.due_date) return 1;
+          if (!b.due_date) return -1;
+          return new Date(a.due_date).getTime() - new Date(b.due_date).getTime();
+        case 'priority':
+          const priorityOrder = { high: 3, medium: 2, low: 1 };
+          return priorityOrder[b.priority] - priorityOrder[a.priority];
+        case 'created_at':
+          return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+        default:
+          return 0;
+      }
+    });
   };
 
   const filteredNotes = notes.filter(note =>
@@ -159,13 +303,39 @@ const Dashboard: React.FC = () => {
     note.content.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const filteredTodos = getFilteredAndSortedTodos();
+
+  // Todo statistics
+  const todoStats = {
+    total: todos.length,
+    completed: todos.filter(t => t.completed).length,
+    overdue: todos.filter(t => !t.completed && t.due_date && new Date(t.due_date) < new Date()).length
+  };
+
+  const getPriorityColor = (priority: string) => {
+    switch (priority) {
+      case 'high':
+        return 'bg-red-100 text-red-800 border-red-200';
+      case 'medium':
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'low':
+        return 'bg-blue-100 text-blue-800 border-blue-200';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-200';
+    }
+  };
+
+  const isOverdue = (dueDate: string) => {
+    return new Date(dueDate) < new Date();
+  };
+
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 flex items-center justify-center">
-        <div className="bg-white/10 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border border-white/20">
+      <div className="min-h-screen bg-background-light flex items-center justify-center">
+        <div className="bg-background-card rounded-3xl p-8 shadow-2xl border border-secondary/20">
           <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 border-4 border-white/30 border-t-white rounded-full animate-spin"></div>
-            <span className="text-white text-xl font-semibold">Loading your notes...</span>
+            <div className="w-8 h-8 border-4 border-secondary/30 border-t-primary rounded-full animate-spin"></div>
+            <span className="text-text-primary text-xl font-semibold">Loading your workspace...</span>
           </div>
         </div>
       </div>
@@ -174,43 +344,27 @@ const Dashboard: React.FC = () => {
 
   return (
     <>
-      <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900">
-        {/* Animated background elements */}
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -inset-10 opacity-30">
-            <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl animate-pulse-slow"></div>
-            <div className="absolute top-1/3 right-1/4 w-72 h-72 bg-yellow-300 rounded-full mix-blend-multiply filter blur-xl animate-pulse-slow animation-delay-2000"></div>
-            <div className="absolute bottom-1/4 left-1/3 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl animate-pulse-slow animation-delay-4000"></div>
-          </div>
-        </div>
-
-        {/* Floating stars */}
-        <div className="absolute inset-0 pointer-events-none">
-          <Star className="absolute top-10 left-10 text-yellow-300 w-4 h-4 animate-pulse" />
-          <Star className="absolute top-20 right-20 text-pink-300 w-3 h-3 animate-pulse animation-delay-1000" />
-          <Sparkles className="absolute bottom-10 right-10 text-indigo-300 w-6 h-6 animate-pulse animation-delay-3000" />
-        </div>
-
+      <div className="min-h-screen bg-background-light">
         <div className="relative z-10 max-w-7xl mx-auto px-4 py-8">
           {/* Header */}
-          <div className="bg-white/10 backdrop-blur-xl rounded-3xl p-6 shadow-2xl border border-white/20 mb-8">
+          <div className="bg-background-card rounded-3xl p-6 shadow-2xl border border-secondary/20 mb-8">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center shadow-lg">
                   <User className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h1 className="text-2xl font-bold text-white">
+                  <h1 className="text-2xl font-bold text-text-primary">
                     Welcome back, {user?.name || 'User'}! 👋
                   </h1>
-                  <p className="text-white/70">
+                  <p className="text-text-secondary">
                     {user?.email}
                   </p>
                 </div>
               </div>
               <button
-                onClick={handleLogout}
-                className="flex items-center space-x-2 bg-red-500/20 hover:bg-red-500/30 border border-red-500/30 rounded-xl px-4 py-2 text-red-200 hover:text-red-100 transition-all duration-300"
+                onClick={logout}
+                className="flex items-center space-x-2 bg-error/10 hover:bg-error/20 border border-error/30 rounded-xl px-4 py-2 text-error hover:text-white transition-all duration-300"
               >
                 <LogOut className="w-4 h-4" />
                 <span>Logout</span>
@@ -218,108 +372,299 @@ const Dashboard: React.FC = () => {
             </div>
           </div>
 
-          {/* Search and Add Note */}
-          <div className="bg-white/10 backdrop-blur-xl rounded-3xl p-6 shadow-2xl border border-white/20 mb-8">
+          {/* Tab Navigation */}
+          <div className="bg-background-card rounded-3xl p-6 shadow-2xl border border-secondary/20 mb-8">
+            <div className="flex space-x-4 mb-6">
+              <button
+                onClick={() => setActiveTab('notes')}
+                className={`flex items-center space-x-2 px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
+                  activeTab === 'notes'
+                    ? 'bg-primary text-white shadow-lg'
+                    : 'bg-secondary/10 text-text-secondary hover:bg-secondary/20'
+                }`}
+              >
+                <FileText className="w-5 h-5" />
+                <span>Notes</span>
+                <span className="bg-white/20 px-2 py-1 rounded-full text-xs">{notes.length}</span>
+              </button>
+              <button
+                onClick={() => setActiveTab('todos')}
+                className={`flex items-center space-x-2 px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
+                  activeTab === 'todos'
+                    ? 'bg-primary text-white shadow-lg'
+                    : 'bg-secondary/10 text-text-secondary hover:bg-secondary/20'
+                }`}
+              >
+                <ListTodo className="w-5 h-5" />
+                <span>Todos</span>
+                <span className="bg-white/20 px-2 py-1 rounded-full text-xs">{todoStats.total}</span>
+              </button>
+            </div>
+
+            {/* Todo Statistics */}
+            {activeTab === 'todos' && (
+              <div className="grid grid-cols-3 gap-4 mb-6">
+                <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+                  <div className="flex items-center space-x-2">
+                    <ListTodo className="w-5 h-5 text-blue-600" />
+                    <span className="text-blue-800 font-semibold">Total</span>
+                  </div>
+                  <p className="text-2xl font-bold text-blue-900">{todoStats.total}</p>
+                </div>
+                <div className="bg-green-50 border border-green-200 rounded-xl p-4">
+                  <div className="flex items-center space-x-2">
+                    <CheckSquare className="w-5 h-5 text-green-600" />
+                    <span className="text-green-800 font-semibold">Completed</span>
+                  </div>
+                  <p className="text-2xl font-bold text-green-900">{todoStats.completed}</p>
+                </div>
+                <div className="bg-red-50 border border-red-200 rounded-xl p-4">
+                  <div className="flex items-center space-x-2">
+                    <AlertTriangle className="w-5 h-5 text-red-600" />
+                    <span className="text-red-800 font-semibold">Overdue</span>
+                  </div>
+                  <p className="text-2xl font-bold text-red-900">{todoStats.overdue}</p>
+                </div>
+              </div>
+            )}
+
+            {/* Search and Controls */}
             <div className="flex flex-col sm:flex-row gap-4">
               <div className="relative flex-1">
-                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/50 w-5 h-5" />
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-text-secondary w-5 h-5" />
                 <input
                   type="text"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full bg-white/10 border border-white/20 rounded-xl pl-12 pr-4 py-3 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent backdrop-blur-sm transition-all duration-300"
-                  placeholder="Search your notes..."
+                  className="w-full bg-background-light border border-secondary/20 rounded-xl pl-12 pr-4 py-3 text-text-primary placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300"
+                  placeholder={`Search your ${activeTab}...`}
                 />
               </div>
-              <button 
-                onClick={handleCreateNote}
-                className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 rounded-xl px-6 py-3 text-white font-semibold transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl flex items-center space-x-2"
+
+              {/* Todo Filters and Sort */}
+              {activeTab === 'todos' && (
+                <>
+                  <select
+                    value={todoFilter}
+                    onChange={(e) => setTodoFilter(e.target.value as FilterType)}
+                    className="bg-background-light border border-secondary/20 rounded-xl px-4 py-3 text-text-primary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300"
+                  >
+                    <option value="all">All Todos</option>
+                    <option value="active">Active</option>
+                    <option value="completed">Completed</option>
+                    <option value="overdue">Overdue</option>
+                  </select>
+                  <select
+                    value={todoSort}
+                    onChange={(e) => setTodoSort(e.target.value as SortType)}
+                    className="bg-background-light border border-secondary/20 rounded-xl px-4 py-3 text-text-primary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300"
+                  >
+                    <option value="due_date">Due Date</option>
+                    <option value="priority">Priority</option>
+                    <option value="created_at">Created</option>
+                  </select>
+                </>
+              )}
+
+              <button
+                onClick={activeTab === 'notes' ? handleCreateNote : handleCreateTodo}
+                className="bg-primary hover:bg-primary-light rounded-xl px-6 py-3 text-white font-semibold transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl flex items-center space-x-2"
               >
                 <Plus className="w-5 h-5" />
-                <span>New Note</span>
+                <span>New {activeTab === 'notes' ? 'Note' : 'Todo'}</span>
               </button>
             </div>
           </div>
 
-          {/* Notes Grid */}
+          {/* Content Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredNotes.length === 0 ? (
-              <div className="col-span-full">
-                <div className="bg-white/10 backdrop-blur-xl rounded-3xl p-12 shadow-2xl border border-white/20 text-center">
-                  <FileText className="w-16 h-16 text-white/50 mx-auto mb-4" />
-                  <h3 className="text-2xl font-bold text-white mb-2">No notes yet</h3>
-                  <p className="text-white/70 mb-6">
-                    {searchTerm ? 'No notes match your search.' : 'Start by creating your first note!'}
-                  </p>
-                  {!searchTerm && (
-                    <button 
-                      onClick={handleCreateNote}
-                      className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 rounded-xl px-6 py-3 text-white font-semibold transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl flex items-center space-x-2 mx-auto"
-                    >
-                      <Plus className="w-5 h-5" />
-                      <span>Create Your First Note</span>
-                    </button>
-                  )}
-                </div>
-              </div>
-            ) : (
-              filteredNotes.map((note) => (
-                <div
-                  key={note.id}
-                  className="bg-white/10 backdrop-blur-xl rounded-3xl p-6 shadow-2xl border border-white/20 hover:bg-white/15 transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl group"
-                >
-                  <div className="flex items-start justify-between mb-4">
-                    <h3 className="text-xl font-bold text-white truncate pr-2">
-                      {note.title}
-                    </h3>
-                    <div className="flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <button 
-                        onClick={() => handleEditNote(note)}
-                        className="p-2 bg-blue-500/20 hover:bg-blue-500/30 rounded-lg text-blue-200 hover:text-blue-100 transition-colors duration-200"
+            {activeTab === 'notes' ? (
+              filteredNotes.length === 0 ? (
+                <div className="col-span-full">
+                  <div className="bg-background-card rounded-3xl p-12 shadow-2xl border border-secondary/20 text-center">
+                    <FileText className="w-16 h-16 text-text-secondary mx-auto mb-4" />
+                    <h3 className="text-2xl font-bold text-text-primary mb-2">No notes yet</h3>
+                    <p className="text-text-secondary mb-6">
+                      {searchTerm ? 'No notes match your search.' : 'Start by creating your first note!'}
+                    </p>
+                    {!searchTerm && (
+                      <button
+                        onClick={handleCreateNote}
+                        className="bg-primary hover:bg-primary-light rounded-xl px-6 py-3 text-white font-semibold transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl flex items-center space-x-2 mx-auto"
                       >
-                        <Edit3 className="w-4 h-4" />
+                        <Plus className="w-5 h-5" />
+                        <span>Create Your First Note</span>
                       </button>
-                      <button 
-                        onClick={() => handleDeleteNote(note)} // Updated this line
-                        className="p-2 bg-red-500/20 hover:bg-red-500/30 rounded-lg text-red-200 hover:text-red-100 transition-colors duration-200"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
-                  
-                  <p className="text-white/70 text-sm mb-4 line-clamp-3">
-                    {note.content.replace(/<[^>]*>/g, '').substring(0, 150)}
-                    {note.content.length > 150 ? '...' : ''}
-                  </p>
-                  
-                  <div className="flex items-center text-white/50 text-xs">
-                    <Calendar className="w-4 h-4 mr-1" />
-                    {new Date(note.created_at).toLocaleDateString()}
-                    {note.updated_at !== note.created_at && (
-                      <span className="ml-2">• Updated {new Date(note.updated_at).toLocaleDateString()}</span>
                     )}
                   </div>
                 </div>
-              ))
+              ) : (
+                filteredNotes.map((note) => (
+                  <div
+                    key={note.id}
+                    className="bg-background-card rounded-3xl p-6 shadow-2xl border border-secondary/20 hover:bg-secondary/5 transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl group"
+                  >
+                    <div className="flex items-start justify-between mb-4">
+                      <h3 className="text-xl font-bold text-text-primary truncate pr-2">
+                        {note.title}
+                      </h3>
+                      <div className="flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <button
+                          onClick={() => handleEditNote(note)}
+                          className="p-2 bg-primary/10 hover:bg-primary/20 rounded-lg text-primary hover:text-primary-light transition-colors duration-200"
+                        >
+                          <Edit3 className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteItem(note, 'note')}
+                          className="p-2 bg-error/10 hover:bg-error/20 rounded-lg text-error hover:text-white transition-colors duration-200"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+
+                    <p className="text-text-secondary text-sm mb-4 line-clamp-3">
+                      {note.content.replace(/<[^>]*>/g, '').substring(0, 150)}
+                      {note.content.length > 150 ? '...' : ''}
+                    </p>
+
+                    <div className="flex items-center text-text-light text-xs">
+                      <Calendar className="w-4 h-4 mr-1" />
+                      {new Date(note.created_at).toLocaleDateString()}
+                      {note.updated_at !== note.created_at && (
+                        <span className="ml-2">• Updated {new Date(note.updated_at).toLocaleDateString()}</span>
+                      )}
+                    </div>
+                  </div>
+                ))
+              )
+            ) : (
+              filteredTodos.length === 0 ? (
+                <div className="col-span-full">
+                  <div className="bg-background-card rounded-3xl p-12 shadow-2xl border border-secondary/20 text-center">
+                    <ListTodo className="w-16 h-16 text-text-secondary mx-auto mb-4" />
+                    <h3 className="text-2xl font-bold text-text-primary mb-2">No todos yet</h3>
+                    <p className="text-text-secondary mb-6">
+                      {searchTerm ? 'No todos match your search.' : 'Start by creating your first todo!'}
+                    </p>
+                    {!searchTerm && (
+                      <button
+                        onClick={handleCreateTodo}
+                        className="bg-primary hover:bg-primary-light rounded-xl px-6 py-3 text-white font-semibold transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl flex items-center space-x-2 mx-auto"
+                      >
+                        <Plus className="w-5 h-5" />
+                        <span>Create Your First Todo</span>
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                filteredTodos.map((todo) => (
+                  <div
+                    key={todo.id}
+                    className={`bg-background-card rounded-3xl p-6 shadow-2xl border transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl group ${
+                      todo.completed
+                        ? 'border-green-200 bg-green-50/50'
+                        : todo.due_date && isOverdue(todo.due_date)
+                        ? 'border-red-200 bg-red-50/50'
+                        : 'border-secondary/20 hover:bg-secondary/5'
+                    }`}
+                  >
+                    <div className="flex items-start space-x-3 mb-4">
+                      <button
+                        onClick={() => handleToggleTodo(todo.id)}
+                        className={`mt-1 flex-shrink-0 transition-all duration-200 ${
+                          todo.completed ? 'text-green-600' : 'text-text-secondary hover:text-primary'
+                        }`}
+                      >
+                        {todo.completed ? (
+                          <CheckSquare className="w-6 h-6" />
+                        ) : (
+                          <Square className="w-6 h-6" />
+                        )}
+                      </button>
+
+                      <div className="flex-1 min-w-0">
+                        <h3 className={`text-lg font-bold truncate ${
+                          todo.completed ? 'text-text-secondary line-through' : 'text-text-primary'
+                        }`}>
+                          {todo.title}
+                        </h3>
+
+                        <div className="flex flex-wrap items-center gap-2 mt-2">
+                          <span className={`px-2 py-1 rounded-lg text-xs font-medium border ${getPriorityColor(todo.priority)}`}>
+                            <Flag className="w-3 h-3 inline mr-1" />
+                            {todo.priority}
+                          </span>
+
+                          {todo.due_date && (
+                            <span className={`px-2 py-1 rounded-lg text-xs font-medium ${
+                              todo.completed
+                                ? 'bg-gray-100 text-gray-600 border-gray-200'
+                                : isOverdue(todo.due_date)
+                                ? 'bg-red-100 text-red-800 border-red-200'
+                                : 'bg-blue-100 text-blue-800 border-blue-200'
+                            }`}>
+                              <Clock className="w-3 h-3 inline mr-1" />
+                              {new Date(todo.due_date).toLocaleDateString()}
+                            </span>
+                          )}
+                        </div>
+
+                        {todo.description && (
+                          <p className={`text-sm mt-2 line-clamp-2 ${
+                            todo.completed ? 'text-text-light' : 'text-text-secondary'
+                          }`}>
+                            {todo.description}
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <button
+                          onClick={() => handleEditTodo(todo)}
+                          className="p-2 bg-primary/10 hover:bg-primary/20 rounded-lg text-primary hover:text-primary-light transition-colors duration-200"
+                        >
+                          <Edit3 className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteItem(todo, 'todo')}
+                          className="p-2 bg-error/10 hover:bg-error/20 rounded-lg text-error hover:text-white transition-colors duration-200"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )
             )}
           </div>
         </div>
       </div>
 
       <NoteModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        isOpen={isNoteModalOpen}
+        onClose={() => setIsNoteModalOpen(false)}
         onSave={handleSaveNote}
         note={editingNote}
-        loading={modalLoading}
+        loading={noteModalLoading}
+      />
+
+      <TodoModal
+        isOpen={isTodoModalOpen}
+        onClose={() => setIsTodoModalOpen(false)}
+        onSave={handleSaveTodo}
+        todo={editingTodo}
+        loading={todoModalLoading}
       />
 
       <DeleteConfirmModal
         isOpen={isDeleteModalOpen}
         onClose={cancelDelete}
-        onConfirm={confirmDeleteNote}
-        noteTitle={noteToDelete?.title || ''}
+        onConfirm={confirmDelete}
+        noteTitle={itemToDelete?.title || ''}
         loading={deleteLoading}
       />
     </>
