@@ -32,23 +32,17 @@ interface Note {
 }
 
 const Dashboard: React.FC = () => {
-  const { user, logout } = useAuth();
-  const [notes, setNotes] = useState<Note[]>([]);
-  const [todos, setTodos] = useState<Todo[]>([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'notes' | 'todos'>('notes');
-  // Multi-select state for notes
-  const [selectedNotes, setSelectedNotes] = useState<number[]>([]);
-  const [multiSelectMode, setMultiSelectMode] = useState(false);
+  // Bulk delete notes with confirmation
+  const [pendingBulkDelete, setPendingBulkDelete] = useState(false);
+  const handleBulkDeleteNotes = () => {
+    setPendingBulkDelete(true);
+  };
 
-  // Bulk delete notes
-  const handleBulkDeleteNotes = async () => {
+  const confirmBulkDeleteNotes = async () => {
     if (selectedNotes.length === 0) return;
     setDeleteLoading(true);
     try {
       const token = localStorage.getItem('token');
-      // Assuming backend supports bulk delete via POST to /api/notes/bulk-delete
       const response = await fetch('http://localhost:5000/api/notes/bulk-delete', {
         method: 'POST',
         headers: {
@@ -60,13 +54,25 @@ const Dashboard: React.FC = () => {
       if (response.ok) {
         setNotes(notes.filter(note => !selectedNotes.includes(note.id)));
         setSelectedNotes([]);
+        setMultiSelectMode(false);
       }
     } catch (error) {
       console.error('Error bulk deleting notes:', error);
     } finally {
       setDeleteLoading(false);
+      setPendingBulkDelete(false);
     }
   };
+  const { user, logout } = useAuth();
+  const [notes, setNotes] = useState<Note[]>([]);
+  const [todos, setTodos] = useState<Todo[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<'notes' | 'todos'>('notes');
+  // Multi-select state for notes
+  const [selectedNotes, setSelectedNotes] = useState<number[]>([]);
+  const [multiSelectMode, setMultiSelectMode] = useState(false);
+
 
   // Note filtering states
   const [noteDateFilter, setNoteDateFilter] = useState<'all' | 'today' | 'week' | 'month'>('all');
@@ -878,6 +884,14 @@ const Dashboard: React.FC = () => {
         onClose={cancelDelete}
         onConfirm={confirmDelete}
         noteTitle={selectedNotes.length > 1 ? `${selectedNotes.length} notes` : (itemToDelete?.title || '')}
+        loading={deleteLoading}
+      />
+      {/* Bulk Delete Confirmation Modal */}
+      <DeleteConfirmModal
+        isOpen={pendingBulkDelete}
+        onClose={() => setPendingBulkDelete(false)}
+        onConfirm={confirmBulkDeleteNotes}
+        noteTitle={`${selectedNotes.length} notes`}
         loading={deleteLoading}
       />
     </>
