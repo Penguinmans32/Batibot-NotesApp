@@ -75,7 +75,8 @@ const Dashboard: React.FC = () => {
 
 
   // Note filtering states
-  const [noteDateFilter, setNoteDateFilter] = useState<'all' | 'today' | 'week' | 'month'>('all');
+  const [noteDateFilter, setNoteDateFilter] = useState<'all' | 'today' | 'week' | 'month' | 'specific'>('all');
+  const [specificDate, setSpecificDate] = useState<string>('');
   const [noteSortOrder, setNoteSortOrder] = useState<'title-asc' | 'title-desc' | 'recent' | 'oldest'>('recent');
 
   // Note states
@@ -367,6 +368,15 @@ const Dashboard: React.FC = () => {
             monthAgo.setMonth(monthAgo.getMonth() - 1);
             if (noteDate < monthAgo) return false;
             break;
+          case 'specific':
+            if (specificDate) {
+              const selectedDate = new Date(specificDate);
+              const selectedDateStart = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate());
+              const selectedDateEnd = new Date(selectedDateStart);
+              selectedDateEnd.setDate(selectedDateEnd.getDate() + 1);
+              if (noteDate < selectedDateStart || noteDate >= selectedDateEnd) return false;
+            }
+            break;
         }
       }
 
@@ -537,15 +547,26 @@ const Dashboard: React.FC = () => {
                     <Calendar className="w-5 h-5 text-text-secondary" />
                     <select
                       value={noteDateFilter}
-                      onChange={(e) => setNoteDateFilter(e.target.value as 'all' | 'today' | 'week' | 'month')}
+                      onChange={(e) => setNoteDateFilter(e.target.value as 'all' | 'today' | 'week' | 'month' | 'specific')}
                       className="bg-background-light border border-secondary/20 rounded-xl px-4 py-3 text-text-primary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300"
                     >
                       <option value="all">All Time</option>
                       <option value="today">Today</option>
                       <option value="week">This Week</option>
                       <option value="month">This Month</option>
+                      <option value="specific">Specific Date</option>
                     </select>
                   </div>
+                  {noteDateFilter === 'specific' && (
+                    <div className="flex items-center space-x-2">
+                      <input
+                        type="date"
+                        value={specificDate}
+                        onChange={(e) => setSpecificDate(e.target.value)}
+                        className="bg-background-light border border-secondary/20 rounded-xl px-4 py-3 text-text-primary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300"
+                      />
+                    </div>
+                  )}
                   <div className="flex items-center space-x-2">
                     <SortAsc className="w-5 h-5 text-text-secondary" />
                     <select
@@ -563,6 +584,7 @@ const Dashboard: React.FC = () => {
                     <button
                       onClick={() => {
                         setNoteDateFilter('all');
+                        setSpecificDate('');
                         setNoteSortOrder('recent');
                         setSearchTerm('');
                       }}
@@ -645,7 +667,11 @@ const Dashboard: React.FC = () => {
                     <FileText className="w-16 h-16 text-text-secondary mx-auto mb-4" />
                     <h3 className="text-2xl font-bold text-text-primary mb-2">No notes yet</h3>
                     <p className="text-text-secondary mb-6">
-                      {searchTerm ? 'No notes match your search.' : 'Start by creating your first note!'}
+                      {noteDateFilter === 'specific' && specificDate
+                        ? 'No existing notes on this day.'
+                        : searchTerm
+                        ? 'No notes match your search.'
+                        : 'Start by creating your first note!'}
                     </p>
                     {!searchTerm && (
                       <button
