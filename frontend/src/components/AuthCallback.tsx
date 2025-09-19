@@ -32,11 +32,11 @@ const AuthCallback: React.FC = () => {
   }, [searchParams, login, navigate]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 flex items-center justify-center">
-      <div className="bg-white/10 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border border-white/20">
+    <div className="min-h-screen bg-background-light flex items-center justify-center">
+      <div className="bg-background-card rounded-3xl p-8 shadow-2xl border border-secondary/20">
         <div className="flex items-center space-x-3">
-          <div className="w-8 h-8 border-4 border-white/30 border-t-white rounded-full animate-spin"></div>
-          <span className="text-white text-xl font-semibold">Completing Google sign-in...</span>
+          <div className="w-8 h-8 border-4 border-secondary/30 border-t-primary rounded-full animate-spin"></div>
+          <span className="text-text-primary text-xl font-semibold">Completing Google sign-in...</span>
         </div>
       </div>
     </div>
