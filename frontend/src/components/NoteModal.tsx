@@ -482,7 +482,10 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
                 style={{
                   minHeight: '400px',
                   fontFamily: fontFamily,
-                  fontSize: fontSize + 'px'
+                  fontSize: fontSize + 'px',
+                  whiteSpace: 'pre-wrap',
+                  wordBreak: 'break-word',
+                  overflowWrap: 'break-word'
                 }}
                 onInput={() => {
                   if (contentRef.current) {

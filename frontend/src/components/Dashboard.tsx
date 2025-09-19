@@ -691,7 +691,8 @@ const Dashboard: React.FC = () => {
                   {filteredNotes.map((note) => (
                     <div
                       key={note.id}
-                      className="bg-background-card rounded-3xl p-6 shadow-2xl border border-secondary/20 hover:bg-secondary/5 transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl group flex"
+                      className="bg-background-card rounded-3xl p-6 shadow-2xl border border-primary/30 hover:bg-secondary/5 transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl group flex"
+                      style={{ wordBreak: 'break-word', overflowWrap: 'break-word', border: '2px solid #3B82F6' }}
                       onPointerDown={e => {
                         let timer: NodeJS.Timeout;
                         const handlePointerUp = () => {
@@ -742,8 +743,9 @@ const Dashboard: React.FC = () => {
                         </div>
 
                         <p className="text-text-secondary text-sm mb-4 line-clamp-3">
-                          {note.content.replace(/<[^>]*>/g, '').substring(0, 150)}
-                          {note.content.length > 150 ? '...' : ''}
+                          <span style={{ whiteSpace: 'pre-line', wordBreak: 'break-word', overflowWrap: 'break-word' }}>
+                            {note.content.replace(/<[^>]*>/g, '')}
+                          </span>
                         </p>
 
                         <div className="flex items-center text-text-light text-xs">
