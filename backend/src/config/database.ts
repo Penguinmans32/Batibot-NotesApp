@@ -14,6 +14,7 @@ export const pool = new Pool({
 // Create tables
 const createTables = async () => {
   try {
+    // Users table
     await pool.query(`
       CREATE TABLE IF NOT EXISTS users (
         id SERIAL PRIMARY KEY,
@@ -26,6 +27,7 @@ const createTables = async () => {
       )
     `);
 
+    // Notes table
     await pool.query(`
       CREATE TABLE IF NOT EXISTS notes (
         id SERIAL PRIMARY KEY,
@@ -66,6 +68,7 @@ const createTables = async () => {
     await pool.query(`
       CREATE INDEX IF NOT EXISTS idx_todos_completed ON todos(completed);
     `);
+
 
     await pool.query(`
       CREATE OR REPLACE FUNCTION update_updated_at_column()
