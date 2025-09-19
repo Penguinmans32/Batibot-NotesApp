@@ -149,7 +149,7 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
   return (
     <>
       <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-        <div className="bg-background-card rounded-3xl w-full max-w-5xl max-h-[95vh] shadow-2xl border border-secondary/20 animate-float flex flex-col">
+        <div className="bg-background-card rounded-3xl w-full max-w-5xl max-h-[95vh] shadow-2xl border border-secondary/20 flex flex-col">
           {/* Header */}
           <div className="flex items-center justify-between p-6 border-b border-secondary/20 flex-shrink-0">
             <div className="flex items-center space-x-3">
