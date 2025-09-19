@@ -7,6 +7,7 @@ import { pool } from './config/database';
 import './config/auth';
 import authRoutes from './routes/auth';
 import notesRoutes from './routes/notes';
+import todoRoutes from './routes/todoRoutes';
 
 dotenv.config();
 
@@ -30,6 +31,7 @@ app.use(passport.session());
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/notes', notesRoutes);
+app.use('/api/todos', todoRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
