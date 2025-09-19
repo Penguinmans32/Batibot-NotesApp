@@ -1,8 +1,10 @@
 import express, { Request, Response } from 'express';
 import { Pool } from 'pg';
 import { authenticateToken } from '../middleware/auth';
-
+import { bulkDeleteNotes } from '../controllers/notesController';
 const router = express.Router();
+// Bulk delete notes
+router.post('/bulk-delete', authenticateToken, bulkDeleteNotes);
 const pool = new Pool({
   user: process.env.DB_USER,
   host: process.env.DB_HOST,

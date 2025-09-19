@@ -1,3 +1,22 @@
+export const bulkDeleteNotes = async (req: AuthRequest, res: Response) => {
+  try {
+    const { ids } = req.body;
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return res.status(400).json({ message: 'No note IDs provided' });
+    }
+
+    // Only delete notes belonging to the user
+    const result = await pool.query(
+      `DELETE FROM notes WHERE id = ANY($1) AND user_id = $2 RETURNING id`,
+      [ids, req.user.id]
+    );
+
+    res.json({ message: 'Notes deleted successfully', deletedIds: result.rows.map(r => r.id) });
+  } catch (error) {
+    console.error('Error bulk deleting notes:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
 import { Request, Response } from 'express';
 import { pool } from '../config/database';
 
