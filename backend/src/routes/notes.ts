@@ -51,15 +51,15 @@ router.get('/:id', authenticateToken, async (req: any, res: Response) => {
 router.post('/', authenticateToken, async (req: any, res: Response) => {
   try {
     const userId = req.user.userId;
-    const { title, content } = req.body;
+    const { title, content, tags = [] } = req.body;
     
     if (!title || !content) {
       return res.status(400).json({ message: 'Title and content are required' });
     }
     
     const result = await pool.query(
-      'INSERT INTO notes (user_id, title, content) VALUES ($1, $2, $3) RETURNING *',
-      [userId, title, content]
+      'INSERT INTO notes (user_id, title, content, tags) VALUES ($1, $2, $3, $4) RETURNING *',
+      [userId, title, content, JSON.stringify(tags)]
     );
     
     res.status(201).json(result.rows[0]);
@@ -73,15 +73,15 @@ router.put('/:id', authenticateToken, async (req: any, res: Response) => {
   try {
     const userId = req.user.userId;
     const noteId = req.params.id;
-    const { title, content } = req.body;
+    const { title, content, tags = [] } = req.body;
     
     if (!title || !content) {
       return res.status(400).json({ message: 'Title and content are required' });
     }
     
     const result = await pool.query(
-      'UPDATE notes SET title = $1, content = $2, updated_at = CURRENT_TIMESTAMP WHERE id = $3 AND user_id = $4 RETURNING *',
-      [title, content, noteId, userId]
+      'UPDATE notes SET title = $1, content = $2, tags = $3, updated_at = CURRENT_TIMESTAMP WHERE id = $4 AND user_id = $5 RETURNING *',
+      [title, content, JSON.stringify(tags), noteId, userId]
     );
     
     if (result.rows.length === 0) {

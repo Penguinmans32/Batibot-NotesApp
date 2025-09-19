@@ -27,17 +27,12 @@ import {
   Table,
   ChevronDown
 } from 'lucide-react';
-
-interface Note {
-  id?: number;
-  title: string;
-  content: string;
-}
+import { Note, NoteTag } from '../types/Note';
 
 interface NoteModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (note: Note) => void;
+  onSave: (note: { id?: number; title: string; content: string; tags?: NoteTag[] }) => void;
   note?: Note | null;
   loading?: boolean;
 }
@@ -51,21 +46,64 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
   const [showHeadingDropdown, setShowHeadingDropdown] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
 
+  // Tag system
+  const defaultTags: NoteTag[] = [
+    { name: 'Shopping List', color: '#3B82F6' },
+    { name: 'Bucketlist', color: '#F59E0B' },
+    { name: 'Work', color: '#10B981' },
+    { name: 'Personal', color: '#F43F5E' },
+    { name: 'Ideas', color: '#8B5CF6' },
+    { name: 'Urgent', color: '#EF4444' }
+  ];
+  const [allTags, setAllTags] = useState<NoteTag[]>(defaultTags);
+  const [selectedTags, setSelectedTags] = useState<NoteTag[]>([]);
+  const [newTagName, setNewTagName] = useState('');
+  const [newTagColor, setNewTagColor] = useState('#6366F1');
+
   useEffect(() => {
     if (note) {
       setTitle(note.title);
       setContent(note.content);
+      setSelectedTags(note.tags || []);
       if (contentRef.current) {
         contentRef.current.innerHTML = note.content || '';
+      }
+      // Add any tags from the note that aren't in allTags
+      if (note.tags) {
+        setAllTags(prev => {
+          const extraTags = note.tags?.filter(t => !prev.some(pt => pt.name === t.name)) || [];
+          return extraTags.length > 0 ? [...prev, ...extraTags] : prev;
+        });
       }
     } else {
       setTitle('');
       setContent('');
+      setSelectedTags([]);
       if (contentRef.current) {
         contentRef.current.innerHTML = '';
       }
     }
   }, [note, isOpen]);
+
+  const handleAddTag = () => {
+    if (!newTagName.trim()) return;
+    const exists = allTags.some(t => t.name.toLowerCase() === newTagName.trim().toLowerCase());
+    if (!exists) {
+      const tag: NoteTag = { name: newTagName.trim(), color: newTagColor };
+      setAllTags([...allTags, tag]);
+      setSelectedTags([...selectedTags, tag]);
+      setNewTagName('');
+      setNewTagColor('#6366F1');
+    }
+  };
+
+  const handleToggleTag = (tag: NoteTag) => {
+    if (selectedTags.some(t => t.name === tag.name)) {
+      setSelectedTags(selectedTags.filter(t => t.name !== tag.name));
+    } else {
+      setSelectedTags([...selectedTags, tag]);
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -74,7 +112,8 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
     onSave({
       id: note?.id,
       title: title.trim(),
-      content: contentRef.current?.innerHTML || ''
+      content: contentRef.current?.innerHTML || '',
+      tags: selectedTags
     });
   };
 
@@ -182,6 +221,77 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
                 placeholder="Enter note title..."
                 required
               />
+            </div>
+
+            {/* Tags Section */}
+            <div className="px-6 pb-4 flex-shrink-0">
+              <label className="text-text-secondary font-medium text-sm block mb-2">
+                Tags & Categories
+              </label>
+              <div className="bg-background-light border border-secondary/20 rounded-xl p-4">
+                {/* Existing Tags */}
+                <div className="flex flex-wrap gap-2 mb-3">
+                  {allTags.map(tag => (
+                    <button
+                      type="button"
+                      key={tag.name}
+                      onClick={() => handleToggleTag(tag)}
+                      style={{ 
+                        backgroundColor: tag.color, 
+                        color: '#fff',
+                        border: selectedTags.some(t => t.name === tag.name) ? '2px solid #111827' : '2px solid transparent'
+                      }}
+                      className="px-3 py-1 rounded-full text-xs font-semibold transition-all duration-200 hover:scale-105 focus:outline-none"
+                    >
+                      {tag.name}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Create New Tag */}
+                <div className="flex items-center gap-2 pt-2 border-t border-secondary/20">
+                  <input
+                    type="text"
+                    value={newTagName}
+                    onChange={(e) => setNewTagName(e.target.value)}
+                    placeholder="Create new tag..."
+                    className="flex-1 bg-background-card border border-secondary/20 rounded-lg px-3 py-2 text-text-primary text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                    onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddTag())}
+                  />
+                  <input
+                    type="color"
+                    value={newTagColor}
+                    onChange={(e) => setNewTagColor(e.target.value)}
+                    className="w-10 h-10 p-1 border border-secondary/20 rounded-lg cursor-pointer"
+                    title="Choose tag color"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleAddTag}
+                    className="px-4 py-2 bg-primary text-white rounded-lg text-sm font-semibold hover:bg-primary-light transition-all duration-200"
+                  >
+                    Add
+                  </button>
+                </div>
+
+                {/* Selected Tags Preview */}
+                {selectedTags.length > 0 && (
+                  <div className="mt-3 pt-3 border-t border-secondary/20">
+                    <span className="text-text-secondary text-xs font-medium mb-2 block">Selected tags:</span>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedTags.map(tag => (
+                        <span
+                          key={tag.name}
+                          style={{ backgroundColor: tag.color, color: '#fff' }}
+                          className="px-3 py-1 rounded-full text-xs font-semibold"
+                        >
+                          {tag.name}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Enhanced Rich Text Toolbar */}
