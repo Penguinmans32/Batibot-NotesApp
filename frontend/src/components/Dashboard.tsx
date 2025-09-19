@@ -22,14 +22,7 @@ import NoteModal from './NoteModal';
 import TodoModal from './TodoModal';
 import DeleteConfirmModal from './DeleteConfirmModal';
 import { Todo, FilterType, SortType } from '../types/Todo';
-
-interface Note {
-  id: number;
-  title: string;
-  content: string;
-  created_at: string;
-  updated_at: string;
-}
+import { Note, NoteTag } from '../types/Note';
 
 const Dashboard: React.FC = () => {
   // Bulk delete notes with confirmation
@@ -78,6 +71,7 @@ const Dashboard: React.FC = () => {
   const [noteDateFilter, setNoteDateFilter] = useState<'all' | 'today' | 'week' | 'month' | 'specific'>('all');
   const [specificDate, setSpecificDate] = useState<string>('');
   const [noteSortOrder, setNoteSortOrder] = useState<'title-asc' | 'title-desc' | 'recent' | 'oldest'>('recent');
+  const [selectedTagFilter, setSelectedTagFilter] = useState<string>('all');
 
   // Note states
   const [isNoteModalOpen, setIsNoteModalOpen] = useState(false);
@@ -150,7 +144,7 @@ const Dashboard: React.FC = () => {
     setIsNoteModalOpen(true);
   };
 
-  const handleSaveNote = async (noteData: { id?: number; title: string; content: string }) => {
+  const handleSaveNote = async (noteData: { id?: number; title: string; content: string; tags?: NoteTag[] }) => {
     setNoteModalLoading(true);
     try {
       const token = localStorage.getItem('token');
@@ -166,7 +160,8 @@ const Dashboard: React.FC = () => {
           },
           body: JSON.stringify({
             title: noteData.title,
-            content: noteData.content
+            content: noteData.content,
+            tags: noteData.tags || []
           })
         }
       );
@@ -345,6 +340,12 @@ const Dashboard: React.FC = () => {
                           note.content.toLowerCase().includes(searchTerm.toLowerCase());
       
       if (!matchesSearch) return false;
+
+      // Tag filter
+      if (selectedTagFilter !== 'all') {
+        const hasTag = note.tags?.some(tag => tag.name === selectedTagFilter);
+        if (!hasTag) return false;
+      }
 
       // Date filter
       if (noteDateFilter !== 'all') {
@@ -568,6 +569,19 @@ const Dashboard: React.FC = () => {
                     </div>
                   )}
                   <div className="flex items-center space-x-2">
+                    <Flag className="w-5 h-5 text-text-secondary" />
+                    <select
+                      value={selectedTagFilter}
+                      onChange={(e) => setSelectedTagFilter(e.target.value)}
+                      className="bg-background-light border border-secondary/20 rounded-xl px-4 py-3 text-text-primary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300"
+                    >
+                      <option value="all">All Tags</option>
+                      {Array.from(new Set(notes.flatMap(note => note.tags?.map(tag => tag.name) || []))).map(tagName => (
+                        <option key={tagName} value={tagName}>{tagName}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="flex items-center space-x-2">
                     <SortAsc className="w-5 h-5 text-text-secondary" />
                     <select
                       value={noteSortOrder}
@@ -580,13 +594,14 @@ const Dashboard: React.FC = () => {
                       <option value="title-desc">Title Z-A</option>
                     </select>
                   </div>
-                  {(noteDateFilter !== 'all' || noteSortOrder !== 'recent' || searchTerm) && (
+                  {(noteDateFilter !== 'all' || noteSortOrder !== 'recent' || searchTerm || selectedTagFilter !== 'all') && (
                     <button
                       onClick={() => {
                         setNoteDateFilter('all');
                         setSpecificDate('');
                         setNoteSortOrder('recent');
                         setSearchTerm('');
+                        setSelectedTagFilter('all');
                       }}
                       className="px-4 py-3 text-text-secondary hover:text-text-primary bg-background-light hover:bg-background-lighter border border-secondary/20 rounded-xl transition-all duration-300 flex items-center space-x-2"
                       title="Clear all filters"
@@ -773,6 +788,21 @@ const Dashboard: React.FC = () => {
                             {note.content.replace(/<[^>]*>/g, '')}
                           </span>
                         </p>
+
+                        {/* Tags Display */}
+                        {note.tags && note.tags.length > 0 && (
+                          <div className="flex flex-wrap gap-2 mb-4">
+                            {note.tags.map((tag, index) => (
+                              <span
+                                key={index}
+                                style={{ backgroundColor: tag.color, color: '#fff' }}
+                                className="px-2 py-1 rounded-full text-xs font-semibold"
+                              >
+                                {tag.name}
+                              </span>
+                            ))}
+                          </div>
+                        )}
 
                         <div className="flex items-center text-text-light text-xs">
                           <Calendar className="w-4 h-4 mr-1" />

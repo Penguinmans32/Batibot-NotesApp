@@ -34,6 +34,7 @@ const createTables = async () => {
         user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
         title VARCHAR(255) NOT NULL,
         content TEXT,
+        tags JSONB DEFAULT '[]'::jsonb,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
@@ -55,6 +56,16 @@ const createTables = async () => {
 
     await pool.query(`
       CREATE INDEX IF NOT EXISTS idx_notes_user_id ON notes(user_id);
+    `);
+
+    // Add tags column to existing notes table if it doesn't exist
+    await pool.query(`
+      DO $$ 
+      BEGIN 
+        IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='notes' AND column_name='tags') THEN
+          ALTER TABLE notes ADD COLUMN tags JSONB DEFAULT '[]'::jsonb;
+        END IF;
+      END $$;
     `);
 
     await pool.query(`
