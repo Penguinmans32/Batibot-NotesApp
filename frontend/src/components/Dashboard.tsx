@@ -38,6 +38,35 @@ const Dashboard: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'notes' | 'todos'>('notes');
+  // Multi-select state for notes
+  const [selectedNotes, setSelectedNotes] = useState<number[]>([]);
+  const [multiSelectMode, setMultiSelectMode] = useState(false);
+
+  // Bulk delete notes
+  const handleBulkDeleteNotes = async () => {
+    if (selectedNotes.length === 0) return;
+    setDeleteLoading(true);
+    try {
+      const token = localStorage.getItem('token');
+      // Assuming backend supports bulk delete via POST to /api/notes/bulk-delete
+      const response = await fetch('http://localhost:5000/api/notes/bulk-delete', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ ids: selectedNotes })
+      });
+      if (response.ok) {
+        setNotes(notes.filter(note => !selectedNotes.includes(note.id)));
+        setSelectedNotes([]);
+      }
+    } catch (error) {
+      console.error('Error bulk deleting notes:', error);
+    } finally {
+      setDeleteLoading(false);
+    }
+  };
 
   // Note filtering states
   const [noteDateFilter, setNoteDateFilter] = useState<'all' | 'today' | 'week' | 'month'>('all');
@@ -624,45 +653,104 @@ const Dashboard: React.FC = () => {
                   </div>
                 </div>
               ) : (
-                filteredNotes.map((note) => (
-                  <div
-                    key={note.id}
-                    className="bg-background-card rounded-3xl p-6 shadow-2xl border border-secondary/20 hover:bg-secondary/5 transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl group"
-                  >
-                    <div className="flex items-start justify-between mb-4">
-                      <h3 className="text-xl font-bold text-text-primary truncate pr-2">
-                        {note.title}
-                      </h3>
-                      <div className="flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <>
+                  {/* Bulk select controls */}
+                  {multiSelectMode && (
+                    <div className="col-span-full flex items-center mb-4">
+                      <input
+                        type="checkbox"
+                        checked={selectedNotes.length === filteredNotes.length && filteredNotes.length > 0}
+                        onChange={e => {
+                          if (e.target.checked) {
+                            setSelectedNotes(filteredNotes.map(n => n.id));
+                          } else {
+                            setSelectedNotes([]);
+                          }
+                        }}
+                        className="mr-2 accent-primary w-5 h-5"
+                      />
+                      <span className="text-sm text-text-secondary mr-4">Select All</span>
+                      {selectedNotes.length > 0 && (
                         <button
-                          onClick={() => handleEditNote(note)}
-                          className="p-2 bg-primary/10 hover:bg-primary/20 rounded-lg text-primary hover:text-primary-light transition-colors duration-200"
-                        >
-                          <Edit3 className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={() => handleDeleteItem(note, 'note')}
-                          className="p-2 bg-error/10 hover:bg-error/20 rounded-lg text-error hover:text-white transition-colors duration-200"
+                          type="button"
+                          onClick={handleBulkDeleteNotes}
+                          className="bg-error/10 hover:bg-error/20 border border-error/30 rounded-xl px-4 py-2 text-error hover:text-white font-semibold transition-all duration-300 flex items-center space-x-2"
                         >
                           <Trash2 className="w-4 h-4" />
+                          <span>Delete Selected ({selectedNotes.length})</span>
                         </button>
-                      </div>
-                    </div>
-
-                    <p className="text-text-secondary text-sm mb-4 line-clamp-3">
-                      {note.content.replace(/<[^>]*>/g, '').substring(0, 150)}
-                      {note.content.length > 150 ? '...' : ''}
-                    </p>
-
-                    <div className="flex items-center text-text-light text-xs">
-                      <Calendar className="w-4 h-4 mr-1" />
-                      {new Date(note.created_at).toLocaleDateString()}
-                      {note.updated_at !== note.created_at && (
-                        <span className="ml-2">• Updated {new Date(note.updated_at).toLocaleDateString()}</span>
                       )}
                     </div>
-                  </div>
-                ))
+                  )}
+                  {filteredNotes.map((note) => (
+                    <div
+                      key={note.id}
+                      className="bg-background-card rounded-3xl p-6 shadow-2xl border border-secondary/20 hover:bg-secondary/5 transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl group flex"
+                      onPointerDown={e => {
+                        let timer: NodeJS.Timeout;
+                        const handlePointerUp = () => {
+                          clearTimeout(timer);
+                          window.removeEventListener('pointerup', handlePointerUp);
+                        };
+                        timer = setTimeout(() => {
+                          setMultiSelectMode(true);
+                          setSelectedNotes([note.id]);
+                        }, 600); // 600ms for long press
+                        window.addEventListener('pointerup', handlePointerUp);
+                      }}
+                    >
+                      {/* Checkbox for multi-select */}
+                      {multiSelectMode && selectedNotes.length > 0 && (
+                        <input
+                          type="checkbox"
+                          checked={selectedNotes.includes(note.id)}
+                          onChange={e => {
+                            if (e.target.checked) {
+                              setSelectedNotes(prev => [...prev, note.id]);
+                            } else {
+                              setSelectedNotes(prev => prev.filter(id => id !== note.id));
+                            }
+                          }}
+                          className="mr-4 mt-2 accent-primary w-5 h-5 flex-shrink-0"
+                        />
+                      )}
+                      <div className="flex-1">
+                        <div className="flex items-start justify-between mb-4">
+                          <h3 className="text-xl font-bold text-text-primary truncate pr-2">
+                            {note.title}
+                          </h3>
+                          <div className="flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            <button
+                              onClick={() => handleEditNote(note)}
+                              className="p-2 bg-primary/10 hover:bg-primary/20 rounded-lg text-primary hover:text-primary-light transition-colors duration-200"
+                            >
+                              <Edit3 className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteItem(note, 'note')}
+                              className="p-2 bg-error/10 hover:bg-error/20 rounded-lg text-error hover:text-white transition-colors duration-200"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </div>
+
+                        <p className="text-text-secondary text-sm mb-4 line-clamp-3">
+                          {note.content.replace(/<[^>]*>/g, '').substring(0, 150)}
+                          {note.content.length > 150 ? '...' : ''}
+                        </p>
+
+                        <div className="flex items-center text-text-light text-xs">
+                          <Calendar className="w-4 h-4 mr-1" />
+                          {new Date(note.created_at).toLocaleDateString()}
+                          {note.updated_at !== note.created_at && (
+                            <span className="ml-2">• Updated {new Date(note.updated_at).toLocaleDateString()}</span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </>
               )
             ) : (
               filteredTodos.length === 0 ? (
@@ -789,7 +877,7 @@ const Dashboard: React.FC = () => {
         isOpen={isDeleteModalOpen}
         onClose={cancelDelete}
         onConfirm={confirmDelete}
-        noteTitle={itemToDelete?.title || ''}
+        noteTitle={selectedNotes.length > 1 ? `${selectedNotes.length} notes` : (itemToDelete?.title || '')}
         loading={deleteLoading}
       />
     </>
