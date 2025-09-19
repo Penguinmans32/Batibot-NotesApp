@@ -39,7 +39,6 @@ const createTables = async () => {
       )
     `);
 
-    // Todos table - NEW!
     await pool.query(`
       CREATE TABLE IF NOT EXISTS todos (
         id SERIAL PRIMARY KEY,
@@ -54,7 +53,6 @@ const createTables = async () => {
       )
     `);
 
-    // Create indexes for better performance
     await pool.query(`
       CREATE INDEX IF NOT EXISTS idx_notes_user_id ON notes(user_id);
     `);
@@ -71,7 +69,7 @@ const createTables = async () => {
       CREATE INDEX IF NOT EXISTS idx_todos_completed ON todos(completed);
     `);
 
-    // Create trigger to auto-update updated_at for notes
+
     await pool.query(`
       CREATE OR REPLACE FUNCTION update_updated_at_column()
       RETURNS TRIGGER AS $$
@@ -90,7 +88,6 @@ const createTables = async () => {
         EXECUTE FUNCTION update_updated_at_column();
     `);
 
-    // Create trigger to auto-update updated_at for todos
     await pool.query(`
       DROP TRIGGER IF EXISTS update_todos_updated_at ON todos;
       CREATE TRIGGER update_todos_updated_at
