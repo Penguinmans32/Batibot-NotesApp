@@ -39,6 +39,10 @@ const Dashboard: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'notes' | 'todos'>('notes');
 
+  // Note filtering states
+  const [noteDateFilter, setNoteDateFilter] = useState<'all' | 'today' | 'week' | 'month'>('all');
+  const [noteSortOrder, setNoteSortOrder] = useState<'title-asc' | 'title-desc' | 'recent' | 'oldest'>('recent');
+
   // Note states
   const [isNoteModalOpen, setIsNoteModalOpen] = useState(false);
   const [editingNote, setEditingNote] = useState<Note | null>(null);
@@ -288,8 +292,8 @@ const Dashboard: React.FC = () => {
           if (!b.due_date) return -1;
           return new Date(a.due_date).getTime() - new Date(b.due_date).getTime();
         case 'priority':
-          const priorityOrder = { high: 3, medium: 2, low: 1 };
-          return priorityOrder[b.priority] - priorityOrder[a.priority];
+          const priorityOrder: { [key: string]: number } = { high: 3, medium: 2, low: 1 };
+          return (priorityOrder[b.priority] || 0) - (priorityOrder[a.priority] || 0);
         case 'created_at':
           return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
         default:
@@ -298,10 +302,60 @@ const Dashboard: React.FC = () => {
     });
   };
 
-  const filteredNotes = notes.filter(note =>
-    note.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    note.content.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const getFilteredAndSortedNotes = () => {
+    let filtered = notes.filter(note => {
+      // Search filter
+      const matchesSearch = note.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          note.content.toLowerCase().includes(searchTerm.toLowerCase());
+      
+      if (!matchesSearch) return false;
+
+      // Date filter
+      if (noteDateFilter !== 'all') {
+        const noteDate = new Date(note.created_at);
+        const now = new Date();
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        
+        switch (noteDateFilter) {
+          case 'today':
+            const todayEnd = new Date(today);
+            todayEnd.setDate(todayEnd.getDate() + 1);
+            if (noteDate < today || noteDate >= todayEnd) return false;
+            break;
+          case 'week':
+            const weekAgo = new Date(today);
+            weekAgo.setDate(weekAgo.getDate() - 7);
+            if (noteDate < weekAgo) return false;
+            break;
+          case 'month':
+            const monthAgo = new Date(today);
+            monthAgo.setMonth(monthAgo.getMonth() - 1);
+            if (noteDate < monthAgo) return false;
+            break;
+        }
+      }
+
+      return true;
+    });
+
+    // Sort notes
+    return filtered.sort((a, b) => {
+      switch (noteSortOrder) {
+        case 'title-asc':
+          return a.title.localeCompare(b.title);
+        case 'title-desc':
+          return b.title.localeCompare(a.title);
+        case 'recent':
+          return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+        case 'oldest':
+          return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+        default:
+          return 0;
+      }
+    });
+  };
+
+  const filteredNotes = getFilteredAndSortedNotes();
 
   const filteredTodos = getFilteredAndSortedTodos();
 
@@ -441,6 +495,52 @@ const Dashboard: React.FC = () => {
                 />
               </div>
 
+              {/* Note Filters and Sort */}
+              {activeTab === 'notes' && (
+                <>
+                  <div className="flex items-center space-x-2">
+                    <Calendar className="w-5 h-5 text-text-secondary" />
+                    <select
+                      value={noteDateFilter}
+                      onChange={(e) => setNoteDateFilter(e.target.value as 'all' | 'today' | 'week' | 'month')}
+                      className="bg-background-light border border-secondary/20 rounded-xl px-4 py-3 text-text-primary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300"
+                    >
+                      <option value="all">All Time</option>
+                      <option value="today">Today</option>
+                      <option value="week">This Week</option>
+                      <option value="month">This Month</option>
+                    </select>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <SortAsc className="w-5 h-5 text-text-secondary" />
+                    <select
+                      value={noteSortOrder}
+                      onChange={(e) => setNoteSortOrder(e.target.value as 'title-asc' | 'title-desc' | 'recent' | 'oldest')}
+                      className="bg-background-light border border-secondary/20 rounded-xl px-4 py-3 text-text-primary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300"
+                    >
+                      <option value="recent">Recently Added</option>
+                      <option value="oldest">Oldest First</option>
+                      <option value="title-asc">Title A-Z</option>
+                      <option value="title-desc">Title Z-A</option>
+                    </select>
+                  </div>
+                  {(noteDateFilter !== 'all' || noteSortOrder !== 'recent' || searchTerm) && (
+                    <button
+                      onClick={() => {
+                        setNoteDateFilter('all');
+                        setNoteSortOrder('recent');
+                        setSearchTerm('');
+                      }}
+                      className="px-4 py-3 text-text-secondary hover:text-text-primary bg-background-light hover:bg-background-lighter border border-secondary/20 rounded-xl transition-all duration-300 flex items-center space-x-2"
+                      title="Clear all filters"
+                    >
+                      <Filter className="w-4 h-4" />
+                      <span className="text-sm">Clear</span>
+                    </button>
+                  )}
+                </>
+              )}
+
               {/* Todo Filters and Sort */}
               {activeTab === 'todos' && (
                 <>
@@ -475,6 +575,31 @@ const Dashboard: React.FC = () => {
               </button>
             </div>
           </div>
+
+          {/* Filter Results Indicator for Notes */}
+          {activeTab === 'notes' && (
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center space-x-2 text-text-secondary">
+                <FileText className="w-4 h-4" />
+                <span className="text-sm">
+                  Showing {filteredNotes.length} of {notes.length} notes
+                  {(noteDateFilter !== 'all' || noteSortOrder !== 'recent' || searchTerm) && (
+                    <span className="text-primary"> • Filtered</span>
+                  )}
+                </span>
+              </div>
+              {filteredNotes.length > 0 && (
+                <div className="text-xs text-text-light">
+                  Sorted by: {
+                    noteSortOrder === 'recent' ? 'Recently Added' :
+                    noteSortOrder === 'oldest' ? 'Oldest First' :
+                    noteSortOrder === 'title-asc' ? 'Title A-Z' :
+                    'Title Z-A'
+                  }
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Content Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
