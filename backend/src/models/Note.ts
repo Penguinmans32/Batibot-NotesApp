@@ -10,6 +10,7 @@ export interface Note {
   content: string;
   tags?: NoteTag[];
   favorite?: boolean;
+  deleted_at?: Date | null;
   created_at: Date;
   updated_at: Date;
 }

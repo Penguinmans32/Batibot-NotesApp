@@ -83,6 +83,20 @@ const createTables = async () => {
       CREATE INDEX IF NOT EXISTS idx_notes_favorite ON notes(favorite);
     `);
 
+    // Add deleted_at column to existing notes table if it doesn't exist
+    await pool.query(`
+      DO $$
+      BEGIN
+        IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='notes' AND column_name='deleted_at') THEN
+          ALTER TABLE notes ADD COLUMN deleted_at TIMESTAMP NULL;
+        END IF;
+      END $$;
+    `);
+
+    await pool.query(`
+      CREATE INDEX IF NOT EXISTS idx_notes_deleted_at ON notes(deleted_at);
+    `);
+
     await pool.query(`
       CREATE INDEX IF NOT EXISTS idx_todos_user_id ON todos(user_id);
     `);

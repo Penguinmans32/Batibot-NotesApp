@@ -8,6 +8,7 @@ import './config/auth';
 import authRoutes from './routes/auth';
 import notesRoutes from './routes/notes';
 import todoRoutes from './routes/todoRoutes';
+import { cleanupExpiredNotes } from './controllers/notesController';
 
 dotenv.config();
 
@@ -35,4 +36,12 @@ app.use('/api/todos', todoRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+  
+  // Run cleanup immediately on startup
+  cleanupExpiredNotes();
+  
+  // Schedule cleanup to run daily (24 hours)
+  setInterval(() => {
+    cleanupExpiredNotes();
+  }, 24 * 60 * 60 * 1000);
 });

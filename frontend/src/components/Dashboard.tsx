@@ -16,12 +16,15 @@ import {
   ListTodo,
   Clock,
   AlertTriangle,
-  Heart
+  Heart,
+  Archive
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import NoteModal from './NoteModal';
+import ViewNoteModal from './ViewNoteModal';
 import TodoModal from './TodoModal';
 import DeleteConfirmModal from './DeleteConfirmModal';
+import RecycleBinModal from './RecycleBinModal';
 import { Todo, FilterType, SortType } from '../types/Todo';
 import { Note, NoteTag } from '../types/Note';
 import { toggleNoteFavorite } from '../utils/api';
@@ -49,7 +52,6 @@ const Dashboard: React.FC = () => {
       if (response.ok) {
         setNotes(notes.filter(note => !selectedNotes.includes(note.id)));
         setSelectedNotes([]);
-        setMultiSelectMode(false);
       }
     } catch (error) {
       console.error('Error bulk deleting notes:', error);
@@ -66,7 +68,6 @@ const Dashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'notes' | 'todos'>('notes');
   // Multi-select state for notes
   const [selectedNotes, setSelectedNotes] = useState<number[]>([]);
-  const [multiSelectMode, setMultiSelectMode] = useState(false);
 
 
   // Note filtering states
@@ -80,6 +81,10 @@ const Dashboard: React.FC = () => {
   const [editingNote, setEditingNote] = useState<Note | null>(null);
   const [noteModalLoading, setNoteModalLoading] = useState(false);
 
+  // View Note Modal states
+  const [isViewNoteModalOpen, setIsViewNoteModalOpen] = useState(false);
+  const [viewingNote, setViewingNote] = useState<Note | null>(null);
+
   // Todo states
   const [isTodoModalOpen, setIsTodoModalOpen] = useState(false);
   const [editingTodo, setEditingTodo] = useState<Todo | null>(null);
@@ -91,6 +96,9 @@ const Dashboard: React.FC = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<(Note | Todo) & { type: 'note' | 'todo' } | null>(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
+
+  // Recycle bin modal state
+  const [isRecycleBinModalOpen, setIsRecycleBinModalOpen] = useState(false);
 
   useEffect(() => {
     fetchNotes();
@@ -153,6 +161,19 @@ const Dashboard: React.FC = () => {
   const handleEditNote = (note: Note) => {
     setEditingNote(note);
     setIsNoteModalOpen(true);
+  };
+
+  const handleViewNote = (note: Note) => {
+    setViewingNote(note);
+    setIsViewNoteModalOpen(true);
+  };
+
+  const handleEditFromView = () => {
+    if (viewingNote) {
+      setIsViewNoteModalOpen(false);
+      setEditingNote(viewingNote);
+      setIsNoteModalOpen(true);
+    }
   };
 
   const handleSaveNote = async (noteData: { id?: number; title: string; content: string; tags?: NoteTag[] }) => {
@@ -658,6 +679,18 @@ const Dashboard: React.FC = () => {
                 <Plus className="w-5 h-5" />
                 <span>New {activeTab === 'notes' ? 'Note' : 'Todo'}</span>
               </button>
+
+              {/* Recycle Bin Button - Only show for notes */}
+              {activeTab === 'notes' && (
+                <button
+                  onClick={() => setIsRecycleBinModalOpen(true)}
+                  className="bg-secondary/10 hover:bg-secondary/20 border border-secondary/30 rounded-xl px-6 py-3 text-text-primary font-semibold transition-all duration-300 flex items-center space-x-2"
+                  title="Recycle Bin"
+                >
+                  <Archive className="w-5 h-5" />
+                  <span>Recycle Bin</span>
+                </button>
+              )}
             </div>
           </div>
 
@@ -729,10 +762,10 @@ const Dashboard: React.FC = () => {
                           key={`fav-${note.id}`}
                           className="bg-background-card rounded-3xl p-6 shadow-2xl border border-pink-300 hover:bg-secondary/5 transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl group flex cursor-pointer"
                           style={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}
-                          onClick={() => handleEditNote(note)}
+                          onClick={() => handleViewNote(note)}
                         >
                           {/* Checkbox for multi-select */}
-                          {multiSelectMode && selectedNotes.length > 0 && (
+                          {selectedNotes.length > 0 && (
                             <input
                               type="checkbox"
                               checked={selectedNotes.includes(note.id)}
@@ -747,12 +780,22 @@ const Dashboard: React.FC = () => {
                               className="mr-4 mt-2 accent-primary w-5 h-5 flex-shrink-0"
                             />
                           )}
-                          <div className="flex-1">
+                          <div className={`flex-1 ${selectedNotes.length > 0 ? 'ml-0' : ''}`}>
                             <div className="flex items-start justify-between mb-4">
                               <h3 className="text-xl font-bold text-text-primary truncate pr-2">
                                 {note.title}
                               </h3>
                               <div className="flex space-x-2 opacity-100 transition-opacity duration-300">
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleEditNote(note);
+                                  }}
+                                  className="p-2 rounded-lg text-text-secondary hover:text-primary hover:bg-secondary/10 transition-colors duration-200"
+                                  title="Edit Note"
+                                >
+                                  <Edit3 className="w-4 h-4" />
+                                </button>
                                 <button
                                   onClick={(e) => {
                                     e.stopPropagation();
@@ -811,21 +854,40 @@ const Dashboard: React.FC = () => {
                   )}
 
                   {/* Bulk select controls */}
-                  {multiSelectMode && (
-                    <div className="col-span-full flex items-center mb-4">
+                  <div className="col-span-full flex items-center justify-between mb-4">
+                    <div className="flex items-center">
                       <input
                         type="checkbox"
-                        checked={selectedNotes.length === filteredNotes.length && filteredNotes.length > 0}
+                        checked={selectedNotes.length > 0}
                         onChange={e => {
                           if (e.target.checked) {
-                            setSelectedNotes(filteredNotes.map(n => n.id));
+                            // Just make checkboxes visible by selecting one note (we'll let user manually select)
+                            setSelectedNotes([filteredNotes[0]?.id].filter(Boolean));
                           } else {
+                            // Hide checkboxes by clearing selection
                             setSelectedNotes([]);
                           }
                         }}
                         className="mr-2 accent-primary w-5 h-5"
                       />
-                      <span className="text-sm text-text-secondary mr-4">Select All</span>
+                      <span className="text-sm text-text-secondary mr-4">Select</span>
+                      {selectedNotes.length > 0 && (
+                        <>
+                          <input
+                            type="checkbox"
+                            checked={selectedNotes.length === filteredNotes.length && filteredNotes.length > 0}
+                            onChange={e => {
+                              if (e.target.checked) {
+                                setSelectedNotes(filteredNotes.map(n => n.id));
+                              } else {
+                                setSelectedNotes([]);
+                              }
+                            }}
+                            className="mr-2 ml-4 accent-primary w-5 h-5"
+                          />
+                          <span className="text-sm text-text-secondary mr-4">Select All</span>
+                        </>
+                      )}
                       {selectedNotes.length > 0 && (
                         <button
                           type="button"
@@ -837,29 +899,17 @@ const Dashboard: React.FC = () => {
                         </button>
                       )}
                     </div>
-                  )}
+                  </div>
 
                   {otherNotes.map((note) => (
                     <div
                       key={note.id}
                       className="bg-background-card rounded-3xl p-6 shadow-2xl border border-primary/30 hover:bg-secondary/5 transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl group flex cursor-pointer"
                       style={{ wordBreak: 'break-word', overflowWrap: 'break-word', border: '2px solid #3B82F6' }}
-                      onClick={() => handleEditNote(note)}
-                      onPointerDown={e => {
-                        let timer: NodeJS.Timeout;
-                        const handlePointerUp = () => {
-                          clearTimeout(timer);
-                          window.removeEventListener('pointerup', handlePointerUp);
-                        };
-                        timer = setTimeout(() => {
-                          setMultiSelectMode(true);
-                          setSelectedNotes([note.id]);
-                        }, 600); // 600ms for long press
-                        window.addEventListener('pointerup', handlePointerUp);
-                      }}
+                      onClick={() => handleViewNote(note)}
                     >
                       {/* Checkbox for multi-select */}
-                      {multiSelectMode && selectedNotes.length > 0 && (
+                      {selectedNotes.length > 0 && (
                         <input
                           type="checkbox"
                           checked={selectedNotes.includes(note.id)}
@@ -874,12 +924,22 @@ const Dashboard: React.FC = () => {
                           className="mr-4 mt-2 accent-primary w-5 h-5 flex-shrink-0"
                         />
                       )}
-                      <div className="flex-1">
+                                                <div className={`flex-1 ${selectedNotes.length > 0 ? 'ml-0' : ''}`}>
                         <div className="flex items-start justify-between mb-4">
                           <h3 className="text-xl font-bold text-text-primary truncate pr-2">
                             {note.title}
                           </h3>
                           <div className="flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleEditNote(note);
+                              }}
+                              className="p-2 rounded-lg text-text-secondary hover:text-primary hover:bg-secondary/10 transition-colors duration-200"
+                              title="Edit Note"
+                            >
+                              <Edit3 className="w-4 h-4" />
+                            </button>
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
@@ -1049,6 +1109,14 @@ const Dashboard: React.FC = () => {
         loading={noteModalLoading}
       />
 
+      <ViewNoteModal
+        isOpen={isViewNoteModalOpen}
+        onClose={() => setIsViewNoteModalOpen(false)}
+        onEdit={handleEditFromView}
+        onToggleFavorite={handleToggleFavorite}
+        note={viewingNote}
+      />
+
       <TodoModal
         isOpen={isTodoModalOpen}
         onClose={() => setIsTodoModalOpen(false)}
@@ -1071,6 +1139,13 @@ const Dashboard: React.FC = () => {
         onConfirm={confirmBulkDeleteNotes}
         noteTitle={`${selectedNotes.length} notes`}
         loading={deleteLoading}
+      />
+
+      {/* Recycle Bin Modal */}
+      <RecycleBinModal
+        isOpen={isRecycleBinModalOpen}
+        onClose={() => setIsRecycleBinModalOpen(false)}
+        onRefresh={fetchNotes}
       />
     </>
   );
