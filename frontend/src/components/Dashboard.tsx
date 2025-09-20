@@ -736,6 +736,7 @@ const Dashboard: React.FC = () => {
                             <input
                               type="checkbox"
                               checked={selectedNotes.includes(note.id)}
+                              onClick={(e) => e.stopPropagation()}
                               onChange={e => {
                                 if (e.target.checked) {
                                   setSelectedNotes(prev => [...prev, note.id]);
@@ -862,6 +863,7 @@ const Dashboard: React.FC = () => {
                         <input
                           type="checkbox"
                           checked={selectedNotes.includes(note.id)}
+                          onClick={(e) => e.stopPropagation()}
                           onChange={e => {
                             if (e.target.checked) {
                               setSelectedNotes(prev => [...prev, note.id]);
