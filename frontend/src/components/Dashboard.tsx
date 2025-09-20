@@ -732,8 +732,9 @@ const Dashboard: React.FC = () => {
                   {filteredNotes.map((note) => (
                     <div
                       key={note.id}
-                      className="bg-background-card rounded-3xl p-6 shadow-2xl border border-primary/30 hover:bg-secondary/5 transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl group flex"
+                      className="bg-background-card rounded-3xl p-6 shadow-2xl border border-primary/30 hover:bg-secondary/5 transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl group flex cursor-pointer"
                       style={{ wordBreak: 'break-word', overflowWrap: 'break-word', border: '2px solid #3B82F6' }}
+                      onClick={() => handleEditNote(note)}
                       onPointerDown={e => {
                         let timer: NodeJS.Timeout;
                         const handlePointerUp = () => {
@@ -769,13 +770,10 @@ const Dashboard: React.FC = () => {
                           </h3>
                           <div className="flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                             <button
-                              onClick={() => handleEditNote(note)}
-                              className="p-2 bg-primary/10 hover:bg-primary/20 rounded-lg text-primary hover:text-primary-light transition-colors duration-200"
-                            >
-                              <Edit3 className="w-4 h-4" />
-                            </button>
-                            <button
-                              onClick={() => handleDeleteItem(note, 'note')}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteItem(note, 'note');
+                              }}
                               className="p-2 bg-error/10 hover:bg-error/20 rounded-lg text-error hover:text-white transition-colors duration-200"
                             >
                               <Trash2 className="w-4 h-4" />
@@ -840,17 +838,21 @@ const Dashboard: React.FC = () => {
                 filteredTodos.map((todo) => (
                   <div
                     key={todo.id}
-                    className={`bg-background-card rounded-3xl p-6 shadow-2xl border transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl group ${
+                    className={`bg-background-card rounded-3xl p-6 shadow-2xl border transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl group cursor-pointer ${
                       todo.completed
                         ? 'border-green-200 bg-green-50/50'
                         : todo.due_date && isOverdue(todo.due_date)
                         ? 'border-red-200 bg-red-50/50'
                         : 'border-secondary/20 hover:bg-secondary/5'
                     }`}
+                    onClick={() => handleEditTodo(todo)}
                   >
                     <div className="flex items-start space-x-3 mb-4">
                       <button
-                        onClick={() => handleToggleTodo(todo.id)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleToggleTodo(todo.id);
+                        }}
                         className={`mt-1 flex-shrink-0 transition-all duration-200 ${
                           todo.completed ? 'text-green-600' : 'text-text-secondary hover:text-primary'
                         }`}
@@ -900,13 +902,10 @@ const Dashboard: React.FC = () => {
 
                       <div className="flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                         <button
-                          onClick={() => handleEditTodo(todo)}
-                          className="p-2 bg-primary/10 hover:bg-primary/20 rounded-lg text-primary hover:text-primary-light transition-colors duration-200"
-                        >
-                          <Edit3 className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={() => handleDeleteItem(todo, 'todo')}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteItem(todo, 'todo');
+                          }}
                           className="p-2 bg-error/10 hover:bg-error/20 rounded-lg text-error hover:text-white transition-colors duration-200"
                         >
                           <Trash2 className="w-4 h-4" />
