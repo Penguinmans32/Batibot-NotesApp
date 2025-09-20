@@ -15,7 +15,8 @@ import {
   SortAsc,
   ListTodo,
   Clock,
-  AlertTriangle
+  AlertTriangle,
+  Heart
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import NoteModal from './NoteModal';
@@ -23,6 +24,7 @@ import TodoModal from './TodoModal';
 import DeleteConfirmModal from './DeleteConfirmModal';
 import { Todo, FilterType, SortType } from '../types/Todo';
 import { Note, NoteTag } from '../types/Note';
+import { toggleNoteFavorite } from '../utils/api';
 
 const Dashboard: React.FC = () => {
   // Bulk delete notes with confirmation
@@ -137,6 +139,15 @@ const Dashboard: React.FC = () => {
   const handleCreateNote = () => {
     setEditingNote(null);
     setIsNoteModalOpen(true);
+  };
+
+  const handleToggleFavorite = async (noteId: number) => {
+    try {
+      const updated = await toggleNoteFavorite(noteId);
+      setNotes(prev => prev.map(n => n.id === noteId ? updated : n));
+    } catch (error) {
+      console.error('Error toggling favorite:', error);
+    }
   };
 
   const handleEditNote = (note: Note) => {
@@ -402,6 +413,8 @@ const Dashboard: React.FC = () => {
   };
 
   const filteredNotes = getFilteredAndSortedNotes();
+  const favoriteNotes = filteredNotes.filter(n => n.favorite);
+  const otherNotes = filteredNotes.filter(n => !n.favorite);
 
   const filteredTodos = getFilteredAndSortedTodos();
 
@@ -701,6 +714,101 @@ const Dashboard: React.FC = () => {
                 </div>
               ) : (
                 <>
+                  {/* Favorites Section */}
+                  {favoriteNotes.length > 0 && (
+                    <>
+                      <div className="col-span-full flex items-center justify-between">
+                        <div className="flex items-center space-x-2">
+                          <Heart className="w-5 h-5 text-pink-500" />
+                          <h3 className="text-lg font-semibold text-text-primary">Favorites</h3>
+                          <span className="text-xs text-text-secondary">{favoriteNotes.length}</span>
+                        </div>
+                      </div>
+                      {favoriteNotes.map((note) => (
+                        <div
+                          key={`fav-${note.id}`}
+                          className="bg-background-card rounded-3xl p-6 shadow-2xl border border-pink-300 hover:bg-secondary/5 transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl group flex cursor-pointer"
+                          style={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}
+                          onClick={() => handleEditNote(note)}
+                        >
+                          {/* Checkbox for multi-select */}
+                          {multiSelectMode && selectedNotes.length > 0 && (
+                            <input
+                              type="checkbox"
+                              checked={selectedNotes.includes(note.id)}
+                              onChange={e => {
+                                if (e.target.checked) {
+                                  setSelectedNotes(prev => [...prev, note.id]);
+                                } else {
+                                  setSelectedNotes(prev => prev.filter(id => id !== note.id));
+                                }
+                              }}
+                              className="mr-4 mt-2 accent-primary w-5 h-5 flex-shrink-0"
+                            />
+                          )}
+                          <div className="flex-1">
+                            <div className="flex items-start justify-between mb-4">
+                              <h3 className="text-xl font-bold text-text-primary truncate pr-2">
+                                {note.title}
+                              </h3>
+                              <div className="flex space-x-2 opacity-100 transition-opacity duration-300">
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleToggleFavorite(note.id);
+                                  }}
+                                  className="p-2 rounded-lg text-pink-500 hover:bg-pink-50 transition-colors duration-200"
+                                  title="Unfavorite"
+                                >
+                                  <Heart className="w-4 h-4" fill="currentColor" />
+                                </button>
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleDeleteItem(note, 'note');
+                                  }}
+                                  className="p-2 bg-error/10 hover:bg-error/20 rounded-lg text-error hover:text-white transition-colors duration-200"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              </div>
+                            </div>
+
+                            <p className="text-text-secondary text-sm mb-4 line-clamp-3">
+                              <span style={{ whiteSpace: 'pre-line', wordBreak: 'break-word', overflowWrap: 'break-word' }}>
+                                {note.content.replace(/<[^>]*>/g, '')}
+                              </span>
+                            </p>
+
+                            {note.tags && note.tags.length > 0 && (
+                              <div className="flex flex-wrap gap-2 mb-4">
+                                {note.tags.map((tag, index) => (
+                                  <span
+                                    key={index}
+                                    style={{ backgroundColor: tag.color, color: '#fff' }}
+                                    className="px-2 py-1 rounded-full text-xs font-semibold"
+                                  >
+                                    {tag.name}
+                                  </span>
+                                ))}
+                              </div>
+                            )}
+
+                            <div className="flex items-center text-text-light text-xs">
+                              <Calendar className="w-4 h-4 mr-1" />
+                              {new Date(note.created_at).toLocaleDateString()}
+                              {note.updated_at !== note.created_at && (
+                                <span className="ml-2">• Updated {new Date(note.updated_at).toLocaleDateString()}</span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                      {/* Divider */}
+                      <div className="col-span-full h-px bg-secondary/20 my-2" />
+                    </>
+                  )}
+
                   {/* Bulk select controls */}
                   {multiSelectMode && (
                     <div className="col-span-full flex items-center mb-4">
@@ -729,7 +837,8 @@ const Dashboard: React.FC = () => {
                       )}
                     </div>
                   )}
-                  {filteredNotes.map((note) => (
+
+                  {otherNotes.map((note) => (
                     <div
                       key={note.id}
                       className="bg-background-card rounded-3xl p-6 shadow-2xl border border-primary/30 hover:bg-secondary/5 transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl group flex cursor-pointer"
@@ -769,6 +878,16 @@ const Dashboard: React.FC = () => {
                             {note.title}
                           </h3>
                           <div className="flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleToggleFavorite(note.id);
+                              }}
+                              className={`p-2 rounded-lg transition-colors duration-200 ${note.favorite ? 'text-pink-500 hover:bg-pink-50' : 'text-text-secondary hover:text-pink-500 hover:bg-secondary/10'}`}
+                              title={note.favorite ? 'Unfavorite' : 'Favorite'}
+                            >
+                              <Heart className="w-4 h-4" fill={note.favorite ? 'currentColor' : 'none'} />
+                            </button>
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();

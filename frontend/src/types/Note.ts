@@ -8,6 +8,7 @@ export interface Note {
   title: string;
   content: string;
   tags?: NoteTag[];
+  favorite?: boolean;
   created_at: string;
   updated_at: string;
 }
