@@ -35,6 +35,7 @@ const createTables = async () => {
         title VARCHAR(255) NOT NULL,
         content TEXT,
         tags JSONB DEFAULT '[]'::jsonb,
+        favorite BOOLEAN DEFAULT FALSE,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
@@ -66,6 +67,20 @@ const createTables = async () => {
           ALTER TABLE notes ADD COLUMN tags JSONB DEFAULT '[]'::jsonb;
         END IF;
       END $$;
+    `);
+
+    // Add favorite column to existing notes table if it doesn't exist
+    await pool.query(`
+      DO $$
+      BEGIN
+        IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='notes' AND column_name='favorite') THEN
+          ALTER TABLE notes ADD COLUMN favorite BOOLEAN DEFAULT FALSE;
+        END IF;
+      END $$;
+    `);
+
+    await pool.query(`
+      CREATE INDEX IF NOT EXISTS idx_notes_favorite ON notes(favorite);
     `);
 
     await pool.query(`
