@@ -25,7 +25,9 @@ import {
   Code,
   Image,
   Table,
-  ChevronDown
+  ChevronDown,
+  Eye,
+  Edit
 } from 'lucide-react';
 import { Note, NoteTag } from '../types/Note';
 
@@ -45,6 +47,8 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [showHeadingDropdown, setShowHeadingDropdown] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
+  const [wordCount, setWordCount] = useState(0);
+  const [charCount, setCharCount] = useState(0);
 
   // Tag system
   const defaultTags: NoteTag[] = [
@@ -84,6 +88,14 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
       }
     }
   }, [note, isOpen]);
+
+  useEffect(() => {
+    if (contentRef.current) {
+      const text = contentRef.current.innerText || '';
+      setCharCount(text.length);
+      setWordCount(text.trim().split(/\s+/).filter(Boolean).length);
+    }
+  }, [content]);
 
   const handleAddTag = () => {
     if (!newTagName.trim()) return;
@@ -187,9 +199,8 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
 
   return (
     <>
-      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-        <div className="bg-background-card rounded-3xl w-full max-w-5xl max-h-[95vh] shadow-2xl border border-secondary/20 flex flex-col">
-          {/* Header */}
+      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto">
+        <div className="bg-background-card rounded-3xl w-full max-w-5xl max-h-[95vh] shadow-2xl border border-secondary/20 flex flex-col overflow-hidden">
           <div className="flex items-center justify-between p-6 border-b border-secondary/20 flex-shrink-0">
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
@@ -208,20 +219,22 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
           </div>
 
           <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-hidden">
-            {/* Title Input */}
-            <div className="p-6 pb-4 flex-shrink-0">
-              <label className="text-text-secondary font-medium text-sm block mb-2">
-                Title
-              </label>
-              <input
-                type="text"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                className="w-full bg-background-light border border-secondary/20 rounded-xl px-4 py-3 text-text-primary placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300"
-                placeholder="Enter note title..."
-                required
-              />
-            </div>
+            {/* Scrollable Content Area */}
+            <div className="flex-1 overflow-y-auto">
+              {/* Title Input */}
+              <div className="p-6 pb-4 flex-shrink-0">
+                <label className="text-text-secondary font-medium text-sm block mb-2">
+                  Title
+                </label>
+                <input
+                  type="text"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  className="w-full bg-background-light border border-secondary/20 rounded-xl px-4 py-3 text-text-primary placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300"
+                  placeholder="Enter note title..."
+                  required
+                />
+              </div>
 
             {/* Tags Section */}
             <div className="px-6 pb-4 flex-shrink-0">
@@ -581,16 +594,25 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
             </div>
 
             {/* Rich Text Editor */}
-            <div className="px-6 flex-1 flex flex-col overflow-hidden">
-              <label className="text-text-secondary font-medium text-sm block mb-2">
-                Content
-              </label>
+            <div className="px-6 flex-shrink-0">
+              <div className="flex items-center justify-between mb-2">
+                <label className="text-text-secondary font-medium text-sm">
+                  Content
+                </label>
+                <div className="flex items-center space-x-3">
+                  <span className="text-text-secondary text-xs">
+                    {wordCount} words • {charCount} characters
+                  </span>
+                </div>
+              </div>
+              {/* Rich Text Editor - Always in Edit Mode */}
               <div
                 ref={contentRef}
                 contentEditable
-                className="rich-editor flex-1 bg-background-light border border-secondary/20 rounded-xl px-4 py-3 text-text-primary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300 overflow-y-auto"
+                className="rich-editor bg-background-light border border-secondary/20 rounded-xl px-4 py-3 text-text-primary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300 overflow-y-auto"
                 style={{
                   minHeight: '400px',
+                  height: '400px',
                   fontFamily: fontFamily,
                   fontSize: fontSize + 'px',
                   whiteSpace: 'pre-wrap',
@@ -599,11 +621,16 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
                 }}
                 onInput={() => {
                   if (contentRef.current) {
-                    setContent(contentRef.current.innerHTML);
+                    const newContent = contentRef.current.innerHTML;
+                    setContent(newContent);
+                    const text = contentRef.current.innerText || '';
+                    setCharCount(text.length);
+                    setWordCount(text.trim().split(/\s+/).filter(Boolean).length);
                   }
                 }}
                 data-placeholder="Start writing your note here... Use the toolbar above to format your text!"
               />
+            </div>
             </div>
 
             {/* Action Buttons */}
