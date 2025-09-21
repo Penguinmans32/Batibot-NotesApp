@@ -724,7 +724,7 @@ const Dashboard: React.FC = () => {
           )}
 
           {/* Content Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 overflow-hidden">
             {activeTab === 'notes' ? (
               filteredNotes.length === 0 ? (
                 <div className="col-span-full">
@@ -784,7 +784,7 @@ const Dashboard: React.FC = () => {
                               className="mr-4 mt-2 accent-primary w-5 h-5 flex-shrink-0"
                             />
                           )}
-                          <div className={`flex-1 ${selectedNotes.length > 0 ? 'ml-0' : ''}`}>
+                          <div className={`flex-1 min-w-0 ${selectedNotes.length > 0 ? 'ml-0' : ''}`}>
                             <div className="flex items-start justify-between mb-4">
                               <h3 className="text-xl font-bold text-text-primary dark:text-text-dark-primary truncate pr-2">
                                 {note.title}
@@ -928,7 +928,7 @@ const Dashboard: React.FC = () => {
                           className="mr-4 mt-2 accent-primary w-5 h-5 flex-shrink-0"
                         />
                       )}
-                                                <div className={`flex-1 ${selectedNotes.length > 0 ? 'ml-0' : ''}`}>
+                                                <div className={`flex-1 min-w-0 ${selectedNotes.length > 0 ? 'ml-0' : ''}`}>
                         <div className="flex items-start justify-between mb-4">
                           <h3 className="text-xl font-bold text-text-primary dark:text-text-dark-primary truncate pr-2">
                             {note.title}
