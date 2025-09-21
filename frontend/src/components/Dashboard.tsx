@@ -720,7 +720,7 @@ const Dashboard: React.FC = () => {
           )}
 
           {/* Content Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 overflow-hidden">
             {activeTab === 'notes' ? (
               filteredNotes.length === 0 ? (
                 <div className="col-span-full">
@@ -760,7 +760,7 @@ const Dashboard: React.FC = () => {
                       {favoriteNotes.map((note) => (
                         <div
                           key={`fav-${note.id}`}
-                          className="bg-background-card rounded-3xl p-6 shadow-2xl border border-pink-300 hover:bg-secondary/5 transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl group flex cursor-pointer"
+                          className="bg-background-card rounded-3xl p-6 shadow-2xl border border-pink-300 hover:bg-secondary/5 transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl group flex cursor-pointer min-w-0"
                           style={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}
                           onClick={() => handleViewNote(note)}
                         >
@@ -780,9 +780,9 @@ const Dashboard: React.FC = () => {
                               className="mr-4 mt-2 accent-primary w-5 h-5 flex-shrink-0"
                             />
                           )}
-                          <div className={`flex-1 ${selectedNotes.length > 0 ? 'ml-0' : ''}`}>
+                          <div className={`flex-1 min-w-0 ${selectedNotes.length > 0 ? 'ml-0' : ''}`}>
                             <div className="flex items-start justify-between mb-4">
-                              <h3 className="text-xl font-bold text-text-primary truncate pr-2">
+                              <h3 className="text-xl font-bold text-text-primary truncate pr-2 min-w-0">
                                 {note.title}
                               </h3>
                               <div className="flex space-x-2 opacity-100 transition-opacity duration-300">
@@ -904,7 +904,7 @@ const Dashboard: React.FC = () => {
                   {otherNotes.map((note) => (
                     <div
                       key={note.id}
-                      className="bg-background-card rounded-3xl p-6 shadow-2xl border border-primary/30 hover:bg-secondary/5 transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl group flex cursor-pointer"
+                      className="bg-background-card rounded-3xl p-6 shadow-2xl border border-primary/30 hover:bg-secondary/5 transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl group flex cursor-pointer min-w-0"
                       style={{ wordBreak: 'break-word', overflowWrap: 'break-word', border: '2px solid #3B82F6' }}
                       onClick={() => handleViewNote(note)}
                     >
@@ -924,9 +924,9 @@ const Dashboard: React.FC = () => {
                           className="mr-4 mt-2 accent-primary w-5 h-5 flex-shrink-0"
                         />
                       )}
-                                                <div className={`flex-1 ${selectedNotes.length > 0 ? 'ml-0' : ''}`}>
+                                                <div className={`flex-1 min-w-0 ${selectedNotes.length > 0 ? 'ml-0' : ''}`}>
                         <div className="flex items-start justify-between mb-4">
-                          <h3 className="text-xl font-bold text-text-primary truncate pr-2">
+                          <h3 className="text-xl font-bold text-text-primary truncate pr-2 min-w-0">
                             {note.title}
                           </h3>
                           <div className="flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
