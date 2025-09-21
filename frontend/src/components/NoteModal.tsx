@@ -622,7 +622,6 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
                 data-placeholder="Start writing your note here... Use the toolbar above to format your text!"
               />
             </div>
-            </div>
 
             {/* Action Buttons */}
             <div className="flex space-x-3 p-6 pt-4 flex-shrink-0">
