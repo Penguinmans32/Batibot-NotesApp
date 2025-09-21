@@ -844,7 +844,7 @@ const Dashboard: React.FC = () => {
           )}
 
           {/* Content Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 overflow-hidden">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {activeTab === 'notes' ? (
               filteredNotes.length === 0 ? (
                 <div className="col-span-full">
@@ -978,12 +978,12 @@ const Dashboard: React.FC = () => {
                         </div>
                       ))}
                       {/* Divider */}
-                      <div className="col-span-full h-px bg-secondary/20 dark:bg-border-dark-primary/30 my-2" />
+                      <div className="col-span-full h-px bg-secondary/20 dark:bg-border-dark-primary/30" />
                     </>
                   )}
 
                   {/* Bulk select controls */}
-                  <div className="col-span-full flex items-center justify-between mb-4">
+                  <div className="col-span-full flex items-center justify-between">
                     <div className="flex items-center">
                       {isSelectionMode && (
                         <div className="text-sm text-text-secondary dark:text-text-dark-secondary">
@@ -996,7 +996,7 @@ const Dashboard: React.FC = () => {
                   {otherNotes.map((note) => (
                     <div
                       key={note.id}
-                      className={`bg-background-card dark:bg-background-dark-card rounded-3xl p-6 shadow-2xl border transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl group cursor-pointer theme-transition relative ${
+                      className={`bg-background-card dark:bg-background-dark-card rounded-3xl p-6 shadow-2xl border transition-all duration-700 ease-in-out transform hover:scale-[1.02] hover:shadow-xl group cursor-pointer theme-transition relative ${
                         isSelectionMode
                           ? selectedNotes.includes(note.id)
                             ? 'ring-4 ring-blue-500 dark:ring-blue-400 ring-opacity-50 bg-blue-50/50 dark:bg-blue-900/20 border-blue-400 dark:border-blue-500'
