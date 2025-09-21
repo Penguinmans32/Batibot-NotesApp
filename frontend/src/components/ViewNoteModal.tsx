@@ -26,6 +26,19 @@ const ViewNoteModal: React.FC<ViewNoteModalProps> = ({
 }) => {
   if (!isOpen || !note) return null;
 
+  // Calculate word and character counts (matching NoteModal logic)
+  const getTextContent = (htmlContent: string) => {
+    // Create a temporary div to match how contentEditable div works in NoteModal
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = htmlContent;
+    // Use innerText like the NoteModal does fallback to textContent
+    return tempDiv.innerText || tempDiv.textContent || '';
+  };
+
+  const plainText = getTextContent(note.content);
+  const charCount = plainText.length;
+  const wordCount = plainText.trim().split(/\s+/).filter(Boolean).length;
+
   return (
     <>
       <div className="fixed inset-0 bg-black/50 dark:bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
@@ -100,6 +113,11 @@ const ViewNoteModal: React.FC<ViewNoteModalProps> = ({
                       <span>{note.tags.length} tag{note.tags.length !== 1 ? 's' : ''}</span>
                     </div>
                   )}
+                  {/* Word and Character Count */}
+                  <div className="flex items-center space-x-1">
+                    <FileText className="w-4 h-4" />
+                    <span>{wordCount} words • {charCount} characters</span>
+                  </div>
                 </div>
               </div>
 

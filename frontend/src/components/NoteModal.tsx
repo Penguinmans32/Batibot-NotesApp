@@ -25,7 +25,9 @@ import {
   Code,
   Image,
   Table,
-  ChevronDown
+  ChevronDown,
+  Eye,
+  Edit
 } from 'lucide-react';
 import { Note, NoteTag } from '../types/Note';
 
@@ -45,6 +47,8 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [showHeadingDropdown, setShowHeadingDropdown] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
+  const [wordCount, setWordCount] = useState(0);
+  const [charCount, setCharCount] = useState(0);
 
   // Tag system
   const defaultTags: NoteTag[] = [
@@ -84,6 +88,14 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
       }
     }
   }, [note, isOpen]);
+
+  useEffect(() => {
+    if (contentRef.current) {
+      const text = contentRef.current.innerText || '';
+      setCharCount(text.length);
+      setWordCount(text.trim().split(/\s+/).filter(Boolean).length);
+    }
+  }, [content]);
 
   const handleAddTag = () => {
     if (!newTagName.trim()) return;
@@ -591,6 +603,7 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
                 className="rich-editor flex-1 bg-background-light dark:bg-background-dark-card border border-secondary/20 dark:border-border-dark-primary rounded-xl px-4 py-3 text-text-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-light focus:border-transparent transition-all duration-300 overflow-y-auto theme-transition"
                 style={{
                   minHeight: '400px',
+                  height: '400px',
                   fontFamily: fontFamily,
                   fontSize: fontSize + 'px',
                   whiteSpace: 'pre-wrap',
@@ -599,11 +612,16 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
                 }}
                 onInput={() => {
                   if (contentRef.current) {
-                    setContent(contentRef.current.innerHTML);
+                    const newContent = contentRef.current.innerHTML;
+                    setContent(newContent);
+                    const text = contentRef.current.innerText || '';
+                    setCharCount(text.length);
+                    setWordCount(text.trim().split(/\s+/).filter(Boolean).length);
                   }
                 }}
                 data-placeholder="Start writing your note here... Use the toolbar above to format your text!"
               />
+            </div>
             </div>
 
             {/* Action Buttons */}
