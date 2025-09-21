@@ -63,12 +63,12 @@ const Login: React.FC = () => {
         
         {/* Floating Notes */}
         <div className="absolute inset-0">
-          <div className="absolute top-10 left-10 w-16 h-20 bg-yellow-100/20 rounded-lg shadow-lg border border-yellow-200/30" style={{transform: 'rotate(12deg)', animation: 'float 6s ease-in-out infinite'}}></div>
-          <div className="absolute top-20 right-20 w-12 h-16 bg-blue-100/20 rounded-lg shadow-lg border border-blue-200/30" style={{transform: 'rotate(-6deg)', animation: 'float 8s ease-in-out infinite', animationDelay: '1s'}}></div>
-          <div className="absolute bottom-32 left-16 w-14 h-18 bg-green-100/20 rounded-lg shadow-lg border border-green-200/30" style={{transform: 'rotate(6deg)', animation: 'float 7s ease-in-out infinite', animationDelay: '2s'}}></div>
-          <div className="absolute bottom-16 right-32 w-10 h-14 bg-purple-100/20 rounded-lg shadow-lg border border-purple-200/30" style={{transform: 'rotate(-12deg)', animation: 'float 5s ease-in-out infinite', animationDelay: '3s'}}></div>
-          <div className="absolute top-1/2 left-8 w-8 h-10 bg-pink-100/20 rounded-lg shadow-lg border border-pink-200/30" style={{transform: 'rotate(18deg)', animation: 'float 9s ease-in-out infinite', animationDelay: '4s'}}></div>
-          <div className="absolute top-1/3 right-8 w-6 h-8 bg-indigo-100/20 rounded-lg shadow-lg border border-indigo-200/30" style={{transform: 'rotate(-15deg)', animation: 'float 6.5s ease-in-out infinite', animationDelay: '5s'}}></div>
+          <div className="absolute top-10 left-10 w-16 h-20 bg-yellow-300/70 dark:bg-yellow-400/40 rounded-lg shadow-xl border-2 border-yellow-400/80 dark:border-yellow-400/50" style={{transform: 'rotate(12deg)', animation: 'float 6s ease-in-out infinite'}}></div>
+          <div className="absolute top-20 right-20 w-12 h-16 bg-blue-300/70 dark:bg-blue-400/40 rounded-lg shadow-xl border-2 border-blue-400/80 dark:border-blue-400/50" style={{transform: 'rotate(-6deg)', animation: 'float 8s ease-in-out infinite', animationDelay: '1s'}}></div>
+          <div className="absolute bottom-32 left-16 w-14 h-18 bg-green-300/70 dark:bg-green-400/40 rounded-lg shadow-xl border-2 border-green-400/80 dark:border-green-400/50" style={{transform: 'rotate(6deg)', animation: 'float 7s ease-in-out infinite', animationDelay: '2s'}}></div>
+          <div className="absolute bottom-16 right-32 w-10 h-14 bg-purple-300/70 dark:bg-purple-400/40 rounded-lg shadow-xl border-2 border-purple-400/80 dark:border-purple-400/50" style={{transform: 'rotate(-12deg)', animation: 'float 5s ease-in-out infinite', animationDelay: '3s'}}></div>
+          <div className="absolute top-1/2 left-8 w-8 h-10 bg-pink-300/70 dark:bg-pink-400/40 rounded-lg shadow-xl border-2 border-pink-400/80 dark:border-pink-400/50" style={{transform: 'rotate(18deg)', animation: 'float 9s ease-in-out infinite', animationDelay: '4s'}}></div>
+          <div className="absolute top-1/3 right-8 w-6 h-8 bg-indigo-300/70 dark:bg-indigo-400/40 rounded-lg shadow-xl border-2 border-indigo-400/80 dark:border-indigo-400/50" style={{transform: 'rotate(-15deg)', animation: 'float 6.5s ease-in-out infinite', animationDelay: '5s'}}></div>
         </div>
 
         {/* Animated Writing Lines */}
@@ -147,11 +147,11 @@ const Login: React.FC = () => {
 
         {/* Floating Dots Pattern */}
         <div className="absolute inset-0">
-          <div className="absolute top-1/3 left-1/5 w-2 h-2 bg-indigo-300/30 rounded-full animate-ping" style={{animationDelay: '0s'}}></div>
-          <div className="absolute top-1/2 left-1/3 w-1 h-1 bg-purple-300/40 rounded-full animate-ping" style={{animationDelay: '1s'}}></div>
-          <div className="absolute top-2/3 right-1/4 w-2 h-2 bg-blue-300/30 rounded-full animate-ping" style={{animationDelay: '2s'}}></div>
-          <div className="absolute bottom-1/3 right-1/5 w-1 h-1 bg-indigo-400/40 rounded-full animate-ping" style={{animationDelay: '3s'}}></div>
-          <div className="absolute top-1/4 right-1/3 w-1 h-1 bg-purple-400/30 rounded-full animate-ping" style={{animationDelay: '4s'}}></div>
+          <div className="absolute top-1/3 left-1/5 w-3 h-3 bg-indigo-500/80 dark:bg-indigo-400/60 rounded-full animate-ping shadow-lg" style={{animationDelay: '0s'}}></div>
+          <div className="absolute top-1/2 left-1/3 w-2 h-2 bg-purple-500/90 dark:bg-purple-400/70 rounded-full animate-ping shadow-lg" style={{animationDelay: '1s'}}></div>
+          <div className="absolute top-2/3 right-1/4 w-3 h-3 bg-blue-500/80 dark:bg-blue-400/60 rounded-full animate-ping shadow-lg" style={{animationDelay: '2s'}}></div>
+          <div className="absolute bottom-1/3 right-1/5 w-2 h-2 bg-indigo-600/90 dark:bg-indigo-500/70 rounded-full animate-ping shadow-lg" style={{animationDelay: '3s'}}></div>
+          <div className="absolute top-1/4 right-1/3 w-2 h-2 bg-purple-600/80 dark:bg-purple-500/60 rounded-full animate-ping shadow-lg" style={{animationDelay: '4s'}}></div>
         </div>
 
         {/* Pen/Pencil Animation */}
@@ -172,31 +172,31 @@ const Login: React.FC = () => {
         </div>
 
         {/* Paper Sheets */}
-        <div className="absolute top-16 right-16 opacity-10">
-          <div className="w-20 h-24 bg-white/50 rounded-lg shadow-lg border border-gray-200/50" style={{transform: 'rotate(12deg)', animation: 'float 8s ease-in-out infinite'}}>
-            <div className="h-2 bg-indigo-200/40 mx-2 mt-4 rounded"></div>
-            <div className="h-1 bg-gray-200/30 mx-2 mt-2 rounded"></div>
-            <div className="h-1 bg-gray-200/30 mx-2 mt-1 rounded"></div>
-            <div className="h-1 bg-purple-200/40 mx-2 mt-1 rounded w-3/4"></div>
-            <div className="h-1 bg-gray-200/20 mx-2 mt-1 rounded w-1/2"></div>
+        <div className="absolute top-16 right-16 opacity-40 dark:opacity-50">
+          <div className="w-20 h-24 bg-white/90 dark:bg-gray-500/60 rounded-lg shadow-2xl border-2 border-gray-400/80 dark:border-gray-400/60" style={{transform: 'rotate(12deg)', animation: 'float 8s ease-in-out infinite'}}>
+            <div className="h-2 bg-indigo-400/80 dark:bg-indigo-400/50 mx-2 mt-4 rounded"></div>
+            <div className="h-1 bg-gray-400/70 dark:bg-gray-400/50 mx-2 mt-2 rounded"></div>
+            <div className="h-1 bg-gray-400/70 dark:bg-gray-400/50 mx-2 mt-1 rounded"></div>
+            <div className="h-1 bg-purple-400/80 dark:bg-purple-400/50 mx-2 mt-1 rounded w-3/4"></div>
+            <div className="h-1 bg-gray-400/60 dark:bg-gray-400/40 mx-2 mt-1 rounded w-1/2"></div>
           </div>
         </div>
 
-        <div className="absolute bottom-20 left-20 opacity-10">
-          <div className="w-16 h-20 bg-white/50 rounded-lg shadow-lg border border-gray-200/50" style={{transform: 'rotate(-6deg)', animation: 'float 6s ease-in-out infinite', animationDelay: '2s'}}>
-            <div className="h-2 bg-blue-200/40 mx-2 mt-3 rounded"></div>
-            <div className="h-1 bg-gray-200/30 mx-2 mt-2 rounded"></div>
-            <div className="h-1 bg-gray-200/30 mx-2 mt-1 rounded w-4/5"></div>
-            <div className="h-1 bg-green-200/40 mx-2 mt-1 rounded w-2/3"></div>
+        <div className="absolute bottom-20 left-20 opacity-40 dark:opacity-50">
+          <div className="w-16 h-20 bg-white/90 dark:bg-gray-500/60 rounded-lg shadow-2xl border-2 border-gray-400/80 dark:border-gray-400/60" style={{transform: 'rotate(-6deg)', animation: 'float 6s ease-in-out infinite', animationDelay: '2s'}}>
+            <div className="h-2 bg-blue-400/80 dark:bg-blue-400/50 mx-2 mt-3 rounded"></div>
+            <div className="h-1 bg-gray-400/70 dark:bg-gray-400/50 mx-2 mt-2 rounded"></div>
+            <div className="h-1 bg-gray-400/70 dark:bg-gray-400/50 mx-2 mt-1 rounded w-4/5"></div>
+            <div className="h-1 bg-green-400/80 dark:bg-green-400/50 mx-2 mt-1 rounded w-2/3"></div>
           </div>
         </div>
 
         {/* Additional floating paper */}
-        <div className="absolute top-1/2 right-10 opacity-8">
-          <div className="w-12 h-15 bg-white/40 rounded-lg shadow-lg border border-gray-200/40" style={{transform: 'rotate(25deg)', animation: 'float 7s ease-in-out infinite', animationDelay: '4s'}}>
-            <div className="h-1 bg-gray-200/30 mx-1 mt-2 rounded"></div>
-            <div className="h-1 bg-gray-200/20 mx-1 mt-1 rounded w-3/4"></div>
-            <div className="h-1 bg-gray-200/25 mx-1 mt-1 rounded w-1/2"></div>
+        <div className="absolute top-1/2 right-10 opacity-30 dark:opacity-40">
+          <div className="w-12 h-15 bg-white/80 dark:bg-gray-500/50 rounded-lg shadow-2xl border-2 border-gray-400/70 dark:border-gray-400/50" style={{transform: 'rotate(25deg)', animation: 'float 7s ease-in-out infinite', animationDelay: '4s'}}>
+            <div className="h-1 bg-gray-400/70 dark:bg-gray-400/50 mx-1 mt-2 rounded"></div>
+            <div className="h-1 bg-gray-400/60 dark:bg-gray-400/40 mx-1 mt-1 rounded w-3/4"></div>
+            <div className="h-1 bg-gray-400/65 dark:bg-gray-400/45 mx-1 mt-1 rounded w-1/2"></div>
           </div>
         </div>
       </div>
