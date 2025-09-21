@@ -223,13 +223,13 @@ const Signup: React.FC = () => {
               <div className="mb-6">
                 <div className="flex items-center gap-4 mb-6">
                   <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-emerald-500 to-blue-600 dark:from-emerald-400 dark:to-blue-500 rounded-3xl shadow-xl">
-                    <BookOpen className="w-8 h-8 text-white" />
+                    <Sparkles className="w-8 h-8 text-white" />
                   </div>
                   <div>
                     <h1 className="text-3xl sm:text-4xl font-bold text-text-primary dark:text-text-dark-primary bg-gradient-to-r from-emerald-400 to-blue-400 dark:from-emerald-300 dark:to-blue-300 bg-clip-text text-transparent">
                       Note App
                     </h1>
-                    <p className="text-text-secondary dark:text-text-dark-secondary">Start Your Journey</p>
+                    <p className="text-text-secondary dark:text-text-dark-secondary">by Team Batibot</p>
                   </div>
                 </div>
                 <p className="text-text-secondary dark:text-text-dark-secondary mb-6 leading-relaxed">
@@ -237,14 +237,14 @@ const Signup: React.FC = () => {
                 </p>
 
                 <div className="space-y-4">
-                  {/* Smart Organization */}
+                  {/* Todo Management */}
                   <div className="flex items-start gap-4">
                     <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-emerald-500/20 to-blue-500/20 border border-background-lighter flex items-center justify-center backdrop-blur-sm">
-                      <Sparkles className="w-5 h-5 text-emerald-300" />
+                      <Star className="w-5 h-5 text-emerald-300" />
                     </div>
                     <div>
-                      <p className="text-text-primary dark:text-text-dark-primary font-semibold">Smart Organization</p>
-                      <p className="text-text-secondary dark:text-text-dark-secondary text-sm">AI-powered categorization and intelligent search</p>
+                      <p className="text-text-primary dark:text-text-dark-primary font-semibold">Todo Management</p>
+                      <p className="text-text-secondary dark:text-text-dark-secondary text-sm">Create tasks with priorities and due dates</p>
                     </div>
                   </div>
 
