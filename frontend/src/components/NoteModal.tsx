@@ -25,7 +25,9 @@ import {
   Code,
   Image,
   Table,
-  ChevronDown
+  ChevronDown,
+  Eye,
+  Edit
 } from 'lucide-react';
 import { Note, NoteTag } from '../types/Note';
 
@@ -44,6 +46,9 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
   const [fontFamily, setFontFamily] = useState('Inter');
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [showHeadingDropdown, setShowHeadingDropdown] = useState(false);
+  const [wordCount, setWordCount] = useState(0);
+  const [charCount, setCharCount] = useState(0);
+  const [showPreviewModal, setShowPreviewModal] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
 
   // Tag system
@@ -65,6 +70,8 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
       setTitle(note.title);
       setContent(note.content);
       setSelectedTags(note.tags || []);
+      setWordCount(countWords(note.content || ''));
+      setCharCount(countCharacters(note.content || ''));
       if (contentRef.current) {
         contentRef.current.innerHTML = note.content || '';
       }
@@ -79,6 +86,8 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
       setTitle('');
       setContent('');
       setSelectedTags([]);
+      setWordCount(0);
+      setCharCount(0);
       if (contentRef.current) {
         contentRef.current.innerHTML = '';
       }
@@ -176,6 +185,31 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
     executeCommand('insertHTML', tableHTML);
   };
 
+  const countWords = (text: string) => {
+    // Remove HTML tags and count words
+    const plainText = text.replace(/<[^>]*>/g, ' ');
+    const words = plainText.trim().split(/\s+/).filter(word => word.length > 0);
+    return words.length;
+  };
+
+  const countCharacters = (text: string) => {
+    // Remove HTML tags and count characters (excluding spaces)
+    const plainText = text.replace(/<[^>]*>/g, '');
+    return plainText.length;
+  };
+
+  const openPreviewModal = () => {
+    if (contentRef.current) {
+      // Save current content before opening preview
+      setContent(contentRef.current.innerHTML);
+    }
+    setShowPreviewModal(true);
+  };
+
+  const closePreviewModal = () => {
+    setShowPreviewModal(false);
+  };
+
   const colors = [
     '#000000', '#FF0000', '#00FF00', '#0000FF',
     '#FFFF00', '#FF00FF', '#00FFFF', '#FFA500',
@@ -188,7 +222,7 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
   return (
     <>
       <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-        <div className="bg-background-card rounded-3xl w-full max-w-5xl max-h-[95vh] shadow-2xl border border-secondary/20 flex flex-col">
+        <div className="bg-background-card rounded-3xl w-full max-w-5xl max-h-[95vh] shadow-2xl border border-secondary/20 flex flex-col overflow-hidden">
           {/* Header */}
           <div className="flex items-center justify-between p-6 border-b border-secondary/20 flex-shrink-0">
             <div className="flex items-center space-x-3">
@@ -207,7 +241,7 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
             </button>
           </div>
 
-          <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-hidden">
+          <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-y-auto">
             {/* Title Input */}
             <div className="p-6 pb-4 flex-shrink-0">
               <label className="text-text-secondary font-medium text-sm block mb-2">
@@ -581,16 +615,34 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
             </div>
 
             {/* Rich Text Editor */}
-            <div className="px-6 flex-1 flex flex-col overflow-hidden">
-              <label className="text-text-secondary font-medium text-sm block mb-2">
-                Content
-              </label>
+            <div className="px-6 flex-shrink-0">
+              <div className="flex items-center justify-between mb-2">
+                <label className="text-text-secondary font-medium text-sm">
+                  Content
+                </label>
+                <div className="flex items-center space-x-3">
+                  <button
+                    type="button"
+                    onClick={openPreviewModal}
+                    className="flex items-center space-x-2 px-3 py-1 bg-background-card hover:bg-secondary/10 border border-secondary/20 rounded-lg text-text-secondary hover:text-text-primary transition-all duration-200 text-xs"
+                    title="Open Preview"
+                  >
+                    <Eye className="w-3 h-3" />
+                    <span>Preview</span>
+                  </button>
+                  <span className="text-text-secondary text-xs">
+                    {wordCount} words • {charCount} characters
+                  </span>
+                </div>
+              </div>
+              {/* Rich Text Editor - Always in Edit Mode */}
               <div
                 ref={contentRef}
                 contentEditable
-                className="rich-editor flex-1 bg-background-light border border-secondary/20 rounded-xl px-4 py-3 text-text-primary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300 overflow-y-auto"
+                className="rich-editor bg-background-light border border-secondary/20 rounded-xl px-4 py-3 text-text-primary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300 overflow-y-auto"
                 style={{
                   minHeight: '400px',
+                  height: '400px',
                   fontFamily: fontFamily,
                   fontSize: fontSize + 'px',
                   whiteSpace: 'pre-wrap',
@@ -599,7 +651,10 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
                 }}
                 onInput={() => {
                   if (contentRef.current) {
-                    setContent(contentRef.current.innerHTML);
+                    const newContent = contentRef.current.innerHTML;
+                    setContent(newContent);
+                    setWordCount(countWords(newContent));
+                    setCharCount(countCharacters(newContent));
                   }
                 }}
                 data-placeholder="Start writing your note here... Use the toolbar above to format your text!"
@@ -649,7 +704,12 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
           content: "";
         }
 
-        .rich-editor blockquote {
+        .preview-content {
+          cursor: default;
+        }
+
+        .rich-editor blockquote,
+        .preview-content blockquote {
           border-left: 4px solid #3B82F6;
           margin: 10px 0;
           padding-left: 15px;
@@ -660,71 +720,83 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
           padding: 10px 15px;
         }
 
-        .rich-editor ul, .rich-editor ol {
+        .rich-editor ul, .rich-editor ol,
+        .preview-content ul, .preview-content ol {
           margin: 10px 0;
           padding-left: 20px;
         }
 
-        .rich-editor li {
+        .rich-editor li,
+        .preview-content li {
           margin: 5px 0;
         }
 
-        .rich-editor a {
+        .rich-editor a,
+        .preview-content a {
           color: #3B82F6;
           text-decoration: underline;
         }
 
-        .rich-editor hr {
+        .rich-editor hr,
+        .preview-content hr {
           border: none;
           border-top: 2px solid #E5E7EB;
           margin: 20px 0;
         }
 
-        .rich-editor h1 {
+        .rich-editor h1,
+        .preview-content h1 {
           font-size: 2rem;
           font-weight: bold;
           margin: 15px 0 10px 0;
           color: #111827;
         }
 
-        .rich-editor h2 {
+        .rich-editor h2,
+        .preview-content h2 {
           font-size: 1.5rem;
           font-weight: bold;
           margin: 12px 0 8px 0;
           color: #111827;
         }
 
-        .rich-editor h3 {
+        .rich-editor h3,
+        .preview-content h3 {
           font-size: 1.25rem;
           font-weight: bold;
           margin: 10px 0 6px 0;
           color: #111827;
         }
 
-        .rich-editor p {
+        .rich-editor p,
+        .preview-content p {
           margin: 5px 0;
           line-height: 1.6;
         }
 
-        .rich-editor table {
+        .rich-editor table,
+        .preview-content table {
           border-collapse: collapse;
           width: 100%;
           margin: 10px 0;
           border: 1px solid #E5E7EB;
         }
 
-        .rich-editor td, .rich-editor th {
+        .rich-editor td, .rich-editor th,
+        .preview-content td, .preview-content th {
           border: 1px solid #E5E7EB;
           padding: 8px 12px;
           text-align: left;
         }
 
-        .rich-editor th {
+        .rich-editor th,
+        .preview-content th {
           background-color: #F9FAFB;
           font-weight: 600;
         }
 
-        .rich-editor code {
+        .rich-editor code,
+        .preview-content code {
           background-color: #F3F4F6;
           padding: 2px 4px;
           border-radius: 4px;
@@ -732,6 +804,86 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
           font-size: 0.9em;
         }
       `}</style>
+
+      {/* Separate Preview Modal */}
+      {showPreviewModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-[60]">
+          <div className="bg-background-card rounded-3xl w-full max-w-4xl max-h-[95vh] shadow-2xl border border-secondary/20 flex flex-col overflow-hidden">
+            {/* Preview Header */}
+            <div className="flex items-center justify-between p-6 border-b border-secondary/20 flex-shrink-0">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center">
+                  <Eye className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold text-text-primary">Note Preview</h2>
+                  <p className="text-sm text-text-secondary">{title || 'Untitled Note'}</p>
+                </div>
+              </div>
+              <button
+                onClick={closePreviewModal}
+                className="p-2 hover:bg-secondary/10 rounded-xl transition-colors duration-200"
+              >
+                <X className="w-5 h-5 text-text-secondary" />
+              </button>
+            </div>
+
+            {/* Preview Content */}
+            <div className="flex-1 p-6 overflow-y-auto">
+              {/* Tags Display */}
+              {selectedTags.length > 0 && (
+                <div className="mb-6">
+                  <h3 className="text-sm font-medium text-text-secondary mb-2">Tags</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedTags.map(tag => (
+                      <span
+                        key={tag.name}
+                        style={{ backgroundColor: tag.color, color: '#fff' }}
+                        className="px-3 py-1 rounded-full text-xs font-semibold"
+                      >
+                        {tag.name}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Note Content */}
+              <div className="prose prose-lg max-w-none">
+                <div
+                  className="preview-content text-text-primary"
+                  style={{
+                    fontFamily: fontFamily,
+                    fontSize: fontSize + 'px',
+                    lineHeight: '1.6'
+                  }}
+                  dangerouslySetInnerHTML={{ 
+                    __html: content || '<p style="color: #6B7280; font-style: italic;">No content to preview...</p>' 
+                  }}
+                />
+              </div>
+
+              {/* Statistics */}
+              <div className="mt-6 pt-4 border-t border-secondary/20">
+                <div className="flex items-center space-x-6 text-sm text-text-secondary">
+                  <span>{wordCount} words</span>
+                  <span>{charCount} characters</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Preview Footer */}
+            <div className="p-6 pt-4 border-t border-secondary/20 flex-shrink-0">
+              <button
+                onClick={closePreviewModal}
+                className="w-full bg-primary hover:bg-primary-light rounded-xl py-3 text-white font-semibold transition-all duration-300"
+              >
+                Close Preview
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };
