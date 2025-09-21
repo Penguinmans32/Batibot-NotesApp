@@ -246,14 +246,14 @@ const Login: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* Team Collaboration */}
+                  {/* Smart Tags */}
                   <div className="flex items-start gap-5">
                     <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500/20 to-purple-500/20 border border-background-lighter flex items-center justify-center backdrop-blur-sm">
-                      <Users className="w-6 h-6 text-indigo-300" />
+                      <Star className="w-6 h-6 text-indigo-300" />
                     </div>
                     <div>
-                      <p className="text-text-primary dark:text-text-dark-primary font-semibold text-lg">Team Collaboration</p>
-                      <p className="text-text-secondary dark:text-text-dark-secondary">Share and collaborate with your team</p>
+                      <p className="text-text-primary dark:text-text-dark-primary font-semibold text-lg">Smart Tags</p>
+                      <p className="text-text-secondary dark:text-text-dark-secondary">Organize notes with colorful tags and favorites</p>
                     </div>
                   </div>
                 </div>
