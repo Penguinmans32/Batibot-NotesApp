@@ -158,7 +158,7 @@ const TodoModal: React.FC<TodoModalProps> = ({
       </div>
       
       <style>{`
-        /* Dark mode styles for date picker */
+        /* Dark mode styles for date picker - only apply in dark mode */
         .dark input[type="date"]::-webkit-calendar-picker-indicator {
           filter: invert(1);
         }
@@ -183,11 +183,34 @@ const TodoModal: React.FC<TodoModalProps> = ({
           color: #f3f4f6;
         }
         
-        /* For Firefox */
-        @media (prefers-color-scheme: dark) {
-          input[type="date"] {
-            color-scheme: dark;
-          }
+        /* Light mode - ensure normal appearance */
+        input[type="date"]::-webkit-calendar-picker-indicator {
+          filter: none;
+        }
+        
+        input[type="date"]::-webkit-datetime-edit {
+          color: #111827;
+        }
+        
+        input[type="date"]::-webkit-datetime-edit-text {
+          color: #6b7280;
+        }
+        
+        input[type="date"]::-webkit-datetime-edit-month-field {
+          color: #111827;
+        }
+        
+        input[type="date"]::-webkit-datetime-edit-day-field {
+          color: #111827;
+        }
+        
+        input[type="date"]::-webkit-datetime-edit-year-field {
+          color: #111827;
+        }
+        
+        /* Color scheme - only dark when dark class is present */
+        input[type="date"] {
+          color-scheme: light;
         }
         
         .dark input[type="date"] {
