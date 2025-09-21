@@ -1002,16 +1002,16 @@ const Dashboard: React.FC = () => {
             ) : (
               filteredTodos.length === 0 ? (
                 <div className="col-span-full">
-                  <div className="bg-background-card rounded-3xl p-12 shadow-2xl border border-secondary/20 text-center">
-                    <ListTodo className="w-16 h-16 text-text-secondary mx-auto mb-4" />
-                    <h3 className="text-2xl font-bold text-text-primary mb-2">No todos yet</h3>
-                    <p className="text-text-secondary mb-6">
+                  <div className="bg-background-card dark:bg-background-dark-card rounded-3xl p-12 shadow-2xl border border-secondary/20 dark:border-text-dark-secondary/20 text-center theme-transition">
+                    <ListTodo className="w-16 h-16 text-text-secondary dark:text-text-dark-secondary mx-auto mb-4" />
+                    <h3 className="text-2xl font-bold text-text-primary dark:text-text-dark-primary mb-2">No todos yet</h3>
+                    <p className="text-text-secondary dark:text-text-dark-secondary mb-6">
                       {searchTerm ? 'No todos match your search.' : 'Start by creating your first todo!'}
                     </p>
                     {!searchTerm && (
                       <button
                         onClick={handleCreateTodo}
-                        className="bg-primary hover:bg-primary-light rounded-xl px-6 py-3 text-white font-semibold transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl flex items-center space-x-2 mx-auto"
+                        className="bg-primary dark:bg-blue-600 hover:bg-primary-light dark:hover:bg-blue-500 rounded-xl px-6 py-3 text-white font-semibold transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl flex items-center space-x-2 mx-auto"
                       >
                         <Plus className="w-5 h-5" />
                         <span>Create Your First Todo</span>

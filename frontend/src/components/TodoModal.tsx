@@ -50,9 +50,9 @@ const TodoModal: React.FC<TodoModalProps> = ({
   };
 
   const priorityColors = {
-    low: 'bg-blue-100 text-blue-800 border-blue-200',
-    medium: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-    high: 'bg-red-100 text-red-800 border-red-200'
+    low: 'bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-200 border-blue-200 dark:border-blue-700',
+    medium: 'bg-yellow-100 dark:bg-yellow-900/50 text-yellow-800 dark:text-yellow-200 border-yellow-200 dark:border-yellow-700',
+    high: 'bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-200 border-red-200 dark:border-red-700'
   };
 
   if (!isOpen) return null;
@@ -100,7 +100,7 @@ const TodoModal: React.FC<TodoModalProps> = ({
           </div>
 
           <div>
-            <label className="block text-text-primary font-semibold mb-2">
+            <label className="block text-text-primary dark:text-text-dark-primary font-semibold mb-2">
               Priority
             </label>
             <div className="grid grid-cols-3 gap-2">
@@ -112,7 +112,7 @@ const TodoModal: React.FC<TodoModalProps> = ({
                   className={`p-3 rounded-xl border-2 transition-all duration-200 flex items-center justify-center space-x-2 ${
                     priority === p
                       ? priorityColors[p]
-                      : 'bg-background-light border-secondary/20 text-text-secondary hover:bg-secondary/5'
+                      : 'bg-background-light dark:bg-background-dark-lighter border-secondary/20 dark:border-text-dark-secondary/20 text-text-secondary dark:text-text-dark-secondary hover:bg-secondary/5 dark:hover:bg-text-dark-secondary/10'
                   }`}
                 >
                   <Flag className="w-4 h-4" />
@@ -123,17 +123,17 @@ const TodoModal: React.FC<TodoModalProps> = ({
           </div>
 
           <div>
-            <label className="block text-text-primary font-semibold mb-2">
+            <label className="block text-text-primary dark:text-text-dark-primary font-semibold mb-2">
               Due Date
             </label>
             <div className="relative">
-              <Calendar className="absolute left-4 top-1/2 transform -translate-y-1/2 text-text-secondary w-5 h-5" />
+              <Calendar className="absolute left-4 top-1/2 transform -translate-y-1/2 text-text-secondary dark:text-text-dark-secondary w-5 h-5" />
               <input
                 type="date"
                 value={dueDate}
                 onChange={(e) => setDueDate(e.target.value)}
                 min={new Date().toISOString().split('T')[0]}
-                className="w-full bg-background-light border border-secondary/20 rounded-xl pl-12 pr-4 py-3 text-text-primary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300"
+                className="w-full bg-background-light dark:bg-background-dark-lighter border border-secondary/20 dark:border-text-dark-secondary/20 rounded-xl pl-12 pr-4 py-3 text-text-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-blue-400 focus:border-transparent transition-all duration-300"
               />
             </div>
           </div>
@@ -142,20 +142,58 @@ const TodoModal: React.FC<TodoModalProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 bg-secondary/10 hover:bg-secondary/20 border border-secondary/30 rounded-xl px-4 py-3 text-text-secondary transition-all duration-300"
+              className="flex-1 bg-secondary/10 dark:bg-text-dark-secondary/10 hover:bg-secondary/20 dark:hover:bg-text-dark-secondary/20 border border-secondary/30 dark:border-text-dark-secondary/30 rounded-xl px-4 py-3 text-text-secondary dark:text-text-dark-secondary transition-all duration-300"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={!title.trim() || loading}
-              className="flex-1 bg-primary hover:bg-primary-light rounded-xl px-4 py-3 text-white font-semibold transition-all duration-300 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+              className="flex-1 bg-primary dark:bg-blue-600 hover:bg-primary-light dark:hover:bg-blue-500 rounded-xl px-4 py-3 text-white font-semibold transition-all duration-300 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
             >
               {loading ? 'Saving...' : todo ? 'Update' : 'Create'}
             </button>
           </div>
         </form>
       </div>
+      
+      <style>{`
+        /* Dark mode styles for date picker */
+        .dark input[type="date"]::-webkit-calendar-picker-indicator {
+          filter: invert(1);
+        }
+        
+        .dark input[type="date"]::-webkit-datetime-edit {
+          color: #f3f4f6;
+        }
+        
+        .dark input[type="date"]::-webkit-datetime-edit-text {
+          color: #9ca3af;
+        }
+        
+        .dark input[type="date"]::-webkit-datetime-edit-month-field {
+          color: #f3f4f6;
+        }
+        
+        .dark input[type="date"]::-webkit-datetime-edit-day-field {
+          color: #f3f4f6;
+        }
+        
+        .dark input[type="date"]::-webkit-datetime-edit-year-field {
+          color: #f3f4f6;
+        }
+        
+        /* For Firefox */
+        @media (prefers-color-scheme: dark) {
+          input[type="date"] {
+            color-scheme: dark;
+          }
+        }
+        
+        .dark input[type="date"] {
+          color-scheme: dark;
+        }
+      `}</style>
     </div>
   );
 };
