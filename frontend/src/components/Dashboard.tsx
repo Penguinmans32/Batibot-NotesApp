@@ -17,7 +17,9 @@ import {
   Clock,
   AlertTriangle,
   Heart,
-  Archive
+  Archive,
+  MousePointer2,
+  X
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import ThemeToggle from './ThemeToggle';
@@ -31,9 +33,35 @@ import { Note, NoteTag } from '../types/Note';
 import { toggleNoteFavorite } from '../utils/api';
 
 const Dashboard: React.FC = () => {
-  // Bulk delete notes with confirmation
-  const [pendingBulkDelete, setPendingBulkDelete] = useState(false);
+  // Selection mode functions
+  const enterSelectionMode = () => {
+    setIsSelectionMode(true);
+    setSelectedNotes([]);
+  };
+
+  const exitSelectionMode = () => {
+    setIsSelectionMode(false);
+    setSelectedNotes([]);
+  };
+
+  const toggleNoteSelection = (noteId: number) => {
+    setSelectedNotes(prev => 
+      prev.includes(noteId) 
+        ? prev.filter(id => id !== noteId)
+        : [...prev, noteId]
+    );
+  };
+
+  const selectAllFilteredNotes = () => {
+    const allIds = filteredNotes.map(note => note.id);
+    setSelectedNotes(allIds);
+  };
+
+  const deselectAllNotes = () => {
+    setSelectedNotes([]);
+  };
   const handleBulkDeleteNotes = () => {
+    if (selectedNotes.length === 0) return;
     setPendingBulkDelete(true);
   };
 
@@ -53,6 +81,7 @@ const Dashboard: React.FC = () => {
       if (response.ok) {
         setNotes(notes.filter(note => !selectedNotes.includes(note.id)));
         setSelectedNotes([]);
+        setIsSelectionMode(false);
       }
     } catch (error) {
       console.error('Error bulk deleting notes:', error);
@@ -69,6 +98,8 @@ const Dashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'notes' | 'todos'>('notes');
   // Multi-select state for notes
   const [selectedNotes, setSelectedNotes] = useState<number[]>([]);
+  const [isSelectionMode, setIsSelectionMode] = useState(false);
+  const [pendingBulkDelete, setPendingBulkDelete] = useState(false);
 
 
   // Note filtering states
@@ -567,136 +598,225 @@ const Dashboard: React.FC = () => {
             )}
 
             {/* Search and Controls */}
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="relative flex-1">
-                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-text-secondary dark:text-text-dark-secondary w-5 h-5" />
-                <input
-                  type="text"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full bg-background-light dark:bg-background-dark-lighter border border-secondary/20 dark:border-text-dark-secondary/20 rounded-xl pl-12 pr-4 py-3 text-text-primary dark:text-text-dark-primary placeholder-text-secondary dark:placeholder-text-dark-secondary focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-blue-400 focus:border-transparent transition-all duration-300"
-                  placeholder={`Search your ${activeTab}...`}
-                />
-              </div>
+            <div className="space-y-4">
+              {/* First Row: Search and Primary Actions */}
+              <div className="flex flex-col sm:flex-row gap-4">
+                <div className="relative flex-1">
+                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-text-secondary dark:text-text-dark-secondary w-5 h-5" />
+                  <input
+                    type="text"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full bg-background-light dark:bg-background-dark-lighter border border-secondary/20 dark:border-text-dark-secondary/20 rounded-xl pl-12 pr-4 py-3 text-text-primary dark:text-text-dark-primary placeholder-text-secondary dark:placeholder-text-dark-secondary focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-blue-400 focus:border-transparent transition-all duration-300"
+                    placeholder={`Search your ${activeTab}...`}
+                  />
+                </div>
 
-              {/* Note Filters and Sort */}
-              {activeTab === 'notes' && (
-                <>
-                  <div className="flex items-center space-x-2">
-                    <Calendar className="w-5 h-5 text-text-secondary dark:text-text-dark-secondary" />
-                    <select
-                      value={noteDateFilter}
-                      onChange={(e) => setNoteDateFilter(e.target.value as 'all' | 'today' | 'week' | 'month' | 'specific')}
-                      className="bg-background-light dark:bg-background-dark-card border border-secondary/20 dark:border-border-dark-primary rounded-xl px-4 py-3 text-text-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-light focus:border-transparent transition-all duration-300"
-                    >
-                      <option value="all">All Time</option>
-                      <option value="today">Today</option>
-                      <option value="week">This Week</option>
-                      <option value="month">This Month</option>
-                      <option value="specific">Specific Date</option>
-                    </select>
-                  </div>
-                  {noteDateFilter === 'specific' && (
-                    <div className="flex items-center space-x-2">
-                      <input
-                        type="date"
-                        value={specificDate}
-                        onChange={(e) => setSpecificDate(e.target.value)}
-                        className="bg-background-light dark:bg-background-dark-card border border-secondary/20 dark:border-border-dark-primary rounded-xl px-4 py-3 text-text-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-light focus:border-transparent transition-all duration-300"
-                      />
-                    </div>
-                  )}
-                  <div className="flex items-center space-x-2">
-                    <Flag className="w-5 h-5 text-text-secondary dark:text-text-dark-secondary" />
-                    <select
-                      value={selectedTagFilter}
-                      onChange={(e) => setSelectedTagFilter(e.target.value)}
-                      className="bg-background-light dark:bg-background-dark-card border border-secondary/20 dark:border-border-dark-primary rounded-xl px-4 py-3 text-text-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-light focus:border-transparent transition-all duration-300"
-                    >
-                      <option value="all">All Tags</option>
-                      {Array.from(new Set(notes.flatMap(note => note.tags?.map(tag => tag.name) || []))).map(tagName => (
-                        <option key={tagName} value={tagName}>{tagName}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <SortAsc className="w-5 h-5 text-text-secondary dark:text-text-dark-secondary" />
-                    <select
-                      value={noteSortOrder}
-                      onChange={(e) => setNoteSortOrder(e.target.value as 'title-asc' | 'title-desc' | 'recent' | 'oldest')}
-                      className="bg-background-light dark:bg-background-dark-card border border-secondary/20 dark:border-border-dark-primary rounded-xl px-4 py-3 text-text-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-light focus:border-transparent transition-all duration-300"
-                    >
-                      <option value="recent">Recently Added</option>
-                      <option value="oldest">Oldest First</option>
-                      <option value="title-asc">Title A-Z</option>
-                      <option value="title-desc">Title Z-A</option>
-                    </select>
-                  </div>
-                  {(noteDateFilter !== 'all' || noteSortOrder !== 'recent' || searchTerm || selectedTagFilter !== 'all') && (
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <button
+                    onClick={activeTab === 'notes' ? handleCreateNote : handleCreateTodo}
+                    className="bg-primary hover:bg-primary-light rounded-xl px-6 py-3 text-white font-semibold transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl flex items-center justify-center space-x-2"
+                  >
+                    <Plus className="w-5 h-5" />
+                    <span>New {activeTab === 'notes' ? 'Note' : 'Todo'}</span>
+                  </button>
+
+                  {/* Selection Mode Toggle - Only show for notes */}
+                  {activeTab === 'notes' && (
                     <button
-                      onClick={() => {
-                        setNoteDateFilter('all');
-                        setSpecificDate('');
-                        setNoteSortOrder('recent');
-                        setSearchTerm('');
-                        setSelectedTagFilter('all');
-                      }}
-                      className="px-4 py-3 text-text-secondary dark:text-text-dark-secondary hover:text-text-primary dark:hover:text-text-dark-primary bg-background-light dark:bg-background-dark-card hover:bg-background-lighter dark:hover:bg-background-dark-lighter border border-secondary/20 dark:border-border-dark-primary rounded-xl transition-all duration-300 flex items-center space-x-2"
-                      title="Clear all filters"
+                      onClick={isSelectionMode ? exitSelectionMode : enterSelectionMode}
+                      className={`rounded-xl px-4 py-3 font-semibold transition-all duration-300 flex items-center justify-center space-x-2 whitespace-nowrap ${
+                        isSelectionMode
+                          ? 'bg-orange-500 hover:bg-orange-600 text-white shadow-lg'
+                          : 'bg-secondary/10 dark:bg-text-dark-secondary/10 hover:bg-secondary/20 dark:hover:bg-text-dark-secondary/20 border border-secondary/30 dark:border-border-dark-primary text-text-primary dark:text-text-dark-primary'
+                      }`}
                     >
-                      <Filter className="w-4 h-4" />
-                      <span className="text-sm">Clear</span>
+                      {isSelectionMode ? (
+                        <>
+                          <X className="w-4 h-4" />
+                          <span>Cancel</span>
+                        </>
+                      ) : (
+                        <>
+                          <MousePointer2 className="w-4 h-4" />
+                          <span>Select</span>
+                        </>
+                      )}
                     </button>
                   )}
-                </>
-              )}
 
-              {/* Todo Filters and Sort */}
-              {activeTab === 'todos' && (
-                <>
-                  <select
-                    value={todoFilter}
-                    onChange={(e) => setTodoFilter(e.target.value as FilterType)}
-                    className="bg-background-light dark:bg-background-dark-card border border-secondary/20 dark:border-border-dark-primary rounded-xl px-4 py-3 text-text-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-light focus:border-transparent transition-all duration-300"
-                  >
-                    <option value="all">All Todos</option>
-                    <option value="active">Active</option>
-                    <option value="completed">Completed</option>
-                    <option value="overdue">Overdue</option>
-                  </select>
-                  <select
-                    value={todoSort}
-                    onChange={(e) => setTodoSort(e.target.value as SortType)}
-                    className="bg-background-light dark:bg-background-dark-card border border-secondary/20 dark:border-border-dark-primary rounded-xl px-4 py-3 text-text-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-light focus:border-transparent transition-all duration-300"
-                  >
-                    <option value="due_date">Due Date</option>
-                    <option value="priority">Priority</option>
-                    <option value="created_at">Created</option>
-                  </select>
-                </>
-              )}
+                  {/* Recycle Bin Button - Only show for notes */}
+                  {activeTab === 'notes' && (
+                    <button
+                      onClick={() => setIsRecycleBinModalOpen(true)}
+                      className="bg-secondary/10 dark:bg-text-dark-secondary/10 hover:bg-secondary/20 dark:hover:bg-text-dark-secondary/20 border border-secondary/30 dark:border-border-dark-primary rounded-xl px-4 py-3 text-text-primary dark:text-text-dark-primary font-semibold transition-all duration-300 flex items-center justify-center space-x-2 whitespace-nowrap"
+                      title="Recycle Bin"
+                    >
+                      <Archive className="w-4 h-4" />
+                      <span>Bin</span>
+                    </button>
+                  )}
+                </div>
+              </div>
 
-              <button
-                onClick={activeTab === 'notes' ? handleCreateNote : handleCreateTodo}
-                className="bg-primary hover:bg-primary-light rounded-xl px-6 py-3 text-white font-semibold transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl flex items-center space-x-2"
-              >
-                <Plus className="w-5 h-5" />
-                <span>New {activeTab === 'notes' ? 'Note' : 'Todo'}</span>
-              </button>
+              {/* Second Row: Filters and Sorting - Only show when relevant */}
+              {(activeTab === 'notes' || activeTab === 'todos') && (
+                <div className="flex flex-wrap justify-center gap-4">
+                  {/* Note Filters and Sort */}
+                  {activeTab === 'notes' && (
+                    <>
+                      <div className="flex items-center space-x-2 min-w-0">
+                        <Calendar className="w-5 h-5 text-text-secondary dark:text-text-dark-secondary flex-shrink-0" />
+                        <select
+                          value={noteDateFilter}
+                          onChange={(e) => setNoteDateFilter(e.target.value as 'all' | 'today' | 'week' | 'month' | 'specific')}
+                          className="bg-background-light dark:bg-background-dark-card border border-secondary/20 dark:border-border-dark-primary rounded-xl px-2 py-3 text-text-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-light focus:border-transparent transition-all duration-300"
+                        >
+                          <option value="all">All Time</option>
+                          <option value="today">Today</option>
+                          <option value="week">This Week</option>
+                          <option value="month">This Month</option>
+                          <option value="specific">Specific Date</option>
+                        </select>
+                      </div>
+                      
+                      {noteDateFilter === 'specific' && (
+                        <div className="flex items-center space-x-2">
+                          <input
+                            type="date"
+                            value={specificDate}
+                            onChange={(e) => setSpecificDate(e.target.value)}
+                            className="bg-background-light dark:bg-background-dark-card border border-secondary/20 dark:border-border-dark-primary rounded-xl px-4 py-3 text-text-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-light focus:border-transparent transition-all duration-300"
+                          />
+                        </div>
+                      )}
+                      
+                      <div className="flex items-center space-x-2 min-w-0">
+                        <Flag className="w-5 h-5 text-text-secondary dark:text-text-dark-secondary flex-shrink-0" />
+                        <select
+                          value={selectedTagFilter}
+                          onChange={(e) => setSelectedTagFilter(e.target.value)}
+                          className="bg-background-light dark:bg-background-dark-card border border-secondary/20 dark:border-border-dark-primary rounded-xl px-2 py-3 text-text-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-light focus:border-transparent transition-all duration-300"
+                        >
+                          <option value="all">All Tags</option>
+                          {Array.from(new Set(notes.flatMap(note => note.tags?.map(tag => tag.name) || []))).map(tagName => (
+                            <option key={tagName} value={tagName}>{tagName}</option>
+                          ))}
+                        </select>
+                      </div>
+                      
+                      <div className="flex items-center space-x-2 min-w-0">
+                        <SortAsc className="w-5 h-5 text-text-secondary dark:text-text-dark-secondary flex-shrink-0" />
+                        <select
+                          value={noteSortOrder}
+                          onChange={(e) => setNoteSortOrder(e.target.value as 'title-asc' | 'title-desc' | 'recent' | 'oldest')}
+                          className="bg-background-light dark:bg-background-dark-card border border-secondary/20 dark:border-border-dark-primary rounded-xl px-2 py-3 text-text-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-light focus:border-transparent transition-all duration-300"
+                        >
+                          <option value="recent">Recently Added</option>
+                          <option value="oldest">Oldest First</option>
+                          <option value="title-asc">Title A-Z</option>
+                          <option value="title-desc">Title Z-A</option>
+                        </select>
+                      </div>
+                      
+                      {(noteDateFilter !== 'all' || noteSortOrder !== 'recent' || searchTerm || selectedTagFilter !== 'all') && (
+                        <button
+                          onClick={() => {
+                            setNoteDateFilter('all');
+                            setSpecificDate('');
+                            setNoteSortOrder('recent');
+                            setSearchTerm('');
+                            setSelectedTagFilter('all');
+                          }}
+                          className="px-4 py-3 text-text-secondary dark:text-text-dark-secondary hover:text-text-primary dark:hover:text-text-dark-primary bg-background-light dark:bg-background-dark-card hover:bg-background-lighter dark:hover:bg-background-dark-lighter border border-secondary/20 dark:border-border-dark-primary rounded-xl transition-all duration-300 flex items-center space-x-2 whitespace-nowrap"
+                          title="Clear all filters"
+                        >
+                          <Filter className="w-4 h-4" />
+                          <span className="text-sm">Clear</span>
+                        </button>
+                      )}
+                    </>
+                  )}
 
-              {/* Recycle Bin Button - Only show for notes */}
-              {activeTab === 'notes' && (
-                <button
-                  onClick={() => setIsRecycleBinModalOpen(true)}
-                  className="bg-secondary/10 dark:bg-text-dark-secondary/10 hover:bg-secondary/20 dark:hover:bg-text-dark-secondary/20 border border-secondary/30 dark:border-border-dark-primary rounded-xl px-6 py-3 text-text-primary dark:text-text-dark-primary font-semibold transition-all duration-300 flex items-center space-x-2"
-                  title="Recycle Bin"
-                >
-                  <Archive className="w-5 h-5" />
-                  <span>Recycle Bin</span>
-                </button>
+                  {/* Todo Filters and Sort */}
+                  {activeTab === 'todos' && (
+                    <>
+                      <select
+                        value={todoFilter}
+                        onChange={(e) => setTodoFilter(e.target.value as FilterType)}
+                        className="bg-background-light dark:bg-background-dark-card border border-secondary/20 dark:border-border-dark-primary rounded-xl px-4 py-3 pr-10 text-text-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-light focus:border-transparent transition-all duration-300"
+                      >
+                        <option value="all">All Todos</option>
+                        <option value="active">Active</option>
+                        <option value="completed">Completed</option>
+                        <option value="overdue">Overdue</option>
+                      </select>
+                      <select
+                        value={todoSort}
+                        onChange={(e) => setTodoSort(e.target.value as SortType)}
+                        className="bg-background-light dark:bg-background-dark-card border border-secondary/20 dark:border-border-dark-primary rounded-xl px-4 py-3 pr-10 text-text-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-light focus:border-transparent transition-all duration-300"
+                      >
+                        <option value="due_date">Due Date</option>
+                        <option value="priority">Priority</option>
+                        <option value="created_at">Created</option>
+                      </select>
+                    </>
+                  )}
+                </div>
               )}
             </div>
           </div>
+
+          {/* Selection Controls Bar - Only show for notes in selection mode */}
+          {activeTab === 'notes' && isSelectionMode && (
+            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border border-blue-200 dark:border-blue-500/30 rounded-3xl p-4 shadow-lg mb-8 theme-transition animate-in slide-in-from-top-2 duration-300">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
+                    <span className="text-blue-800 dark:text-blue-300 font-semibold">
+                      Selection Mode
+                    </span>
+                    <span className="bg-blue-100 dark:bg-blue-800/30 text-blue-800 dark:text-blue-300 px-3 py-1 rounded-full text-sm font-medium transition-all duration-300">
+                      {selectedNotes.length} selected
+                    </span>
+                  </div>
+                </div>
+                
+                <div className="flex items-center space-x-3">
+                  {selectedNotes.length < filteredNotes.length && filteredNotes.length > 0 && (
+                    <button
+                      onClick={selectAllFilteredNotes}
+                      className="bg-blue-100 dark:bg-blue-800/30 hover:bg-blue-200 dark:hover:bg-blue-700/40 border border-blue-300 dark:border-blue-600/50 rounded-xl px-4 py-2 text-blue-800 dark:text-blue-300 font-semibold transition-all duration-300 flex items-center space-x-2 hover:scale-105 transform"
+                    >
+                      <CheckSquare className="w-4 h-4" />
+                      <span>Select All ({filteredNotes.length})</span>
+                    </button>
+                  )}
+                  
+                  {selectedNotes.length > 0 && (
+                    <>
+                      <button
+                        onClick={deselectAllNotes}
+                        className="bg-gray-100 dark:bg-gray-700/30 hover:bg-gray-200 dark:hover:bg-gray-600/40 border border-gray-300 dark:border-gray-600/50 rounded-xl px-4 py-2 text-gray-700 dark:text-gray-300 font-semibold transition-all duration-300 flex items-center space-x-2 hover:scale-105 transform"
+                      >
+                        <Square className="w-4 h-4" />
+                        <span>Deselect All</span>
+                      </button>
+                      
+                      <button
+                        onClick={handleBulkDeleteNotes}
+                        className="bg-red-100 dark:bg-red-900/30 hover:bg-red-200 dark:hover:bg-red-800/40 border border-red-300 dark:border-red-600/50 rounded-xl px-4 py-2 text-red-800 dark:text-red-400 hover:text-white dark:hover:text-white font-semibold transition-all duration-300 flex items-center space-x-2 hover:bg-red-500 dark:hover:bg-red-600 hover:scale-105 transform"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                        <span>Delete ({selectedNotes.length})</span>
+                      </button>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Filter Results Indicator for Notes */}
           {activeTab === 'notes' && (
@@ -764,62 +884,67 @@ const Dashboard: React.FC = () => {
                       {favoriteNotes.map((note) => (
                         <div
                           key={`fav-${note.id}`}
-                          className="bg-background-card dark:bg-background-dark-card rounded-3xl p-6 shadow-2xl border border-pink-300 dark:border-pink-500/30 hover:bg-secondary/5 dark:hover:bg-text-dark-secondary/5 transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl group flex cursor-pointer theme-transition"
+                          className={`bg-background-card dark:bg-background-dark-card rounded-3xl p-6 shadow-2xl border border-pink-300 dark:border-pink-500/30 transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl group cursor-pointer theme-transition relative ${
+                            isSelectionMode
+                              ? selectedNotes.includes(note.id)
+                                ? 'ring-4 ring-blue-500 dark:ring-blue-400 ring-opacity-50 bg-blue-50/50 dark:bg-blue-900/20 border-blue-400 dark:border-blue-500'
+                                : 'hover:ring-2 hover:ring-blue-300 dark:hover:ring-blue-500 hover:ring-opacity-30'
+                              : 'hover:bg-secondary/5 dark:hover:bg-text-dark-secondary/5'
+                          }`}
                           style={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}
-                          onClick={() => handleViewNote(note)}
+                          onClick={() => isSelectionMode ? toggleNoteSelection(note.id) : handleViewNote(note)}
                         >
-                          {/* Checkbox for multi-select */}
-                          {selectedNotes.length > 0 && (
-                            <input
-                              type="checkbox"
-                              checked={selectedNotes.includes(note.id)}
-                              onClick={(e) => e.stopPropagation()}
-                              onChange={e => {
-                                if (e.target.checked) {
-                                  setSelectedNotes(prev => [...prev, note.id]);
-                                } else {
-                                  setSelectedNotes(prev => prev.filter(id => id !== note.id));
-                                }
-                              }}
-                              className="mr-4 mt-2 accent-primary w-5 h-5 flex-shrink-0"
-                            />
+                          {/* Selection Indicator */}
+                          {isSelectionMode && (
+                            <div className={`absolute top-4 right-4 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
+                              selectedNotes.includes(note.id)
+                                ? 'bg-blue-500 border-blue-500 text-white'
+                                : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700'
+                            }`}>
+                              {selectedNotes.includes(note.id) && (
+                                <CheckSquare className="w-4 h-4" />
+                              )}
+                            </div>
                           )}
-                          <div className={`flex-1 min-w-0 ${selectedNotes.length > 0 ? 'ml-0' : ''}`}>
+
+                          <div className="flex-1 min-w-0">
                             <div className="flex items-start justify-between mb-4">
                               <h3 className="text-xl font-bold text-text-primary dark:text-text-dark-primary truncate pr-2">
                                 {note.title}
                               </h3>
-                              <div className="flex space-x-2 opacity-100 transition-opacity duration-300">
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleEditNote(note);
-                                  }}
-                                  className="p-2 rounded-lg text-text-secondary dark:text-text-dark-secondary hover:text-primary dark:hover:text-primary-light hover:bg-secondary/10 dark:hover:bg-text-dark-secondary/10 transition-colors duration-200"
-                                  title="Edit Note"
-                                >
-                                  <Edit3 className="w-4 h-4" />
-                                </button>
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleToggleFavorite(note.id);
-                                  }}
-                                  className="p-2 rounded-lg text-pink-500 dark:text-pink-400 hover:bg-pink-50 dark:hover:bg-pink-400/10 transition-colors duration-200"
-                                  title="Unfavorite"
-                                >
-                                  <Heart className="w-4 h-4" fill="currentColor" />
-                                </button>
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleDeleteItem(note, 'note');
-                                  }}
-                                  className="p-2 bg-error/10 dark:bg-red-500/10 hover:bg-error/20 dark:hover:bg-red-500/20 rounded-lg text-error dark:text-red-400 hover:text-white dark:hover:text-white transition-colors duration-200"
-                                >
-                                  <Trash2 className="w-4 h-4" />
-                                </button>
-                              </div>
+                              {!isSelectionMode && (
+                                <div className="flex space-x-2 opacity-100 transition-opacity duration-300">
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleEditNote(note);
+                                    }}
+                                    className="p-2 rounded-lg text-text-secondary dark:text-text-dark-secondary hover:text-primary dark:hover:text-primary-light hover:bg-secondary/10 dark:hover:bg-text-dark-secondary/10 transition-colors duration-200"
+                                    title="Edit Note"
+                                  >
+                                    <Edit3 className="w-4 h-4" />
+                                  </button>
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleToggleFavorite(note.id);
+                                    }}
+                                    className="p-2 rounded-lg text-pink-500 dark:text-pink-400 hover:bg-pink-50 dark:hover:bg-pink-400/10 transition-colors duration-200"
+                                    title="Unfavorite"
+                                  >
+                                    <Heart className="w-4 h-4" fill="currentColor" />
+                                  </button>
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleDeleteItem(note, 'note');
+                                    }}
+                                    className="p-2 bg-error/10 dark:bg-red-500/10 hover:bg-error/20 dark:hover:bg-red-500/20 rounded-lg text-error dark:text-red-400 hover:text-white dark:hover:text-white transition-colors duration-200"
+                                  >
+                                    <Trash2 className="w-4 h-4" />
+                                  </button>
+                                </div>
+                              )}
                             </div>
 
                             <p className="text-text-secondary dark:text-text-dark-secondary text-sm mb-4 line-clamp-3">
@@ -860,47 +985,10 @@ const Dashboard: React.FC = () => {
                   {/* Bulk select controls */}
                   <div className="col-span-full flex items-center justify-between mb-4">
                     <div className="flex items-center">
-                      <input
-                        type="checkbox"
-                        checked={selectedNotes.length > 0}
-                        onChange={e => {
-                          if (e.target.checked) {
-                            // Just make checkboxes visible by selecting one note (we'll let user manually select)
-                            setSelectedNotes([filteredNotes[0]?.id].filter(Boolean));
-                          } else {
-                            // Hide checkboxes by clearing selection
-                            setSelectedNotes([]);
-                          }
-                        }}
-                        className="mr-2 accent-primary w-5 h-5"
-                      />
-                      <span className="text-sm text-text-secondary dark:text-text-dark-secondary mr-4">Select</span>
-                      {selectedNotes.length > 0 && (
-                        <>
-                          <input
-                            type="checkbox"
-                            checked={selectedNotes.length === filteredNotes.length && filteredNotes.length > 0}
-                            onChange={e => {
-                              if (e.target.checked) {
-                                setSelectedNotes(filteredNotes.map(n => n.id));
-                              } else {
-                                setSelectedNotes([]);
-                              }
-                            }}
-                            className="mr-2 ml-4 accent-primary w-5 h-5"
-                          />
-                          <span className="text-sm text-text-secondary dark:text-text-dark-secondary mr-4">Select All</span>
-                        </>
-                      )}
-                      {selectedNotes.length > 0 && (
-                        <button
-                          type="button"
-                          onClick={handleBulkDeleteNotes}
-                          className="bg-error/10 dark:bg-red-500/10 hover:bg-error/20 dark:hover:bg-red-500/20 border border-error/30 dark:border-red-500/30 rounded-xl px-4 py-2 text-error dark:text-red-400 hover:text-white dark:hover:text-white font-semibold transition-all duration-300 flex items-center space-x-2"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                          <span>Delete Selected ({selectedNotes.length})</span>
-                        </button>
+                      {isSelectionMode && (
+                        <div className="text-sm text-text-secondary dark:text-text-dark-secondary">
+                          Click notes to select them for bulk actions
+                        </div>
                       )}
                     </div>
                   </div>
@@ -908,62 +996,71 @@ const Dashboard: React.FC = () => {
                   {otherNotes.map((note) => (
                     <div
                       key={note.id}
-                      className="bg-background-card dark:bg-background-dark-card rounded-3xl p-6 shadow-2xl border border-primary/30 dark:border-primary-dark/30 hover:bg-secondary/5 dark:hover:bg-text-dark-secondary/5 transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl group flex cursor-pointer theme-transition"
-                      style={{ wordBreak: 'break-word', overflowWrap: 'break-word', border: '2px solid #3B82F6' }}
-                      onClick={() => handleViewNote(note)}
+                      className={`bg-background-card dark:bg-background-dark-card rounded-3xl p-6 shadow-2xl border transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl group cursor-pointer theme-transition relative ${
+                        isSelectionMode
+                          ? selectedNotes.includes(note.id)
+                            ? 'ring-4 ring-blue-500 dark:ring-blue-400 ring-opacity-50 bg-blue-50/50 dark:bg-blue-900/20 border-blue-400 dark:border-blue-500'
+                            : 'hover:ring-2 hover:ring-blue-300 dark:hover:ring-blue-500 hover:ring-opacity-30 border-primary/30 dark:border-primary-dark/30'
+                          : 'border-primary/30 dark:border-primary-dark/30 hover:bg-secondary/5 dark:hover:bg-text-dark-secondary/5'
+                      }`}
+                      style={{ 
+                        wordBreak: 'break-word', 
+                        overflowWrap: 'break-word', 
+                        border: isSelectionMode && selectedNotes.includes(note.id) ? undefined : '2px solid #3B82F6' 
+                      }}
+                      onClick={() => isSelectionMode ? toggleNoteSelection(note.id) : handleViewNote(note)}
                     >
-                      {/* Checkbox for multi-select */}
-                      {selectedNotes.length > 0 && (
-                        <input
-                          type="checkbox"
-                          checked={selectedNotes.includes(note.id)}
-                          onClick={(e) => e.stopPropagation()}
-                          onChange={e => {
-                            if (e.target.checked) {
-                              setSelectedNotes(prev => [...prev, note.id]);
-                            } else {
-                              setSelectedNotes(prev => prev.filter(id => id !== note.id));
-                            }
-                          }}
-                          className="mr-4 mt-2 accent-primary w-5 h-5 flex-shrink-0"
-                        />
+                      {/* Selection Indicator */}
+                      {isSelectionMode && (
+                        <div className={`absolute top-4 right-4 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-300 z-10 ${
+                          selectedNotes.includes(note.id)
+                            ? 'bg-blue-500 border-blue-500 text-white'
+                            : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700'
+                        }`}>
+                          {selectedNotes.includes(note.id) && (
+                            <CheckSquare className="w-4 h-4" />
+                          )}
+                        </div>
                       )}
-                                                <div className={`flex-1 min-w-0 ${selectedNotes.length > 0 ? 'ml-0' : ''}`}>
+
+                      <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between mb-4">
                           <h3 className="text-xl font-bold text-text-primary dark:text-text-dark-primary truncate pr-2">
                             {note.title}
                           </h3>
-                          <div className="flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleEditNote(note);
-                              }}
-                              className="p-2 rounded-lg text-text-secondary dark:text-text-dark-secondary hover:text-primary dark:hover:text-primary-light hover:bg-secondary/10 dark:hover:bg-text-dark-secondary/10 transition-colors duration-200"
-                              title="Edit Note"
-                            >
-                              <Edit3 className="w-4 h-4" />
-                            </button>
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleToggleFavorite(note.id);
-                              }}
-                              className={`p-2 rounded-lg transition-colors duration-200 ${note.favorite ? 'text-pink-500 dark:text-pink-400 hover:bg-pink-50 dark:hover:bg-pink-400/10' : 'text-text-secondary dark:text-text-dark-secondary hover:text-pink-500 dark:hover:text-pink-400 hover:bg-secondary/10 dark:hover:bg-text-dark-secondary/10'}`}
-                              title={note.favorite ? 'Unfavorite' : 'Favorite'}
-                            >
-                              <Heart className="w-4 h-4" fill={note.favorite ? 'currentColor' : 'none'} />
-                            </button>
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleDeleteItem(note, 'note');
-                              }}
-                              className="p-2 bg-error/10 dark:bg-red-500/10 hover:bg-error/20 dark:hover:bg-red-500/20 rounded-lg text-error dark:text-red-400 hover:text-white dark:hover:text-white transition-colors duration-200"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
-                          </div>
+                          {!isSelectionMode && (
+                            <div className="flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleEditNote(note);
+                                }}
+                                className="p-2 rounded-lg text-text-secondary dark:text-text-dark-secondary hover:text-primary dark:hover:text-primary-light hover:bg-secondary/10 dark:hover:bg-text-dark-secondary/10 transition-colors duration-200"
+                                title="Edit Note"
+                              >
+                                <Edit3 className="w-4 h-4" />
+                              </button>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleToggleFavorite(note.id);
+                                }}
+                                className={`p-2 rounded-lg transition-colors duration-200 ${note.favorite ? 'text-pink-500 dark:text-pink-400 hover:bg-pink-50 dark:hover:bg-pink-400/10' : 'text-text-secondary dark:text-text-dark-secondary hover:text-pink-500 dark:hover:text-pink-400 hover:bg-secondary/10 dark:hover:bg-text-dark-secondary/10'}`}
+                                title={note.favorite ? 'Unfavorite' : 'Favorite'}
+                              >
+                                <Heart className="w-4 h-4" fill={note.favorite ? 'currentColor' : 'none'} />
+                              </button>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleDeleteItem(note, 'note');
+                                }}
+                                className="p-2 bg-error/10 dark:bg-red-500/10 hover:bg-error/20 dark:hover:bg-red-500/20 rounded-lg text-error dark:text-red-400 hover:text-white dark:hover:text-white transition-colors duration-200"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
+                          )}
                         </div>
 
                         <p className="text-text-secondary dark:text-text-dark-secondary text-sm mb-4 line-clamp-3">
