@@ -197,17 +197,17 @@ const RecycleBinModal: React.FC<RecycleBinModalProps> = ({ isOpen, onClose, onRe
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-background-card rounded-3xl w-full max-w-4xl max-h-[80vh] overflow-hidden shadow-2xl">
+    <div className="fixed inset-0 bg-black bg-opacity-50 dark:bg-black dark:bg-opacity-70 flex items-center justify-center z-50 p-4">
+      <div className="bg-background-card dark:bg-background-dark-card rounded-3xl w-full max-w-4xl max-h-[80vh] overflow-hidden shadow-2xl border border-secondary/20 dark:border-text-dark-secondary/20 theme-transition">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-secondary/20">
+        <div className="flex items-center justify-between p-6 border-b border-secondary/20 dark:border-text-dark-secondary/20">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center">
-              <Trash2 className="w-5 h-5 text-red-600" />
+            <div className="w-10 h-10 bg-red-100 dark:bg-red-900/20 rounded-xl flex items-center justify-center">
+              <Trash2 className="w-5 h-5 text-red-600 dark:text-red-400" />
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-text-primary">Recycle Bin</h2>
-              <p className="text-text-secondary text-sm">
+              <h2 className="text-2xl font-bold text-text-primary dark:text-text-dark-primary">Recycle Bin</h2>
+              <p className="text-text-secondary dark:text-text-dark-secondary text-sm">
                 Notes are automatically deleted after 30 days
               </p>
             </div>
@@ -216,14 +216,14 @@ const RecycleBinModal: React.FC<RecycleBinModalProps> = ({ isOpen, onClose, onRe
             <button
               onClick={fetchDeletedNotes}
               disabled={loading}
-              className="p-2 text-text-secondary hover:text-primary hover:bg-secondary/10 rounded-lg transition-colors duration-200"
+              className="p-2 text-text-secondary dark:text-text-dark-secondary hover:text-primary dark:hover:text-blue-400 hover:bg-secondary/10 dark:hover:bg-text-dark-secondary/10 rounded-lg transition-colors duration-200"
               title="Refresh"
             >
               <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
             </button>
             <button
               onClick={onClose}
-              className="p-2 text-text-secondary hover:text-primary hover:bg-secondary/10 rounded-lg transition-colors duration-200"
+              className="p-2 text-text-secondary dark:text-text-dark-secondary hover:text-primary dark:hover:text-blue-400 hover:bg-secondary/10 dark:hover:bg-text-dark-secondary/10 rounded-lg transition-colors duration-200"
             >
               <X className="w-5 h-5" />
             </button>
@@ -232,7 +232,7 @@ const RecycleBinModal: React.FC<RecycleBinModalProps> = ({ isOpen, onClose, onRe
 
         {/* Controls */}
         {deletedNotes.length > 0 && (
-          <div className="p-6 border-b border-secondary/20 bg-background-light">
+          <div className="p-6 border-b border-secondary/20 dark:border-text-dark-secondary/20 bg-background-light dark:bg-background-dark-lighter">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
                 <label className="flex items-center space-x-2 cursor-pointer">
@@ -242,10 +242,10 @@ const RecycleBinModal: React.FC<RecycleBinModalProps> = ({ isOpen, onClose, onRe
                     onChange={toggleSelectAll}
                     className="accent-primary w-4 h-4"
                   />
-                  <span className="text-text-secondary text-sm">Select All</span>
+                  <span className="text-text-secondary dark:text-text-dark-secondary text-sm">Select All</span>
                 </label>
                 {selectedNotes.length > 0 && (
-                  <span className="text-text-secondary text-sm">
+                  <span className="text-text-secondary dark:text-text-dark-secondary text-sm">
                     {selectedNotes.length} selected
                   </span>
                 )}
@@ -280,15 +280,15 @@ const RecycleBinModal: React.FC<RecycleBinModalProps> = ({ isOpen, onClose, onRe
           {loading ? (
             <div className="flex items-center justify-center py-12">
               <div className="flex items-center space-x-3">
-                <div className="w-6 h-6 border-4 border-secondary/30 border-t-primary rounded-full animate-spin"></div>
-                <span className="text-text-secondary">Loading deleted notes...</span>
+                <div className="w-6 h-6 border-4 border-secondary/30 dark:border-text-dark-secondary/30 border-t-primary dark:border-t-blue-400 rounded-full animate-spin"></div>
+                <span className="text-text-secondary dark:text-text-dark-secondary">Loading deleted notes...</span>
               </div>
             </div>
           ) : deletedNotes.length === 0 ? (
             <div className="text-center py-12">
-              <Trash2 className="w-16 h-16 text-text-secondary mx-auto mb-4 opacity-50" />
-              <h3 className="text-xl font-semibold text-text-primary mb-2">Recycle bin is empty</h3>
-              <p className="text-text-secondary">Deleted notes will appear here for 30 days before being permanently removed.</p>
+              <Trash2 className="w-16 h-16 text-text-secondary dark:text-text-dark-secondary mx-auto mb-4 opacity-50" />
+              <h3 className="text-xl font-semibold text-text-primary dark:text-text-dark-primary mb-2">Recycle bin is empty</h3>
+              <p className="text-text-secondary dark:text-text-dark-secondary">Deleted notes will appear here for 30 days before being permanently removed.</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -299,12 +299,12 @@ const RecycleBinModal: React.FC<RecycleBinModalProps> = ({ isOpen, onClose, onRe
                 return (
                   <div
                     key={note.id}
-                    className={`bg-background-light rounded-2xl p-4 border transition-all duration-200 ${
+                    className={`bg-background-light dark:bg-background-dark-lighter rounded-2xl p-4 border transition-all duration-200 theme-transition ${
                       selectedNotes.includes(note.id)
-                        ? 'border-primary bg-primary/5'
+                        ? 'border-primary dark:border-blue-400 bg-primary/5 dark:bg-blue-400/5'
                         : isExpiringSoon
-                        ? 'border-red-200 bg-red-50/50'
-                        : 'border-secondary/20'
+                        ? 'border-red-200 dark:border-red-500/30 bg-red-50/50 dark:bg-red-900/10'
+                        : 'border-secondary/20 dark:border-text-dark-secondary/20'
                     }`}
                   >
                     <div className="flex items-start space-x-3">
@@ -318,16 +318,16 @@ const RecycleBinModal: React.FC<RecycleBinModalProps> = ({ isOpen, onClose, onRe
                       </label>
                       
                       <div className="flex-1 min-w-0">
-                        <h4 className="font-semibold text-text-primary truncate mb-2">
+                        <h4 className="font-semibold text-text-primary dark:text-text-dark-primary truncate mb-2">
                           {note.title}
                         </h4>
                         
-                        <p className="text-text-secondary text-sm line-clamp-2 mb-3">
+                        <p className="text-text-secondary dark:text-text-dark-secondary text-sm line-clamp-2 mb-3">
                           {note.content.replace(/<[^>]*>/g, '')}
                         </p>
                         
                         <div className="flex items-center justify-between mb-3">
-                          <div className="flex items-center space-x-4 text-xs text-text-light">
+                          <div className="flex items-center space-x-4 text-xs text-text-light dark:text-text-dark-light">
                             <div className="flex items-center space-x-1">
                               <Calendar className="w-3 h-3" />
                               <span>Deleted {new Date(note.deleted_at!).toLocaleDateString()}</span>
@@ -336,12 +336,12 @@ const RecycleBinModal: React.FC<RecycleBinModalProps> = ({ isOpen, onClose, onRe
                         </div>
                         
                         <div className={`flex items-center justify-between p-2 rounded-lg ${
-                          isExpiringSoon ? 'bg-red-100' : 'bg-yellow-100'
+                          isExpiringSoon ? 'bg-red-100 dark:bg-red-900/20' : 'bg-yellow-100 dark:bg-yellow-900/20'
                         }`}>
                           <div className="flex items-center space-x-2">
-                            <Clock className={`w-4 h-4 ${isExpiringSoon ? 'text-red-600' : 'text-yellow-600'}`} />
+                            <Clock className={`w-4 h-4 ${isExpiringSoon ? 'text-red-600 dark:text-red-400' : 'text-yellow-600 dark:text-yellow-400'}`} />
                             <span className={`text-sm font-medium ${
-                              isExpiringSoon ? 'text-red-800' : 'text-yellow-800'
+                              isExpiringSoon ? 'text-red-800 dark:text-red-300' : 'text-yellow-800 dark:text-yellow-300'
                             }`}>
                               {daysRemaining === 0 
                                 ? 'Expires today'
@@ -351,7 +351,7 @@ const RecycleBinModal: React.FC<RecycleBinModalProps> = ({ isOpen, onClose, onRe
                           </div>
                           
                           {isExpiringSoon && (
-                            <AlertTriangle className="w-4 h-4 text-red-600" />
+                            <AlertTriangle className="w-4 h-4 text-red-600 dark:text-red-400" />
                           )}
                         </div>
                         

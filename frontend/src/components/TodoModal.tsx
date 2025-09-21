@@ -58,43 +58,43 @@ const TodoModal: React.FC<TodoModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-background-card rounded-3xl p-6 w-full max-w-md shadow-2xl border border-secondary/20 transform transition-all duration-300 scale-100">
+    <div className="fixed inset-0 bg-black/50 dark:bg-black/70 flex items-center justify-center z-50 p-4">
+      <div className="bg-background-card dark:bg-background-dark-card rounded-3xl p-6 w-full max-w-md shadow-2xl border border-secondary/20 dark:border-text-dark-secondary/20 transform transition-all duration-300 scale-100 theme-transition">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-text-primary">
+          <h2 className="text-2xl font-bold text-text-primary dark:text-text-dark-primary">
             {todo ? 'Edit Todo' : 'New Todo'}
           </h2>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-secondary/10 rounded-xl transition-colors duration-200"
+            className="p-2 hover:bg-secondary/10 dark:hover:bg-text-dark-secondary/10 rounded-xl transition-colors duration-200"
           >
-            <X className="w-5 h-5 text-text-secondary" />
+            <X className="w-5 h-5 text-text-secondary dark:text-text-dark-secondary" />
           </button>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-text-primary font-semibold mb-2">
+            <label className="block text-text-primary dark:text-text-dark-primary font-semibold mb-2">
               Title *
             </label>
             <input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full bg-background-light border border-secondary/20 rounded-xl px-4 py-3 text-text-primary placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300"
+              className="w-full bg-background-light dark:bg-background-dark-lighter border border-secondary/20 dark:border-text-dark-secondary/20 rounded-xl px-4 py-3 text-text-primary dark:text-text-dark-primary placeholder-text-secondary dark:placeholder-text-dark-secondary focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-blue-400 focus:border-transparent transition-all duration-300"
               placeholder="What needs to be done?"
               required
             />
           </div>
 
           <div>
-            <label className="block text-text-primary font-semibold mb-2">
+            <label className="block text-text-primary dark:text-text-dark-primary font-semibold mb-2">
               Description
             </label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="w-full bg-background-light border border-secondary/20 rounded-xl px-4 py-3 text-text-primary placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300 min-h-[80px]"
+              className="w-full bg-background-light dark:bg-background-dark-lighter border border-secondary/20 dark:border-text-dark-secondary/20 rounded-xl px-4 py-3 text-text-primary dark:text-text-dark-primary placeholder-text-secondary dark:placeholder-text-dark-secondary focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-blue-400 focus:border-transparent transition-all duration-300 min-h-[80px]"
               placeholder="Add more details..."
             />
           </div>

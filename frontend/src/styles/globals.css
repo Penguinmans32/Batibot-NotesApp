@@ -12,6 +12,7 @@
 
 body {
   font-family: 'Inter', sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* Custom scrollbar */
@@ -23,6 +24,10 @@ body {
   background: #f1f1f1;
 }
 
+.dark ::-webkit-scrollbar-track {
+  background: #334155;
+}
+
 ::-webkit-scrollbar-thumb {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   border-radius: 10px;
@@ -30,6 +35,14 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #4338ca 0%, #6d28d9 100%);
 }
 
 /* Writing Animation Keyframes */
@@ -70,4 +83,30 @@ body {
   100% {
     transform: translateX(200%) skewX(-12deg);
   }
+}
+
+/* Dark mode transitions */
+.theme-transition {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+/* Dark mode utilities */
+.dark-bg-primary {
+  @apply bg-background-light dark:bg-background-dark-light;
+}
+
+.dark-bg-card {
+  @apply bg-background-card dark:bg-background-dark-card;
+}
+
+.dark-text-primary {
+  @apply text-text-primary dark:text-text-dark-primary;
+}
+
+.dark-text-secondary {
+  @apply text-text-secondary dark:text-text-dark-secondary;
+}
+
+.dark-border {
+  @apply border-secondary/20 dark:border-text-dark-secondary/20;
 }

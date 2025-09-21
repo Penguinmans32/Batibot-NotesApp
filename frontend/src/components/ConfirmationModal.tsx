@@ -27,8 +27,8 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[60] p-4">
-      <div className="bg-background-card rounded-3xl w-full max-w-md shadow-2xl border border-secondary/20">
+    <div className="fixed inset-0 bg-black bg-opacity-50 dark:bg-black dark:bg-opacity-70 flex items-center justify-center z-[60] p-4">
+      <div className="bg-background-card dark:bg-background-dark-card rounded-3xl w-full max-w-md shadow-2xl border border-secondary/20 dark:border-text-dark-secondary/20 theme-transition">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-secondary/20">
           <div className="flex items-center space-x-3">

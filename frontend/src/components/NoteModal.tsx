@@ -187,37 +187,37 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
 
   return (
     <>
-      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-        <div className="bg-background-card rounded-3xl w-full max-w-5xl max-h-[95vh] shadow-2xl border border-secondary/20 flex flex-col">
+      <div className="fixed inset-0 bg-black/50 dark:bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+        <div className="bg-background-card dark:bg-background-dark-card rounded-3xl w-full max-w-5xl max-h-[95vh] shadow-2xl border border-secondary/20 dark:border-text-dark-secondary/20 flex flex-col theme-transition">
           {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b border-secondary/20 flex-shrink-0">
+          <div className="flex items-center justify-between p-6 border-b border-secondary/20 dark:border-text-dark-secondary/20 flex-shrink-0">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
+              <div className="w-10 h-10 bg-primary dark:bg-blue-600 rounded-xl flex items-center justify-center">
                 <FileText className="w-5 h-5 text-white" />
               </div>
-              <h2 className="text-xl font-bold text-text-primary">
+              <h2 className="text-xl font-bold text-text-primary dark:text-text-dark-primary">
                 {note ? 'Edit Note' : 'Create New Note'}
               </h2>
             </div>
             <button
               onClick={onClose}
-              className="p-2 hover:bg-secondary/10 rounded-xl transition-colors duration-200"
+              className="p-2 hover:bg-secondary/10 dark:hover:bg-text-dark-secondary/10 rounded-xl transition-colors duration-200"
             >
-              <X className="w-5 h-5 text-text-secondary" />
+              <X className="w-5 h-5 text-text-secondary dark:text-text-dark-secondary" />
             </button>
           </div>
 
           <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-hidden">
             {/* Title Input */}
             <div className="p-6 pb-4 flex-shrink-0">
-              <label className="text-text-secondary font-medium text-sm block mb-2">
+              <label className="text-text-secondary dark:text-text-dark-secondary font-medium text-sm block mb-2">
                 Title
               </label>
               <input
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="w-full bg-background-light border border-secondary/20 rounded-xl px-4 py-3 text-text-primary placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300"
+                className="w-full bg-background-light dark:bg-background-dark-card border border-secondary/20 dark:border-border-dark-primary rounded-xl px-4 py-3 text-text-primary dark:text-text-dark-primary placeholder-text-secondary dark:placeholder-text-dark-tertiary focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-light focus:border-transparent transition-all duration-300"
                 placeholder="Enter note title..."
                 required
               />
@@ -225,10 +225,10 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
 
             {/* Tags Section */}
             <div className="px-6 pb-4 flex-shrink-0">
-              <label className="text-text-secondary font-medium text-sm block mb-2">
+              <label className="text-text-secondary dark:text-text-dark-secondary font-medium text-sm block mb-2">
                 Tags & Categories
               </label>
-              <div className="bg-background-light border border-secondary/20 rounded-xl p-4">
+              <div className="bg-background-light dark:bg-background-dark-card border border-secondary/20 dark:border-border-dark-primary rounded-xl p-4">
                 {/* Existing Tags */}
                 <div className="flex flex-wrap gap-2 mb-3">
                   {allTags.map(tag => (
@@ -249,26 +249,26 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
                 </div>
 
                 {/* Create New Tag */}
-                <div className="flex items-center gap-2 pt-2 border-t border-secondary/20">
+                <div className="flex items-center gap-2 pt-2 border-t border-secondary/20 dark:border-border-dark-primary">
                   <input
                     type="text"
                     value={newTagName}
                     onChange={(e) => setNewTagName(e.target.value)}
                     placeholder="Create new tag..."
-                    className="flex-1 bg-background-card border border-secondary/20 rounded-lg px-3 py-2 text-text-primary text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="flex-1 bg-background-card dark:bg-background-dark-card border border-secondary/20 dark:border-border-dark-primary rounded-lg px-3 py-2 text-text-primary dark:text-text-dark-primary text-sm focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-light"
                     onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddTag())}
                   />
                   <input
                     type="color"
                     value={newTagColor}
                     onChange={(e) => setNewTagColor(e.target.value)}
-                    className="w-10 h-10 p-1 border border-secondary/20 rounded-lg cursor-pointer"
+                    className="w-10 h-10 p-1 border border-secondary/20 dark:border-border-dark-primary rounded-lg cursor-pointer"
                     title="Choose tag color"
                   />
                   <button
                     type="button"
                     onClick={handleAddTag}
-                    className="px-4 py-2 bg-primary text-white rounded-lg text-sm font-semibold hover:bg-primary-light transition-all duration-200"
+                    className="px-4 py-2 bg-primary dark:bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-primary-light dark:hover:bg-blue-500 transition-all duration-200"
                   >
                     Add
                   </button>
@@ -276,8 +276,8 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
 
                 {/* Selected Tags Preview */}
                 {selectedTags.length > 0 && (
-                  <div className="mt-3 pt-3 border-t border-secondary/20">
-                    <span className="text-text-secondary text-xs font-medium mb-2 block">Selected tags:</span>
+                  <div className="mt-3 pt-3 border-t border-secondary/20 dark:border-border-dark-primary">
+                    <span className="text-text-secondary dark:text-text-dark-secondary text-xs font-medium mb-2 block">Selected tags:</span>
                     <div className="flex flex-wrap gap-2">
                       {selectedTags.map(tag => (
                         <span
@@ -296,14 +296,14 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
 
             {/* Enhanced Rich Text Toolbar */}
             <div className="px-6 pb-4 flex-shrink-0">
-              <div className="bg-background-light border border-secondary/20 rounded-xl p-4 space-y-3">
+              <div className="bg-background-light dark:bg-background-dark-card border border-secondary/20 dark:border-border-dark-primary rounded-xl p-4 space-y-3">
                 {/* First Row - Font and Text Style */}
                 <div className="flex items-center space-x-3 flex-wrap gap-2">
                   {/* Font Family */}
                   <select
                     value={fontFamily}
                     onChange={(e) => changeFontFamily(e.target.value)}
-                    className="bg-background-card border border-secondary/20 rounded-lg px-3 py-2 text-text-primary text-sm focus:outline-none focus:ring-2 focus:ring-primary min-w-[120px]"
+                    className="bg-background-card dark:bg-background-dark-card border border-secondary/20 dark:border-border-dark-primary rounded-lg px-3 py-2 text-text-primary dark:text-text-dark-primary text-sm focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-light min-w-[120px]"
                   >
                     <option value="Inter">Inter</option>
                     <option value="Arial">Arial</option>
@@ -319,7 +319,7 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
                   <select
                     value={fontSize}
                     onChange={(e) => changeFontSize(e.target.value)}
-                    className="bg-background-card border border-secondary/20 rounded-lg px-3 py-2 text-text-primary text-sm focus:outline-none focus:ring-2 focus:ring-primary min-w-[80px]"
+                    className="bg-background-card dark:bg-background-dark-card border border-secondary/20 dark:border-border-dark-primary rounded-lg px-3 py-2 text-text-primary dark:text-text-dark-primary text-sm focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-light min-w-[80px]"
                   >
                     <option value="8">8px</option>
                     <option value="10">10px</option>
@@ -340,39 +340,39 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
                     <button
                       type="button"
                       onClick={() => setShowHeadingDropdown(!showHeadingDropdown)}
-                      className="bg-background-card border border-secondary/20 rounded-lg px-3 py-2 text-text-primary text-sm focus:outline-none focus:ring-2 focus:ring-primary flex items-center space-x-2 min-w-[100px]"
+                      className="bg-background-card dark:bg-background-dark-card border border-secondary/20 dark:border-border-dark-primary rounded-lg px-3 py-2 text-text-primary dark:text-text-dark-primary text-sm focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-light flex items-center space-x-2 min-w-[100px]"
                     >
                       <Type className="w-4 h-4" />
                       <span>Heading</span>
                       <ChevronDown className="w-3 h-3" />
                     </button>
                     {showHeadingDropdown && (
-                      <div className="absolute top-full left-0 mt-1 bg-background-card border border-secondary/20 rounded-lg shadow-lg z-10 min-w-[140px]">
+                      <div className="absolute top-full left-0 mt-1 bg-background-card dark:bg-background-dark-card border border-secondary/20 dark:border-border-dark-primary rounded-lg shadow-lg z-10 min-w-[140px]">
                         <button
                           type="button"
                           onClick={() => executeCommand('formatBlock', 'p')}
-                          className="w-full text-left px-3 py-2 hover:bg-secondary/10 text-text-primary text-sm"
+                          className="w-full text-left px-3 py-2 hover:bg-secondary/10 dark:hover:bg-text-dark-secondary/10 text-text-primary dark:text-text-dark-primary text-sm"
                         >
                           Normal
                         </button>
                         <button
                           type="button"
                           onClick={() => insertHeading('1')}
-                          className="w-full text-left px-3 py-2 hover:bg-secondary/10 text-text-primary text-lg font-bold"
+                          className="w-full text-left px-3 py-2 hover:bg-secondary/10 dark:hover:bg-text-dark-secondary/10 text-text-primary dark:text-text-dark-primary text-lg font-bold"
                         >
                           Heading 1
                         </button>
                         <button
                           type="button"
                           onClick={() => insertHeading('2')}
-                          className="w-full text-left px-3 py-2 hover:bg-secondary/10 text-text-primary text-base font-bold"
+                          className="w-full text-left px-3 py-2 hover:bg-secondary/10 dark:hover:bg-text-dark-secondary/10 text-text-primary dark:text-text-dark-primary text-base font-bold"
                         >
                           Heading 2
                         </button>
                         <button
                           type="button"
                           onClick={() => insertHeading('3')}
-                          className="w-full text-left px-3 py-2 hover:bg-secondary/10 text-text-primary text-sm font-bold"
+                          className="w-full text-left px-3 py-2 hover:bg-secondary/10 dark:hover:bg-text-dark-secondary/10 text-text-primary dark:text-text-dark-primary text-sm font-bold"
                         >
                           Heading 3
                         </button>
@@ -385,21 +385,21 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
                     <button
                       type="button"
                       onClick={() => setShowColorPicker(!showColorPicker)}
-                      className="p-2 hover:bg-secondary/10 rounded-lg border border-secondary/20 transition-all duration-200 flex items-center space-x-1"
+                      className="p-2 hover:bg-secondary/10 dark:hover:bg-text-dark-secondary/10 rounded-lg border border-secondary/20 dark:border-border-dark-primary transition-all duration-200 flex items-center space-x-1"
                       title="Text Color"
                     >
-                      <Palette className="w-4 h-4 text-text-secondary" />
-                      <ChevronDown className="w-3 h-3 text-text-secondary" />
+                      <Palette className="w-4 h-4 text-text-secondary dark:text-text-dark-secondary" />
+                      <ChevronDown className="w-3 h-3 text-text-secondary dark:text-text-dark-secondary" />
                     </button>
                     {showColorPicker && (
-                      <div className="absolute top-full left-0 mt-1 bg-background-card border border-secondary/20 rounded-lg shadow-lg z-10 p-3">
+                      <div className="absolute top-full left-0 mt-1 bg-background-card dark:bg-background-dark-card border border-secondary/20 dark:border-border-dark-primary rounded-lg shadow-lg z-10 p-3">
                         <div className="grid grid-cols-4 gap-1 w-32">
                           {colors.map((color) => (
                             <button
                               key={color}
                               type="button"
                               onClick={() => changeTextColor(color)}
-                              className="w-6 h-6 rounded border border-secondary/20 hover:scale-110 transition-transform"
+                              className="w-6 h-6 rounded border border-secondary/20 dark:border-border-dark-primary hover:scale-110 transition-transform"
                               style={{ backgroundColor: color }}
                               title={color}
                             />
@@ -415,7 +415,7 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
                   <button
                     type="button"
                     onClick={() => executeCommand('undo')}
-                    className="p-2 hover:bg-secondary/10 rounded-lg text-text-secondary hover:text-text-primary transition-all duration-200"
+                    className="p-2 hover:bg-secondary/10 dark:hover:bg-text-dark-secondary/10 rounded-lg text-text-secondary dark:text-text-dark-secondary hover:text-text-primary dark:hover:text-text-dark-primary transition-all duration-200"
                     title="Undo"
                   >
                     <RotateCcw className="w-4 h-4" />
@@ -423,18 +423,18 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
                   <button
                     type="button"
                     onClick={() => executeCommand('redo')}
-                    className="p-2 hover:bg-secondary/10 rounded-lg text-text-secondary hover:text-text-primary transition-all duration-200"
+                    className="p-2 hover:bg-secondary/10 dark:hover:bg-text-dark-secondary/10 rounded-lg text-text-secondary dark:text-text-dark-secondary hover:text-text-primary dark:hover:text-text-dark-primary transition-all duration-200"
                     title="Redo"
                   >
                     <RotateCw className="w-4 h-4" />
                   </button>
 
-                  <div className="w-px h-6 bg-secondary/20 mx-2"></div>
+                  <div className="w-px h-6 bg-secondary/20 dark:bg-border-dark-primary mx-2"></div>
 
                   <button
                     type="button"
                     onClick={() => executeCommand('bold')}
-                    className="p-2 hover:bg-secondary/10 rounded-lg text-text-secondary hover:text-text-primary transition-all duration-200"
+                    className="p-2 hover:bg-secondary/10 dark:hover:bg-text-dark-secondary/10 rounded-lg text-text-secondary dark:text-text-dark-secondary hover:text-text-primary dark:hover:text-text-dark-primary transition-all duration-200"
                     title="Bold"
                   >
                     <Bold className="w-4 h-4" />
@@ -442,7 +442,7 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
                   <button
                     type="button"
                     onClick={() => executeCommand('italic')}
-                    className="p-2 hover:bg-secondary/10 rounded-lg text-text-secondary hover:text-text-primary transition-all duration-200"
+                    className="p-2 hover:bg-secondary/10 dark:hover:bg-text-dark-secondary/10 rounded-lg text-text-secondary dark:text-text-dark-secondary hover:text-text-primary dark:hover:text-text-dark-primary transition-all duration-200"
                     title="Italic"
                   >
                     <Italic className="w-4 h-4" />
@@ -450,7 +450,7 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
                   <button
                     type="button"
                     onClick={() => executeCommand('underline')}
-                    className="p-2 hover:bg-secondary/10 rounded-lg text-text-secondary hover:text-text-primary transition-all duration-200"
+                    className="p-2 hover:bg-secondary/10 dark:hover:bg-text-dark-secondary/10 rounded-lg text-text-secondary dark:text-text-dark-secondary hover:text-text-primary dark:hover:text-text-dark-primary transition-all duration-200"
                     title="Underline"
                   >
                     <Underline className="w-4 h-4" />
@@ -458,7 +458,7 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
                   <button
                     type="button"
                     onClick={() => executeCommand('strikethrough')}
-                    className="p-2 hover:bg-secondary/10 rounded-lg text-text-secondary hover:text-text-primary transition-all duration-200"
+                    className="p-2 hover:bg-secondary/10 dark:hover:bg-text-dark-secondary/10 rounded-lg text-text-secondary dark:text-text-dark-secondary hover:text-text-primary dark:hover:text-text-dark-primary transition-all duration-200"
                     title="Strikethrough"
                   >
                     <Strikethrough className="w-4 h-4" />
@@ -466,7 +466,7 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
                   <button
                     type="button"
                     onClick={() => executeCommand('subscript')}
-                    className="p-2 hover:bg-secondary/10 rounded-lg text-text-secondary hover:text-text-primary transition-all duration-200"
+                    className="p-2 hover:bg-secondary/10 dark:hover:bg-text-dark-secondary/10 rounded-lg text-text-secondary dark:text-text-dark-secondary hover:text-text-primary dark:hover:text-text-dark-primary transition-all duration-200"
                     title="Subscript"
                   >
                     <Subscript className="w-4 h-4" />
@@ -474,18 +474,18 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
                   <button
                     type="button"
                     onClick={() => executeCommand('superscript')}
-                    className="p-2 hover:bg-secondary/10 rounded-lg text-text-secondary hover:text-text-primary transition-all duration-200"
+                    className="p-2 hover:bg-secondary/10 dark:hover:bg-text-dark-secondary/10 rounded-lg text-text-secondary dark:text-text-dark-secondary hover:text-text-primary dark:hover:text-text-dark-primary transition-all duration-200"
                     title="Superscript"
                   >
                     <Superscript className="w-4 h-4" />
                   </button>
 
-                  <div className="w-px h-6 bg-secondary/20 mx-2"></div>
+                  <div className="w-px h-6 bg-secondary/20 dark:bg-border-dark-primary mx-2"></div>
 
                   <button
                     type="button"
                     onClick={() => executeCommand('justifyLeft')}
-                    className="p-2 hover:bg-secondary/10 rounded-lg text-text-secondary hover:text-text-primary transition-all duration-200"
+                    className="p-2 hover:bg-secondary/10 dark:hover:bg-text-dark-secondary/10 rounded-lg text-text-secondary dark:text-text-dark-secondary hover:text-text-primary dark:hover:text-text-dark-primary transition-all duration-200"
                     title="Align Left"
                   >
                     <AlignLeft className="w-4 h-4" />
@@ -493,7 +493,7 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
                   <button
                     type="button"
                     onClick={() => executeCommand('justifyCenter')}
-                    className="p-2 hover:bg-secondary/10 rounded-lg text-text-secondary hover:text-text-primary transition-all duration-200"
+                    className="p-2 hover:bg-secondary/10 dark:hover:bg-text-dark-secondary/10 rounded-lg text-text-secondary dark:text-text-dark-secondary hover:text-text-primary dark:hover:text-text-dark-primary transition-all duration-200"
                     title="Align Center"
                   >
                     <AlignCenter className="w-4 h-4" />
@@ -501,7 +501,7 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
                   <button
                     type="button"
                     onClick={() => executeCommand('justifyRight')}
-                    className="p-2 hover:bg-secondary/10 rounded-lg text-text-secondary hover:text-text-primary transition-all duration-200"
+                    className="p-2 hover:bg-secondary/10 dark:hover:bg-text-dark-secondary/10 rounded-lg text-text-secondary dark:text-text-dark-secondary hover:text-text-primary dark:hover:text-text-dark-primary transition-all duration-200"
                     title="Align Right"
                   >
                     <AlignRight className="w-4 h-4" />
@@ -509,18 +509,18 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
                   <button
                     type="button"
                     onClick={() => executeCommand('justifyFull')}
-                    className="p-2 hover:bg-secondary/10 rounded-lg text-text-secondary hover:text-text-primary transition-all duration-200"
+                    className="p-2 hover:bg-secondary/10 dark:hover:bg-text-dark-secondary/10 rounded-lg text-text-secondary dark:text-text-dark-secondary hover:text-text-primary dark:hover:text-text-dark-primary transition-all duration-200"
                     title="Justify"
                   >
                     <AlignJustify className="w-4 h-4" />
                   </button>
 
-                  <div className="w-px h-6 bg-secondary/20 mx-2"></div>
+                  <div className="w-px h-6 bg-secondary/20 dark:bg-border-dark-primary mx-2"></div>
 
                   <button
                     type="button"
                     onClick={() => insertList(false)}
-                    className="p-2 hover:bg-secondary/10 rounded-lg text-text-secondary hover:text-text-primary transition-all duration-200"
+                    className="p-2 hover:bg-secondary/10 dark:hover:bg-text-dark-secondary/10 rounded-lg text-text-secondary dark:text-text-dark-secondary hover:text-text-primary dark:hover:text-text-dark-primary transition-all duration-200"
                     title="Bullet List"
                   >
                     <List className="w-4 h-4" />
@@ -528,18 +528,18 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
                   <button
                     type="button"
                     onClick={() => insertList(true)}
-                    className="p-2 hover:bg-secondary/10 rounded-lg text-text-secondary hover:text-text-primary transition-all duration-200"
+                    className="p-2 hover:bg-secondary/10 dark:hover:bg-text-dark-secondary/10 rounded-lg text-text-secondary dark:text-text-dark-secondary hover:text-text-primary dark:hover:text-text-dark-primary transition-all duration-200"
                     title="Numbered List"
                   >
                     <ListOrdered className="w-4 h-4" />
                   </button>
 
-                  <div className="w-px h-6 bg-secondary/20 mx-2"></div>
+                  <div className="w-px h-6 bg-secondary/20 dark:bg-border-dark-primary mx-2"></div>
 
                   <button
                     type="button"
                     onClick={() => executeCommand('formatBlock', 'blockquote')}
-                    className="p-2 hover:bg-secondary/10 rounded-lg text-text-secondary hover:text-text-primary transition-all duration-200"
+                    className="p-2 hover:bg-secondary/10 dark:hover:bg-text-dark-secondary/10 rounded-lg text-text-secondary dark:text-text-dark-secondary hover:text-text-primary dark:hover:text-text-dark-primary transition-all duration-200"
                     title="Quote"
                   >
                     <Quote className="w-4 h-4" />
@@ -547,7 +547,7 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
                   <button
                     type="button"
                     onClick={() => executeCommand('insertHTML', '<code style="background-color: #f3f4f6; padding: 2px 4px; border-radius: 4px; font-family: monospace;"></code>')}
-                    className="p-2 hover:bg-secondary/10 rounded-lg text-text-secondary hover:text-text-primary transition-all duration-200"
+                    className="p-2 hover:bg-secondary/10 dark:hover:bg-text-dark-secondary/10 rounded-lg text-text-secondary dark:text-text-dark-secondary hover:text-text-primary dark:hover:text-text-dark-primary transition-all duration-200"
                     title="Inline Code"
                   >
                     <Code className="w-4 h-4" />
@@ -555,7 +555,7 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
                   <button
                     type="button"
                     onClick={createLink}
-                    className="p-2 hover:bg-secondary/10 rounded-lg text-text-secondary hover:text-text-primary transition-all duration-200"
+                    className="p-2 hover:bg-secondary/10 dark:hover:bg-text-dark-secondary/10 rounded-lg text-text-secondary dark:text-text-dark-secondary hover:text-text-primary dark:hover:text-text-dark-primary transition-all duration-200"
                     title="Insert Link"
                   >
                     <Link className="w-4 h-4" />
@@ -563,7 +563,7 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
                   <button
                     type="button"
                     onClick={insertTable}
-                    className="p-2 hover:bg-secondary/10 rounded-lg text-text-secondary hover:text-text-primary transition-all duration-200"
+                    className="p-2 hover:bg-secondary/10 dark:hover:bg-text-dark-secondary/10 rounded-lg text-text-secondary dark:text-text-dark-secondary hover:text-text-primary dark:hover:text-text-dark-primary transition-all duration-200"
                     title="Insert Table"
                   >
                     <Table className="w-4 h-4" />
@@ -571,7 +571,7 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
                   <button
                     type="button"
                     onClick={insertHorizontalRule}
-                    className="p-2 hover:bg-secondary/10 rounded-lg text-text-secondary hover:text-text-primary transition-all duration-200"
+                    className="p-2 hover:bg-secondary/10 dark:hover:bg-text-dark-secondary/10 rounded-lg text-text-secondary dark:text-text-dark-secondary hover:text-text-primary dark:hover:text-text-dark-primary transition-all duration-200"
                     title="Horizontal Line"
                   >
                     <Minus className="w-4 h-4" />
@@ -582,13 +582,13 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
 
             {/* Rich Text Editor */}
             <div className="px-6 flex-1 flex flex-col overflow-hidden">
-              <label className="text-text-secondary font-medium text-sm block mb-2">
+              <label className="text-text-secondary dark:text-text-dark-secondary font-medium text-sm block mb-2">
                 Content
               </label>
               <div
                 ref={contentRef}
                 contentEditable
-                className="rich-editor flex-1 bg-background-light border border-secondary/20 rounded-xl px-4 py-3 text-text-primary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300 overflow-y-auto"
+                className="rich-editor flex-1 bg-background-light dark:bg-background-dark-card border border-secondary/20 dark:border-border-dark-primary rounded-xl px-4 py-3 text-text-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-light focus:border-transparent transition-all duration-300 overflow-y-auto theme-transition"
                 style={{
                   minHeight: '400px',
                   fontFamily: fontFamily,
@@ -611,14 +611,14 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
               <button
                 type="button"
                 onClick={onClose}
-                className="flex-1 bg-background-light hover:bg-secondary/10 border border-secondary/20 rounded-xl py-3 text-text-secondary font-medium transition-all duration-300"
+                className="flex-1 bg-background-light dark:bg-background-dark-card hover:bg-secondary/10 dark:hover:bg-text-dark-secondary/10 border border-secondary/20 dark:border-border-dark-primary rounded-xl py-3 text-text-secondary dark:text-text-dark-secondary font-medium transition-all duration-300"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={loading || !title.trim()}
-                className="flex-1 bg-primary hover:bg-primary-light disabled:bg-secondary disabled:opacity-50 rounded-xl py-3 text-white font-semibold transition-all duration-300 transform hover:scale-[1.02] disabled:cursor-not-allowed disabled:scale-100 flex items-center justify-center space-x-2"
+                className="flex-1 bg-primary dark:bg-blue-600 hover:bg-primary-light dark:hover:bg-blue-500 disabled:bg-secondary dark:disabled:bg-gray-600 disabled:opacity-50 rounded-xl py-3 text-white font-semibold transition-all duration-300 transform hover:scale-[1.02] disabled:cursor-not-allowed disabled:scale-100 flex items-center justify-center space-x-2"
               >
                 {loading ? (
                   <>
@@ -645,6 +645,10 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
           pointer-events: none;
         }
 
+        .dark .rich-editor[contenteditable="true"]:empty:before {
+          color: #9CA3AF;
+        }
+
         .rich-editor[contenteditable="true"]:focus:before {
           content: "";
         }
@@ -658,6 +662,12 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
           background-color: #F3F4F6;
           border-radius: 4px;
           padding: 10px 15px;
+        }
+
+        .dark .rich-editor blockquote {
+          color: #D1D5DB;
+          background-color: #374151;
+          border-left-color: #60A5FA;
         }
 
         .rich-editor ul, .rich-editor ol {
@@ -674,10 +684,18 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
           text-decoration: underline;
         }
 
+        .dark .rich-editor a {
+          color: #60A5FA;
+        }
+
         .rich-editor hr {
           border: none;
           border-top: 2px solid #E5E7EB;
           margin: 20px 0;
+        }
+
+        .dark .rich-editor hr {
+          border-top-color: #4B5563;
         }
 
         .rich-editor h1 {
@@ -687,6 +705,10 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
           color: #111827;
         }
 
+        .dark .rich-editor h1 {
+          color: #F9FAFB;
+        }
+
         .rich-editor h2 {
           font-size: 1.5rem;
           font-weight: bold;
@@ -694,11 +716,19 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
           color: #111827;
         }
 
+        .dark .rich-editor h2 {
+          color: #F9FAFB;
+        }
+
         .rich-editor h3 {
           font-size: 1.25rem;
           font-weight: bold;
           margin: 10px 0 6px 0;
           color: #111827;
+        }
+
+        .dark .rich-editor h3 {
+          color: #F9FAFB;
         }
 
         .rich-editor p {
@@ -713,15 +743,27 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
           border: 1px solid #E5E7EB;
         }
 
+        .dark .rich-editor table {
+          border-color: #4B5563;
+        }
+
         .rich-editor td, .rich-editor th {
           border: 1px solid #E5E7EB;
           padding: 8px 12px;
           text-align: left;
         }
 
+        .dark .rich-editor td, .dark .rich-editor th {
+          border-color: #4B5563;
+        }
+
         .rich-editor th {
           background-color: #F9FAFB;
           font-weight: 600;
+        }
+
+        .dark .rich-editor th {
+          background-color: #374151;
         }
 
         .rich-editor code {
@@ -730,6 +772,11 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
           border-radius: 4px;
           font-family: 'Courier New', monospace;
           font-size: 0.9em;
+        }
+
+        .dark .rich-editor code {
+          background-color: #374151;
+          color: #E5E7EB;
         }
       `}</style>
     </>

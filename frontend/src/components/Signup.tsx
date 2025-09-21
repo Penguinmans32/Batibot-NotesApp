@@ -59,11 +59,11 @@ const Signup: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-2 relative overflow-hidden">
+    <div className="min-h-screen bg-background dark:bg-background-dark flex items-center justify-center p-2 relative overflow-hidden theme-transition">
       {/* Animated Background */}
       <div className="absolute inset-0">
         {/* Base gradient */}
-        <div className="absolute inset-0 bg-gradient-to-br from-background via-background-light to-background opacity-50"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-background via-background-light to-background dark:from-background-dark dark:via-background-dark-light dark:to-background-dark opacity-50"></div>
         
         {/* Subtle grid pattern */}
         <div className="absolute inset-0 opacity-5" style={{
@@ -216,23 +216,23 @@ const Signup: React.FC = () => {
 
       {/* Signup Card */}
       <div className="relative z-10 w-full max-w-6xl">
-        <div className="bg-background-card backdrop-blur-xl rounded-3xl p-6 shadow-2xl border border-background-light">
+        <div className="bg-background-card dark:bg-background-dark-card backdrop-blur-xl rounded-3xl p-6 shadow-2xl border border-background-light dark:border-text-dark-secondary/20 theme-transition">
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
             {/* Left Column - App Features & Benefits */}
-            <div className="lg:col-span-3 flex flex-col justify-center p-4 lg:border-r border-background-lighter">
+            <div className="lg:col-span-3 flex flex-col justify-center p-4 lg:border-r border-background-lighter dark:border-text-dark-secondary/20">
               <div className="mb-6">
                 <div className="flex items-center gap-4 mb-6">
-                  <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-emerald-500 to-blue-600 rounded-3xl shadow-xl">
+                  <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-emerald-500 to-blue-600 dark:from-emerald-400 dark:to-blue-500 rounded-3xl shadow-xl">
                     <BookOpen className="w-8 h-8 text-white" />
                   </div>
                   <div>
-                    <h1 className="text-3xl sm:text-4xl font-bold text-text-primary bg-gradient-to-r from-emerald-400 to-blue-400 bg-clip-text text-transparent">
+                    <h1 className="text-3xl sm:text-4xl font-bold text-text-primary dark:text-text-dark-primary bg-gradient-to-r from-emerald-400 to-blue-400 dark:from-emerald-300 dark:to-blue-300 bg-clip-text text-transparent">
                       Note App
                     </h1>
-                    <p className="text-text-secondary">Start Your Journey</p>
+                    <p className="text-text-secondary dark:text-text-dark-secondary">Start Your Journey</p>
                   </div>
                 </div>
-                <p className="text-text-secondary mb-6 leading-relaxed">
+                <p className="text-text-secondary dark:text-text-dark-secondary mb-6 leading-relaxed">
                   Join thousands of users who trust our platform to organize their thoughts, capture ideas, and boost productivity. Experience the future of note-taking.
                 </p>
 
@@ -243,8 +243,8 @@ const Signup: React.FC = () => {
                       <Sparkles className="w-5 h-5 text-emerald-300" />
                     </div>
                     <div>
-                      <p className="text-text-primary font-semibold">Smart Organization</p>
-                      <p className="text-text-secondary text-sm">AI-powered categorization and intelligent search</p>
+                      <p className="text-text-primary dark:text-text-dark-primary font-semibold">Smart Organization</p>
+                      <p className="text-text-secondary dark:text-text-dark-secondary text-sm">AI-powered categorization and intelligent search</p>
                     </div>
                   </div>
 
@@ -254,8 +254,8 @@ const Signup: React.FC = () => {
                       <Users className="w-5 h-5 text-blue-300" />
                     </div>
                     <div>
-                      <p className="text-text-primary font-semibold">Real-time Collaboration</p>
-                      <p className="text-text-secondary text-sm">Share and work together with your team</p>
+                      <p className="text-text-primary dark:text-text-dark-primary font-semibold">Real-time Collaboration</p>
+                      <p className="text-text-secondary dark:text-text-dark-secondary text-sm">Share and work together with your team</p>
                     </div>
                   </div>
 
@@ -265,8 +265,8 @@ const Signup: React.FC = () => {
                       <Zap className="w-5 h-5 text-yellow-300" />
                     </div>
                     <div>
-                      <p className="text-text-primary font-semibold">Lightning Fast</p>
-                      <p className="text-text-secondary text-sm">Instant sync across all your devices</p>
+                      <p className="text-text-primary dark:text-text-dark-primary font-semibold">Lightning Fast</p>
+                      <p className="text-text-secondary dark:text-text-dark-secondary text-sm">Instant sync across all your devices</p>
                     </div>
                   </div>
 
@@ -276,8 +276,8 @@ const Signup: React.FC = () => {
                       <Shield className="w-5 h-5 text-green-300" />
                     </div>
                     <div>
-                      <p className="text-text-primary font-semibold">Enterprise Security</p>
-                      <p className="text-text-secondary text-sm">End-to-end encryption with military-grade security</p>
+                      <p className="text-text-primary dark:text-text-dark-primary font-semibold">Enterprise Security</p>
+                      <p className="text-text-secondary dark:text-text-dark-secondary text-sm">End-to-end encryption with military-grade security</p>
                     </div>
                   </div>
                 </div>
@@ -287,10 +287,10 @@ const Signup: React.FC = () => {
             {/* Right Column - Signup Form */}
             <div className="lg:col-span-2 p-4 flex flex-col justify-center">
               <div className="text-center mb-6">
-                <h1 className="text-3xl font-bold text-text-primary mb-2">
+                <h1 className="text-3xl font-bold text-text-primary dark:text-text-dark-primary mb-2">
                   Join Today
                 </h1>
-                <p className="text-text-secondary text-lg">
+                <p className="text-text-secondary dark:text-text-dark-secondary text-lg">
                   Create your free account
                 </p>
               </div>
@@ -298,7 +298,7 @@ const Signup: React.FC = () => {
               {/* Google Signup Button */}
               <button
                 onClick={handleGoogleSignup}
-                className="w-full bg-background-light hover:bg-background-lighter backdrop-blur-sm border border-background-lighter rounded-2xl p-4 mb-6 transition-all duration-300 group hover:scale-[1.02] hover:shadow-xl"
+                className="w-full bg-background-light dark:bg-background-dark-lighter hover:bg-background-lighter dark:hover:bg-background-dark-light backdrop-blur-sm border border-background-lighter dark:border-text-dark-secondary/20 rounded-2xl p-4 mb-6 transition-all duration-300 group hover:scale-[1.02] hover:shadow-xl"
               >
                 <div className="flex items-center justify-center space-x-3">
                   <svg className="w-6 h-6" viewBox="0 0 24 24">
@@ -307,7 +307,7 @@ const Signup: React.FC = () => {
                     <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
                     <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
                   </svg>
-                  <span className="text-text-primary font-semibold text-lg group-hover:text-text-primary/90">
+                  <span className="text-text-primary dark:text-text-dark-primary font-semibold text-lg group-hover:text-text-primary/90 dark:group-hover:text-text-dark-primary/90">
                     Continue with Google
                   </span>
                 </div>
@@ -316,10 +316,10 @@ const Signup: React.FC = () => {
               {/* Divider */}
               <div className="relative flex items-center justify-center mb-6">
                 <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-background-lighter"></div>
+                  <div className="w-full border-t border-background-lighter dark:border-text-dark-secondary/20"></div>
                 </div>
-                <div className="relative bg-background-card px-4">
-                  <span className="text-text-light font-medium">or</span>
+                <div className="relative bg-background-card dark:bg-background-dark-card px-4">
+                  <span className="text-text-light dark:text-text-dark-secondary font-medium">or</span>
                 </div>
               </div>
 
@@ -327,16 +327,16 @@ const Signup: React.FC = () => {
               <form onSubmit={handleSubmit} className="space-y-4">
                 {/* Name Field */}
                 <div className="space-y-1">
-                  <label className="text-text-primary font-medium text-sm block">
+                  <label className="text-text-primary dark:text-text-dark-primary font-medium text-sm block">
                     Full Name
                   </label>
                   <div className="relative">
-                    <User className="absolute left-4 top-1/2 transform -translate-y-1/2 text-text-light w-5 h-5" />
+                    <User className="absolute left-4 top-1/2 transform -translate-y-1/2 text-text-light dark:text-text-dark-secondary w-5 h-5" />
                     <input
                       type="text"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      className="w-full bg-background-light border border-background-lighter rounded-xl pl-12 pr-4 py-3 text-text-primary placeholder-text-light focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300"
+                      className="w-full bg-background-light dark:bg-background-dark-card border border-background-lighter dark:border-border-dark-primary rounded-xl pl-12 pr-4 py-3 text-text-primary dark:text-text-dark-primary placeholder-text-light dark:placeholder-text-dark-secondary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300"
                       placeholder="Enter your full name"
                       required
                     />
@@ -345,16 +345,16 @@ const Signup: React.FC = () => {
 
                 {/* Email Field */}
                 <div className="space-y-1">
-                  <label className="text-text-primary font-medium text-sm block">
+                  <label className="text-text-primary dark:text-text-dark-primary font-medium text-sm block">
                     Email Address
                   </label>
                   <div className="relative">
-                    <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-text-light w-5 h-5" />
+                    <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-text-light dark:text-text-dark-secondary w-5 h-5" />
                     <input
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="w-full bg-background-light border border-background-lighter rounded-xl pl-12 pr-4 py-3 text-text-primary placeholder-text-light focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300"
+                      className="w-full bg-background-light dark:bg-background-dark-card border border-background-lighter dark:border-border-dark-primary rounded-xl pl-12 pr-4 py-3 text-text-primary dark:text-text-dark-primary placeholder-text-light dark:placeholder-text-dark-secondary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300"
                       placeholder="Enter your email"
                       required
                     />
@@ -363,23 +363,23 @@ const Signup: React.FC = () => {
 
                 {/* Password Field */}
                 <div className="space-y-1">
-                  <label className="text-text-primary font-medium text-sm block">
+                  <label className="text-text-primary dark:text-text-dark-primary font-medium text-sm block">
                     Password
                   </label>
                   <div className="relative">
-                    <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-text-light w-5 h-5" />
+                    <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-text-light dark:text-text-dark-secondary w-5 h-5" />
                     <input
                       type={showPassword ? 'text' : 'password'}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="w-full bg-background-light border border-background-lighter rounded-xl pl-12 pr-12 py-3 text-text-primary placeholder-text-light focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300"
+                      className="w-full bg-background-light dark:bg-background-dark-card border border-background-lighter dark:border-border-dark-primary rounded-xl pl-12 pr-12 py-3 text-text-primary dark:text-text-dark-primary placeholder-text-light dark:placeholder-text-dark-secondary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300"
                       placeholder="Create a password"
                       required
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-4 top-1/2 transform -translate-y-1/2 text-text-light hover:text-text-secondary transition-colors duration-200"
+                      className="absolute right-4 top-1/2 transform -translate-y-1/2 text-text-light dark:text-text-dark-secondary hover:text-text-secondary dark:hover:text-text-dark-primary transition-colors duration-200"
                     >
                       {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                     </button>
@@ -388,23 +388,23 @@ const Signup: React.FC = () => {
 
                 {/* Confirm Password Field */}
                 <div className="space-y-1">
-                  <label className="text-text-primary font-medium text-sm block">
+                  <label className="text-text-primary dark:text-text-dark-primary font-medium text-sm block">
                     Confirm Password
                   </label>
                   <div className="relative">
-                    <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-text-light w-5 h-5" />
+                    <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-text-light dark:text-text-dark-secondary w-5 h-5" />
                     <input
                       type={showConfirmPassword ? 'text' : 'password'}
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
-                      className="w-full bg-background-light border border-background-lighter rounded-xl pl-12 pr-12 py-3 text-text-primary placeholder-text-light focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300"
+                      className="w-full bg-background-light dark:bg-background-dark-card border border-background-lighter dark:border-border-dark-primary rounded-xl pl-12 pr-12 py-3 text-text-primary dark:text-text-dark-primary placeholder-text-light dark:placeholder-text-dark-secondary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300"
                       placeholder="Confirm your password"
                       required
                     />
                     <button
                       type="button"
                       onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      className="absolute right-4 top-1/2 transform -translate-y-1/2 text-text-light hover:text-text-secondary transition-colors duration-200"
+                      className="absolute right-4 top-1/2 transform -translate-y-1/2 text-text-light dark:text-text-dark-secondary hover:text-text-secondary dark:hover:text-text-dark-primary transition-colors duration-200"
                     >
                       {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                     </button>
@@ -440,7 +440,7 @@ const Signup: React.FC = () => {
 
               {/* Login Link */}
               <div className="text-center mt-6">
-                <p className="text-text-secondary">
+                <p className="text-text-secondary dark:text-text-dark-secondary">
                   Already have an account?{' '}
                   <Link 
                     to="/login" 

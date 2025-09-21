@@ -28,15 +28,15 @@ const ViewNoteModal: React.FC<ViewNoteModalProps> = ({
 
   return (
     <>
-      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-        <div className="bg-background-card rounded-3xl w-full max-w-4xl max-h-[95vh] shadow-2xl border border-secondary/20 flex flex-col">
+      <div className="fixed inset-0 bg-black/50 dark:bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+        <div className="bg-background-card dark:bg-background-dark-card rounded-3xl w-full max-w-4xl max-h-[95vh] shadow-2xl border border-secondary/20 dark:border-text-dark-secondary/20 flex flex-col theme-transition">
           {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b border-secondary/20 flex-shrink-0">
+          <div className="flex items-center justify-between p-6 border-b border-secondary/20 dark:border-text-dark-secondary/20 flex-shrink-0">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
+              <div className="w-10 h-10 bg-primary dark:bg-blue-600 rounded-xl flex items-center justify-center">
                 <FileText className="w-5 h-5 text-white" />
               </div>
-              <h2 className="text-xl font-bold text-text-primary">View Note</h2>
+              <h2 className="text-xl font-bold text-text-primary dark:text-text-dark-primary">View Note</h2>
             </div>
             <div className="flex items-center space-x-2">
               {/* Favorite Button */}
@@ -57,7 +57,7 @@ const ViewNoteModal: React.FC<ViewNoteModalProps> = ({
               {/* Edit Button */}
               <button
                 onClick={onEdit}
-                className="p-2 bg-primary hover:bg-primary-light rounded-xl text-white transition-colors duration-200"
+                className="p-2 bg-primary dark:bg-blue-600 hover:bg-primary-light dark:hover:bg-blue-500 rounded-xl text-white transition-colors duration-200"
                 title="Edit Note"
               >
                 <Edit3 className="w-5 h-5" />
@@ -66,9 +66,9 @@ const ViewNoteModal: React.FC<ViewNoteModalProps> = ({
               {/* Close Button */}
               <button
                 onClick={onClose}
-                className="p-2 hover:bg-secondary/10 rounded-xl transition-colors duration-200"
+                className="p-2 hover:bg-secondary/10 dark:hover:bg-text-dark-secondary/10 rounded-xl transition-colors duration-200"
               >
-                <X className="w-5 h-5 text-text-secondary" />
+                <X className="w-5 h-5 text-text-secondary dark:text-text-dark-secondary" />
               </button>
             </div>
           </div>
@@ -78,12 +78,12 @@ const ViewNoteModal: React.FC<ViewNoteModalProps> = ({
             <div className="p-6">
               {/* Title */}
               <div className="mb-6">
-                <h1 className="text-3xl font-bold text-text-primary mb-2">
+                <h1 className="text-3xl font-bold text-text-primary dark:text-text-dark-primary mb-2">
                   {note.title}
                 </h1>
                 
                 {/* Metadata */}
-                <div className="flex items-center space-x-4 text-text-secondary text-sm">
+                <div className="flex items-center space-x-4 text-text-secondary dark:text-text-dark-secondary text-sm">
                   <div className="flex items-center space-x-1">
                     <Calendar className="w-4 h-4" />
                     <span>Created: {new Date(note.created_at).toLocaleDateString()}</span>
@@ -106,7 +106,7 @@ const ViewNoteModal: React.FC<ViewNoteModalProps> = ({
               {/* Tags */}
               {note.tags && note.tags.length > 0 && (
                 <div className="mb-6">
-                  <h3 className="text-text-secondary font-medium text-sm mb-3">Tags & Categories</h3>
+                  <h3 className="text-text-secondary dark:text-text-dark-secondary font-medium text-sm mb-3">Tags & Categories</h3>
                   <div className="flex flex-wrap gap-2">
                     {note.tags.map((tag, index) => (
                       <span
@@ -123,9 +123,9 @@ const ViewNoteModal: React.FC<ViewNoteModalProps> = ({
 
               {/* Content */}
               <div className="mb-6">
-                <h3 className="text-text-secondary font-medium text-sm mb-3">Content</h3>
+                <h3 className="text-text-secondary dark:text-text-dark-secondary font-medium text-sm mb-3">Content</h3>
                 <div 
-                  className="prose prose-sm max-w-none text-text-primary bg-background-light border border-secondary/20 rounded-xl p-4"
+                  className="prose prose-sm max-w-none text-text-primary dark:text-text-dark-primary bg-background-light dark:bg-background-dark-lighter border border-secondary/20 dark:border-text-dark-secondary/20 rounded-xl p-4 theme-transition"
                   style={{
                     minHeight: '200px',
                     whiteSpace: 'pre-wrap',
@@ -139,20 +139,20 @@ const ViewNoteModal: React.FC<ViewNoteModalProps> = ({
           </div>
 
           {/* Footer */}
-          <div className="flex justify-between items-center p-6 pt-4 border-t border-secondary/20 flex-shrink-0">
-            <div className="text-text-secondary text-sm">
+          <div className="flex justify-between items-center p-6 pt-4 border-t border-secondary/20 dark:border-text-dark-secondary/20 flex-shrink-0">
+            <div className="text-text-secondary dark:text-text-dark-secondary text-sm">
               Last modified: {new Date(note.updated_at).toLocaleString()}
             </div>
             <div className="flex space-x-3">
               <button
                 onClick={onClose}
-                className="bg-background-light hover:bg-secondary/10 border border-secondary/20 rounded-xl px-6 py-2 text-text-secondary font-medium transition-all duration-300"
+                className="bg-background-light dark:bg-background-dark-lighter hover:bg-secondary/10 dark:hover:bg-text-dark-secondary/10 border border-secondary/20 dark:border-text-dark-secondary/20 rounded-xl px-6 py-2 text-text-secondary dark:text-text-dark-secondary font-medium transition-all duration-300"
               >
                 Close
               </button>
               <button
                 onClick={onEdit}
-                className="bg-primary hover:bg-primary-light rounded-xl px-6 py-2 text-white font-semibold transition-all duration-300 transform hover:scale-[1.02] flex items-center space-x-2"
+                className="bg-primary dark:bg-blue-600 hover:bg-primary-light dark:hover:bg-blue-500 rounded-xl px-6 py-2 text-white font-semibold transition-all duration-300 transform hover:scale-[1.02] flex items-center space-x-2"
               >
                 <Edit3 className="w-4 h-4" />
                 <span>Edit Note</span>
@@ -174,6 +174,12 @@ const ViewNoteModal: React.FC<ViewNoteModalProps> = ({
           padding: 10px 15px;
         }
 
+        .dark .prose blockquote {
+          color: #94A3B8;
+          background-color: #334155;
+          border-left-color: #60A5FA;
+        }
+
         .prose ul, .prose ol {
           margin: 10px 0;
           padding-left: 20px;
@@ -188,10 +194,18 @@ const ViewNoteModal: React.FC<ViewNoteModalProps> = ({
           text-decoration: underline;
         }
 
+        .dark .prose a {
+          color: #60A5FA;
+        }
+
         .prose hr {
           border: none;
           border-top: 2px solid #E5E7EB;
           margin: 20px 0;
+        }
+
+        .dark .prose hr {
+          border-top-color: #475569;
         }
 
         .prose h1 {
@@ -201,6 +215,10 @@ const ViewNoteModal: React.FC<ViewNoteModalProps> = ({
           color: #111827;
         }
 
+        .dark .prose h1 {
+          color: #F8FAFC;
+        }
+
         .prose h2 {
           font-size: 1.5rem;
           font-weight: bold;
@@ -208,11 +226,19 @@ const ViewNoteModal: React.FC<ViewNoteModalProps> = ({
           color: #111827;
         }
 
+        .dark .prose h2 {
+          color: #F8FAFC;
+        }
+
         .prose h3 {
           font-size: 1.25rem;
           font-weight: bold;
           margin: 10px 0 6px 0;
           color: #111827;
+        }
+
+        .dark .prose h3 {
+          color: #F8FAFC;
         }
 
         .prose p {
@@ -227,15 +253,27 @@ const ViewNoteModal: React.FC<ViewNoteModalProps> = ({
           border: 1px solid #E5E7EB;
         }
 
+        .dark .prose table {
+          border-color: #475569;
+        }
+
         .prose td, .prose th {
           border: 1px solid #E5E7EB;
           padding: 8px 12px;
           text-align: left;
         }
 
+        .dark .prose td, .dark .prose th {
+          border-color: #475569;
+        }
+
         .prose th {
           background-color: #F9FAFB;
           font-weight: 600;
+        }
+
+        .dark .prose th {
+          background-color: #374151;
         }
 
         .prose code {
@@ -244,6 +282,11 @@ const ViewNoteModal: React.FC<ViewNoteModalProps> = ({
           border-radius: 4px;
           font-family: 'Courier New', monospace;
           font-size: 0.9em;
+        }
+
+        .dark .prose code {
+          background-color: #374151;
+          color: #F3F4F6;
         }
       `}</style>
     </>
