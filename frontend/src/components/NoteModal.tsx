@@ -229,7 +229,7 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="w-full bg-background-light dark:bg-background-dark-card border border-secondary/20 dark:border-border-dark-primary rounded-xl px-4 py-3 text-text-primary dark:text-text-dark-primary placeholder-text-secondary dark:placeholder-text-dark-tertiary focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-light focus:border-transparent transition-all duration-300"
+                className="w-full bg-background-light dark:bg-background-dark-card border border-secondary/20 dark:border-border-dark-primary rounded-xl px-4 py-3 text-text-primary dark:text-text-dark-primary placeholder-text-secondary dark:placeholder-text-dark-tertiary focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-light focus:border-transparent transition-shadow duration-500 ease-in-out"
                 placeholder="Enter note title..."
                 required
               />
@@ -267,7 +267,7 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
                     value={newTagName}
                     onChange={(e) => setNewTagName(e.target.value)}
                     placeholder="Create new tag..."
-                    className="flex-1 bg-background-card dark:bg-background-dark-card border border-secondary/20 dark:border-border-dark-primary rounded-lg px-3 py-2 text-text-primary dark:text-text-dark-primary text-sm focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-light"
+                    className="flex-1 bg-background-card dark:bg-background-dark-card border border-secondary/20 dark:border-border-dark-primary rounded-lg px-3 py-2 text-text-primary dark:text-text-dark-primary text-sm focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-light focus:border-transparent transition-shadow duration-500 ease-in-out"
                     onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddTag())}
                   />
                   <input
@@ -315,7 +315,7 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
                   <select
                     value={fontFamily}
                     onChange={(e) => changeFontFamily(e.target.value)}
-                    className="bg-background-card dark:bg-background-dark-card border border-secondary/20 dark:border-border-dark-primary rounded-lg px-3 py-2 text-text-primary dark:text-text-dark-primary text-sm focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-light min-w-[120px]"
+                    className="bg-background-card dark:bg-background-dark-card border border-secondary/20 dark:border-border-dark-primary rounded-lg px-3 py-2 text-text-primary dark:text-text-dark-primary text-sm focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-light focus:border-transparent transition-shadow duration-500 ease-in-out min-w-[120px]"
                   >
                     <option value="Inter">Inter</option>
                     <option value="Arial">Arial</option>
@@ -331,7 +331,7 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
                   <select
                     value={fontSize}
                     onChange={(e) => changeFontSize(e.target.value)}
-                    className="bg-background-card dark:bg-background-dark-card border border-secondary/20 dark:border-border-dark-primary rounded-lg px-3 py-2 text-text-primary dark:text-text-dark-primary text-sm focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-light min-w-[80px]"
+                    className="bg-background-card dark:bg-background-dark-card border border-secondary/20 dark:border-border-dark-primary rounded-lg px-3 py-2 text-text-primary dark:text-text-dark-primary text-sm focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-light focus:border-transparent transition-shadow duration-500 ease-in-out min-w-[80px]"
                   >
                     <option value="8">8px</option>
                     <option value="10">10px</option>
@@ -352,7 +352,7 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
                     <button
                       type="button"
                       onClick={() => setShowHeadingDropdown(!showHeadingDropdown)}
-                      className="bg-background-card dark:bg-background-dark-card border border-secondary/20 dark:border-border-dark-primary rounded-lg px-3 py-2 text-text-primary dark:text-text-dark-primary text-sm focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-light flex items-center space-x-2 min-w-[100px]"
+                      className="bg-background-card dark:bg-background-dark-card border border-secondary/20 dark:border-border-dark-primary rounded-lg px-3 py-2 text-text-primary dark:text-text-dark-primary text-sm focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-light focus:border-transparent transition-shadow duration-500 ease-in-out flex items-center space-x-2 min-w-[100px]"
                     >
                       <Type className="w-4 h-4" />
                       <span>Heading</span>
@@ -593,17 +593,16 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
             </div>
 
             {/* Rich Text Editor */}
-            <div className="px-6 flex-1 flex flex-col overflow-hidden">
+            <div className="px-6 pb-4 flex-1 flex flex-col overflow-hidden">
               <label className="text-text-secondary dark:text-text-dark-secondary font-medium text-sm block mb-2">
                 Content
               </label>
               <div
                 ref={contentRef}
                 contentEditable
-                className="rich-editor flex-1 bg-background-light dark:bg-background-dark-card border border-secondary/20 dark:border-border-dark-primary rounded-xl px-4 py-3 text-text-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-light focus:border-transparent transition-all duration-300 overflow-y-auto theme-transition"
+                className="rich-editor flex-1 bg-background-light dark:bg-background-dark-card border border-secondary/20 dark:border-border-dark-primary rounded-xl px-4 py-3 text-text-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-light focus:border-transparent transition-shadow duration-500 ease-in-out overflow-y-auto"
                 style={{
-                  minHeight: '400px',
-                  height: '400px',
+                  minHeight: '300px',
                   fontFamily: fontFamily,
                   fontSize: fontSize + 'px',
                   whiteSpace: 'pre-wrap',
@@ -624,7 +623,7 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
             </div>
 
             {/* Action Buttons */}
-            <div className="flex space-x-3 p-6 pt-4 flex-shrink-0">
+            <div className="flex space-x-3 px-6 py-4 border-t border-secondary/20 dark:border-text-dark-secondary/20 flex-shrink-0">
               <button
                 type="button"
                 onClick={onClose}
@@ -660,14 +659,16 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
           color: #6B7280;
           font-style: italic;
           pointer-events: none;
+          opacity: 1;
+          transition: opacity 0.3s ease-in-out;
         }
 
         .dark .rich-editor[contenteditable="true"]:empty:before {
           color: #9CA3AF;
         }
 
-        .rich-editor[contenteditable="true"]:focus:before {
-          content: "";
+        .rich-editor[contenteditable="true"]:not(:empty):before {
+          opacity: 0;
         }
 
         .rich-editor blockquote {

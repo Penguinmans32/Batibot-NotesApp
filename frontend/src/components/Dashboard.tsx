@@ -649,7 +649,7 @@ const Dashboard: React.FC = () => {
                   {activeTab === 'notes' && (
                     <button
                       onClick={() => setIsRecycleBinModalOpen(true)}
-                      className="bg-secondary/10 dark:bg-text-dark-secondary/10 hover:bg-secondary/20 dark:hover:bg-text-dark-secondary/20 border border-secondary/30 dark:border-border-dark-primary rounded-xl px-4 py-3 text-text-primary dark:text-text-dark-primary font-semibold transition-all duration-300 flex items-center justify-center space-x-2 whitespace-nowrap"
+                      className="bg-red-500/15 hover:bg-red-500/25 dark:bg-red-600/20 dark:hover:bg-red-500/30 border border-red-400/40 dark:border-red-400/50 rounded-xl px-4 py-3 text-red-600 dark:text-red-300 hover:text-red-700 dark:hover:text-red-200 font-semibold transition-all duration-300 flex items-center justify-center space-x-2 whitespace-nowrap hover:scale-105 transform"
                       title="Recycle Bin"
                     >
                       <Archive className="w-4 h-4" />
