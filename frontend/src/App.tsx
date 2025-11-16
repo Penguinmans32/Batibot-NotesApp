@@ -2,11 +2,12 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
-import { CardanoProvider } from './contexts/CardanoContext'; // ✅ Already imported!
+import { CardanoProvider } from './contexts/CardanoContext';
 import Login from './components/Login';
 import Signup from './components/Signup';
 import Dashboard from './components/Dashboard';
 import AuthCallback from './components/AuthCallback';
+import BlockchainAnalytics from './components/BlockchainAnalytics'; // 🔥 NEW IMPORT
 import './styles/globals.css';
 
 const AppRoutes: React.FC = () => {
@@ -37,7 +38,11 @@ const AppRoutes: React.FC = () => {
       />
       <Route 
         path="/dashboard" 
-        element={isAuthenticated ? <Dashboard /> : <Navigate to="/dashboard" replace />} 
+        element={isAuthenticated ? <Dashboard /> : <Navigate to="/login" replace />} 
+      />
+      <Route 
+        path="/analytics" 
+        element={isAuthenticated ? <BlockchainAnalytics /> : <Navigate to="/login" replace />} 
       />
       <Route 
         path="/auth/callback" 
@@ -55,11 +60,11 @@ const App: React.FC = () => {
   return (
     <ThemeProvider>
       <AuthProvider>
-        <CardanoProvider> {/* 🔥 ADDED HERE! */}
+        <CardanoProvider>
           <Router>
             <AppRoutes />
           </Router>
-        </CardanoProvider> {/* 🔥 WRAPPED EVERYTHING! */}
+        </CardanoProvider>
       </AuthProvider>
     </ThemeProvider>
   );

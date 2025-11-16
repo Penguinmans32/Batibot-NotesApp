@@ -9,6 +9,7 @@ import authRoutes from './routes/auth';
 import notesRoutes from './routes/notes';
 import todoRoutes from './routes/todoRoutes';
 import { cleanupExpiredNotes } from './controllers/notesController';
+import blockchainRoutes from './routes/blockchain';
 
 dotenv.config();
 
@@ -33,6 +34,7 @@ app.use(passport.session());
 app.use('/api/auth', authRoutes);
 app.use('/api/notes', notesRoutes);
 app.use('/api/todos', todoRoutes);
+app.use('/api/blockchain', blockchainRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

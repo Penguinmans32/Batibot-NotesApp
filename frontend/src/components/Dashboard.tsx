@@ -20,7 +20,8 @@ import {
   Archive,
   MousePointer2,
   X,
-  Wallet
+  Wallet,
+  BarChart3
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import ThemeToggle from './ThemeToggle';
@@ -36,6 +37,7 @@ import CardanoWallet from './CardanoWallet';
 import { useCardanoContext } from '../contexts/CardanoContext';
 import BlockchainSuccessModal from './BlockchainSuccessModal';
 import BlockchainAmountModal from './BlockchainAmountModal';
+import { useNavigate } from 'react-router-dom';
 
 const Dashboard: React.FC = () => {
   // Selection mode functions
@@ -188,6 +190,7 @@ const Dashboard: React.FC = () => {
   const [isNoteModalOpen, setIsNoteModalOpen] = useState(false);
   const [editingNote, setEditingNote] = useState<Note | null>(null);
   const [noteModalLoading, setNoteModalLoading] = useState(false);
+  const navigate = useNavigate();
 
   // View Note Modal states
   const [isViewNoteModalOpen, setIsViewNoteModalOpen] = useState(false);
@@ -421,7 +424,7 @@ const Dashboard: React.FC = () => {
                 const txHash = await createNoteWithMetadata(
                   savedTodo.id,
                   `TODO_${isEditing ? 'UPDATE' : 'CREATE'}:${savedTodo.title}`,
-                  amount // Pass custom amount
+                  amount,
                 );
                 
                 console.log(`✅ Blockchain TODO ${isEditing ? 'UPDATE' : 'CREATE'} completed:`, txHash);
@@ -569,7 +572,7 @@ const Dashboard: React.FC = () => {
                 
                 const txHash = await createNoteWithMetadata(
                   itemToDelete.id,
-                  `${itemType}_DELETE:${itemToDelete.title}`,
+                  `DELETE:${itemToDelete.title}`,
                   amount // Pass custom amount
                 );
                 
@@ -1480,7 +1483,34 @@ const Dashboard: React.FC = () => {
                 ))
               )
             ) : activeTab === 'cardano' ? (
-              <div className="col-span-full">
+              <div className="col-span-full space-y-6">
+                {/* 🔥 NEW ANALYTICS BUTTON */}
+                <div className="bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20 rounded-3xl p-6 border border-purple-200 dark:border-purple-700/50 shadow-xl">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-4">
+                      <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
+                        <BarChart3 className="w-6 h-6 text-white" />
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-bold text-purple-800 dark:text-purple-300">
+                          Blockchain Analytics Dashboard
+                        </h3>
+                        <p className="text-purple-600 dark:text-purple-400 text-sm">
+                          View detailed insights of your Web3 security investments
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => navigate('/analytics')}
+                      className="bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl flex items-center space-x-2"
+                    >
+                      <BarChart3 className="w-5 h-5" />
+                      <span>View Analytics</span>
+                    </button>
+                  </div>
+                </div>
+                
+                {/* Your existing CardanoWallet component */}
                 <CardanoWallet 
                   notes={notes || []}
                   onRefreshNotes={fetchNotes}

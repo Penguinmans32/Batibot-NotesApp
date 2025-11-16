@@ -55,6 +55,21 @@ const createTables = async () => {
       )
     `);
 
+    // 🔥 NEW BLOCKCHAIN TRANSACTIONS TABLE
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS blockchain_transactions (
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        item_id INTEGER NOT NULL,
+        item_type VARCHAR(10) NOT NULL CHECK (item_type IN ('note', 'todo')),
+        action VARCHAR(20) NOT NULL CHECK (action IN ('CREATE', 'UPDATE', 'DELETE', 'COMPLETE', 'REOPEN')),
+        item_title VARCHAR(255) NOT NULL,
+        ada_amount DECIMAL(10, 6) NOT NULL,
+        tx_hash VARCHAR(128) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
     await pool.query(`
       CREATE INDEX IF NOT EXISTS idx_notes_user_id ON notes(user_id);
     `);
@@ -109,6 +124,18 @@ const createTables = async () => {
       CREATE INDEX IF NOT EXISTS idx_todos_completed ON todos(completed);
     `);
 
+    // 🔥 NEW BLOCKCHAIN TRANSACTION INDEXES
+    await pool.query(`
+      CREATE INDEX IF NOT EXISTS idx_blockchain_transactions_user_id ON blockchain_transactions(user_id);
+    `);
+
+    await pool.query(`
+      CREATE INDEX IF NOT EXISTS idx_blockchain_transactions_created_at ON blockchain_transactions(created_at);
+    `);
+
+    await pool.query(`
+      CREATE INDEX IF NOT EXISTS idx_blockchain_transactions_action ON blockchain_transactions(action);
+    `);
 
     await pool.query(`
       CREATE OR REPLACE FUNCTION update_updated_at_column()
@@ -139,7 +166,7 @@ const createTables = async () => {
     console.log('✅ Database tables created successfully');
     console.log('✅ Indexes created successfully');
     console.log('✅ Triggers created successfully');
-    console.log('📋 Tables: users, notes, todos');
+    console.log('📋 Tables: users, notes, todos, blockchain_transactions'); // 🔥 UPDATED
   } catch (error) {
     console.error('❌ Error creating tables:', error);
   }
