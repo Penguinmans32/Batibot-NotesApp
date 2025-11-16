@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
+import { CardanoProvider } from './contexts/CardanoContext'; // ✅ Already imported!
 import Login from './components/Login';
 import Signup from './components/Signup';
 import Dashboard from './components/Dashboard';
@@ -36,7 +37,7 @@ const AppRoutes: React.FC = () => {
       />
       <Route 
         path="/dashboard" 
-        element={isAuthenticated ? <Dashboard /> : <Navigate to="/login" replace />} 
+        element={isAuthenticated ? <Dashboard /> : <Navigate to="/dashboard" replace />} 
       />
       <Route 
         path="/auth/callback" 
@@ -54,9 +55,11 @@ const App: React.FC = () => {
   return (
     <ThemeProvider>
       <AuthProvider>
-        <Router>
-          <AppRoutes />
-        </Router>
+        <CardanoProvider> {/* 🔥 ADDED HERE! */}
+          <Router>
+            <AppRoutes />
+          </Router>
+        </CardanoProvider> {/* 🔥 WRAPPED EVERYTHING! */}
       </AuthProvider>
     </ThemeProvider>
   );
