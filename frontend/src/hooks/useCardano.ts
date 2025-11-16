@@ -213,20 +213,20 @@ export const useCardano = () => {
     }
   };
 
-  const createNoteWithMetadata = async (noteId: number, noteHash: string) => {
+  const createNoteWithMetadata = async (noteId: number, noteHash: string, customAmount: string = '0.5') => {
     if (!wallet) throw new Error('No wallet connected');
 
-    console.log(`🔒 Creating blockchain proof for note ${noteId}...`);
+    console.log(`🔒 Creating blockchain proof for note ${noteId} with ${customAmount} ADA...`);
     
     try {
-        // 🎯 SIMPLE FIX: Use a known good testnet address
+        // 🎯 Use custom amount instead of fixed 0.5
         const testnetAddress = 'addr_test1qpw0djgj0x59ngrjvqthn7enhvruxnsavsw5th63la3mjel3tkc974sr23jmlzgq5zda4gtv8k9cy38756r9y3qgmkqqjz6aa7';
         
-        console.log('📍 Sending proof transaction to testnet address');
+        console.log(`📍 Sending ${customAmount} ADA proof transaction to testnet address`);
         
-        // Send small transaction as blockchain proof
-        const proofTx = await sendADA(testnetAddress, '0.5');
-        console.log(`📝 Note ${noteId} secured on blockchain: ${proofTx}`);
+        // Send custom amount transaction as blockchain proof
+        const proofTx = await sendADA(testnetAddress, customAmount);
+        console.log(`📝 Note ${noteId} secured on blockchain with ${customAmount} ADA: ${proofTx}`);
         return proofTx;
     } catch (error) {
         console.error('Failed to create note proof:', error);
