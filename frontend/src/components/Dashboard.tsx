@@ -20,7 +20,8 @@ import {
   Archive,
   MousePointer2,
   X,
-  Wallet
+  Wallet,
+  BarChart3
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import ThemeToggle from './ThemeToggle';
@@ -35,6 +36,8 @@ import { toggleNoteFavorite } from '../utils/api';
 import CardanoWallet from './CardanoWallet';
 import { useCardanoContext } from '../contexts/CardanoContext';
 import BlockchainSuccessModal from './BlockchainSuccessModal';
+import BlockchainAmountModal from './BlockchainAmountModal';
+import { useNavigate } from 'react-router-dom';
 
 const Dashboard: React.FC = () => {
   // Selection mode functions
@@ -87,38 +90,56 @@ const Dashboard: React.FC = () => {
       });
       
       if (response.ok) {
-        // 2. 🔥 CREATE BLOCKCHAIN TRANSACTIONS FOR BULK DELETE
+        // 2. 🔥 SHOW ADA AMOUNT MODAL FOR BULK DELETE
         if (wallet) {
-          try {
-            console.log(`🔗 Creating blockchain records for bulk delete of ${selectedNotes.length} notes...`);
-            
-            const deletedNotes = notes.filter(note => selectedNotes.includes(note.id));
-            const blockchainPromises = deletedNotes.map(note => 
-              createNoteWithMetadata(note.id, `DELETE:${note.title}`)
-            );
-            
-            const txHashes = await Promise.all(blockchainPromises);
-            
-            console.log('✅ Bulk blockchain DELETE completed:', txHashes);
-            
-            // 🎯 SHOW BEAUTIFUL MODAL FOR FIRST TRANSACTION
-            if (txHashes.length > 0) {
-              setBlockchainSuccessData({
-                txHash: txHashes[0],
-                action: 'deleted',
-                title: `${selectedNotes.length} notes bulk deleted`,
-                itemType: 'Note'
-              });
-              setIsBlockchainSuccessModalOpen(true);
+          const deletedNotes = notes.filter(note => selectedNotes.includes(note.id));
+          setPendingBlockchainAction({
+            type: 'note',
+            action: 'delete',
+            data: { title: `${selectedNotes.length} notes bulk deleted`, notes: deletedNotes },
+            callback: async (amount: string) => {
+              try {
+                console.log(`🔗 Creating blockchain records for bulk delete of ${selectedNotes.length} notes with ${amount} ADA...`);
+                
+                const blockchainPromises = deletedNotes.map(note => 
+                  createNoteWithMetadata(
+                    note.id, 
+                    `DELETE:${note.title}`, 
+                    amount,
+                    note.title, // 🎯 ADD REAL TITLE HERE
+                    'note' // 🎯 ADD ITEM TYPE
+                  )
+                );
+                
+                const txHashes = await Promise.all(blockchainPromises);
+                
+                console.log('✅ Bulk blockchain DELETE completed:', txHashes);
+                
+                // Show success modal for first transaction
+                if (txHashes.length > 0) {
+                  setBlockchainSuccessData({
+                    txHash: txHashes[0],
+                    action: 'deleted',
+                    title: `${selectedNotes.length} notes bulk deleted`,
+                    itemType: 'Note'
+                  });
+                  setIsBlockchainSuccessModalOpen(true);
+                }
+                setIsAmountModalOpen(false);
+                setPendingBlockchainAction(null);
+              } catch (blockchainError: any) {
+                console.error('Bulk blockchain transaction failed:', blockchainError);
+                alert(
+                  `✅ ${selectedNotes.length} notes deleted from database!\n\n` +
+                  `⚠️ Blockchain transactions failed: ${blockchainError?.message || 'Unknown error'}\n\n` +
+                  `💡 Notes are deleted, but deletions not recorded on blockchain.`
+                );
+                setIsAmountModalOpen(false);
+                setPendingBlockchainAction(null);
+              }
             }
-           } catch (blockchainError: any) {
-            console.error('Bulk blockchain transaction failed:', blockchainError);
-            alert(
-              `✅ ${selectedNotes.length} notes deleted from database!\n\n` +
-              `⚠️ Blockchain transactions failed: ${blockchainError?.message || 'Unknown error'}\n\n` +
-              `💡 Notes are deleted, but deletions not recorded on blockchain.`
-            );
-          }
+          });
+          setIsAmountModalOpen(true);
         } else {
           // No wallet connected
           alert(`✅ ${selectedNotes.length} notes deleted successfully!\n\n💡 Connect Cardano wallet for blockchain audit trail!`);
@@ -163,11 +184,19 @@ const Dashboard: React.FC = () => {
   const [specificDate, setSpecificDate] = useState<string>('');
   const [noteSortOrder, setNoteSortOrder] = useState<'title-asc' | 'title-desc' | 'recent' | 'oldest'>('recent');
   const [selectedTagFilter, setSelectedTagFilter] = useState<string>('all');
+  const [isAmountModalOpen, setIsAmountModalOpen] = useState(false);
+  const [pendingBlockchainAction, setPendingBlockchainAction] = useState<{
+    type: 'note' | 'todo';
+    action: string;
+    data: any;
+    callback: (amount: string) => Promise<void>;
+  } | null>(null);
 
   // Note states
   const [isNoteModalOpen, setIsNoteModalOpen] = useState(false);
   const [editingNote, setEditingNote] = useState<Note | null>(null);
   const [noteModalLoading, setNoteModalLoading] = useState(false);
+  const navigate = useNavigate();
 
   // View Note Modal states
   const [isViewNoteModalOpen, setIsViewNoteModalOpen] = useState(false);
@@ -290,35 +319,50 @@ const Dashboard: React.FC = () => {
       if (response.ok) {
         const savedNote = await response.json();
 
-        // 2. 🔥 CREATE BLOCKCHAIN TRANSACTION IF WALLET CONNECTED
+        // 2. 🔥 SHOW ADA AMOUNT MODAL IF WALLET CONNECTED
         if (wallet) {
-          try {
-            const action = isEditing ? 'UPDATE' : 'CREATE';
-            console.log(`🔗 Creating blockchain record for ${action}: ${savedNote.title}`);
-            
-            const txHash = await createNoteWithMetadata(
-              savedNote.id,
-              `${action}:${savedNote.title}`
-            );
-            
-            console.log(`✅ Blockchain ${action} completed:`, txHash);
-            
-            // 🎯 SHOW BEAUTIFUL MODAL
-            setBlockchainSuccessData({
-              txHash,
-              action: isEditing ? 'updated' : 'created',
-              title: savedNote.title,
-              itemType: 'Note'
-            });
-            setIsBlockchainSuccessModalOpen(true);
-          } catch (blockchainError: any) {
-            console.error('Blockchain transaction failed:', blockchainError);
-            alert(
-              `✅ Note ${isEditing ? 'updated' : 'created'} in database!\n\n` +
-              `⚠️ Blockchain transaction failed: ${blockchainError?.message || 'Unknown error'}\n\n` +
-              `💡 Your note is saved, but not secured on blockchain.`
-            );
-          }
+          const action = isEditing ? 'updated' : 'created';
+          setPendingBlockchainAction({
+            type: 'note',
+            action: isEditing ? 'update' : 'create',
+            data: savedNote,
+            callback: async (amount: string) => {
+              try {
+                console.log(`🔗 Creating blockchain record for ${isEditing ? 'UPDATE' : 'CREATE'}: ${savedNote.title} with ${amount} ADA`);
+                
+                const txHash = await createNoteWithMetadata(
+                  savedNote.id,
+                  `${isEditing ? 'UPDATE' : 'CREATE'}:${savedNote.title}`,
+                  amount,
+                  savedNote.title,
+                  'note'
+                );
+                
+                console.log(`✅ Blockchain ${isEditing ? 'UPDATE' : 'CREATE'} completed:`, txHash);
+                
+                // Show success modal
+                setBlockchainSuccessData({
+                  txHash,
+                  action: action,
+                  title: savedNote.title,
+                  itemType: 'Note'
+                });
+                setIsBlockchainSuccessModalOpen(true);
+                setIsAmountModalOpen(false);
+                setPendingBlockchainAction(null);
+              } catch (blockchainError: any) {
+                console.error('Blockchain transaction failed:', blockchainError);
+                alert(
+                  `✅ Note ${action} in database!\n\n` +
+                  `⚠️ Blockchain transaction failed: ${blockchainError?.message || 'Unknown error'}\n\n` +
+                  `💡 Your note is saved, but not secured on blockchain.`
+                );
+                setIsAmountModalOpen(false);
+                setPendingBlockchainAction(null);
+              }
+            }
+          });
+          setIsAmountModalOpen(true);
         } else {
           // No wallet connected - show regular success
           alert(`✅ Note ${isEditing ? 'updated' : 'created'} successfully!\n\n💡 Connect Cardano wallet for blockchain security!`);
@@ -374,35 +418,50 @@ const Dashboard: React.FC = () => {
       if (response.ok) {
         const savedTodo = await response.json();
 
-        // 2. 🔥 CREATE BLOCKCHAIN TRANSACTION IF WALLET CONNECTED
+        // 2. 🔥 SHOW ADA AMOUNT MODAL IF WALLET CONNECTED
         if (wallet) {
-          try {
-            const action = isEditing ? 'UPDATE' : 'CREATE';
-            console.log(`🔗 Creating blockchain record for TODO ${action}: ${savedTodo.title}`);
-            
-            const txHash = await createNoteWithMetadata(
-              savedTodo.id,
-              `TODO_${action}:${savedTodo.title}`
-            );
-            
-            console.log(`✅ Blockchain TODO ${action} completed:`, txHash);
-            
-            // 🎯 SHOW BEAUTIFUL MODAL
-            setBlockchainSuccessData({
-              txHash,
-              action: isEditing ? 'updated' : 'created',
-              title: savedTodo.title,
-              itemType: 'Todo'
-            });
-            setIsBlockchainSuccessModalOpen(true);
-          } catch (blockchainError: any) {
-            console.error('Blockchain transaction failed:', blockchainError);
-            alert(
-              `✅ Todo ${isEditing ? 'updated' : 'created'} in database!\n\n` +
-              `⚠️ Blockchain transaction failed: ${blockchainError?.message || 'Unknown error'}\n\n` +
-              `💡 Your todo is saved, but not secured on blockchain.`
-            );
-          }
+          const action = isEditing ? 'updated' : 'created';
+          setPendingBlockchainAction({
+            type: 'todo',
+            action: isEditing ? 'update' : 'create',
+            data: savedTodo,
+            callback: async (amount: string) => {
+              try {
+                console.log(`🔗 Creating blockchain record for TODO ${isEditing ? 'UPDATE' : 'CREATE'}: ${savedTodo.title} with ${amount} ADA`);
+                
+                const txHash = await createNoteWithMetadata(
+                  savedTodo.id,
+                  `TODO_${isEditing ? 'UPDATE' : 'CREATE'}:${savedTodo.title}`,
+                  amount,
+                  savedTodo.title,
+                  'todo'
+                );
+                
+                console.log(`✅ Blockchain TODO ${isEditing ? 'UPDATE' : 'CREATE'} completed:`, txHash);
+                
+                // Show success modal
+                setBlockchainSuccessData({
+                  txHash,
+                  action: action,
+                  title: savedTodo.title,
+                  itemType: 'Todo'
+                });
+                setIsBlockchainSuccessModalOpen(true);
+                setIsAmountModalOpen(false);
+                setPendingBlockchainAction(null);
+              } catch (blockchainError: any) {
+                console.error('Blockchain transaction failed:', blockchainError);
+                alert(
+                  `✅ Todo ${action} in database!\n\n` +
+                  `⚠️ Blockchain transaction failed: ${blockchainError?.message || 'Unknown error'}\n\n` +
+                  `💡 Your todo is saved, but not secured on blockchain.`
+                );
+                setIsAmountModalOpen(false);
+                setPendingBlockchainAction(null);
+              }
+            }
+          });
+          setIsAmountModalOpen(true);
         } else {
           // No wallet connected - show regular success
           alert(`✅ Todo ${isEditing ? 'updated' : 'created'} successfully!\n\n💡 Connect Cardano wallet for blockchain security!`);
@@ -440,31 +499,45 @@ const Dashboard: React.FC = () => {
       if (response.ok) {
         const updatedTodo = await response.json();
 
-        // 2. 🔥 CREATE BLOCKCHAIN TRANSACTION IF WALLET CONNECTED
+        // 2. 🔥 SHOW ADA AMOUNT MODAL IF WALLET CONNECTED
         if (wallet) {
-          try {
-            const action = updatedTodo.completed ? 'completed' : 'reopened';
-            console.log(`🔗 Creating blockchain record for TODO ${action}: ${updatedTodo.title}`);
-            
-            const txHash = await createNoteWithMetadata(
-              updatedTodo.id,
-              `TODO_${action.toUpperCase()}:${updatedTodo.title}`
-            );
-            
-            console.log(`✅ Blockchain TODO ${action} completed:`, txHash);
-            
-            // 🎯 SHOW BEAUTIFUL MODAL
-            setBlockchainSuccessData({
-              txHash,
-              action: action,
-              title: updatedTodo.title,
-              itemType: 'Todo'
-            });
-            setIsBlockchainSuccessModalOpen(true);
-          } catch (blockchainError: any) {
-            console.error('Blockchain transaction failed:', blockchainError);
-            // Silent failure for toggle operations to avoid too many popups
-          }
+          const action = updatedTodo.completed ? 'completed' : 'reopened';
+          setPendingBlockchainAction({
+            type: 'todo',
+            action: action,
+            data: updatedTodo,
+            callback: async (amount: string) => {
+              try {
+                console.log(`🔗 Creating blockchain record for TODO ${action}: ${updatedTodo.title} with ${amount} ADA`);
+                
+                const txHash = await createNoteWithMetadata(
+                  updatedTodo.id,
+                  `TODO_${action.toUpperCase()}:${updatedTodo.title}`,
+                  amount,
+                  updatedTodo.title,
+                  'todo'
+                );
+                
+                console.log(`✅ Blockchain TODO ${action} completed:`, txHash);
+                
+                // Show success modal
+                setBlockchainSuccessData({
+                  txHash,
+                  action: action,
+                  title: updatedTodo.title,
+                  itemType: 'Todo'
+                });
+                setIsBlockchainSuccessModalOpen(true);
+                setIsAmountModalOpen(false);
+                setPendingBlockchainAction(null);
+              } catch (blockchainError: any) {
+                console.error('Blockchain transaction failed:', blockchainError);
+                setIsAmountModalOpen(false);
+                setPendingBlockchainAction(null);
+              }
+            }
+          });
+          setIsAmountModalOpen(true);
         }
 
         // 3. UPDATE UI STATE
@@ -498,35 +571,50 @@ const Dashboard: React.FC = () => {
       });
 
       if (response.ok) {
-        // 2. 🔥 CREATE BLOCKCHAIN TRANSACTION FOR DELETION
+        // 2. 🔥 SHOW ADA AMOUNT MODAL FOR DELETION
         if (wallet) {
-          try {
-            const itemType = itemToDelete.type === 'note' ? 'NOTE' : 'TODO';
-            console.log(`🔗 Creating blockchain record for ${itemType} DELETE: ${itemToDelete.title}`);
-            
-            const txHash = await createNoteWithMetadata(
-              itemToDelete.id,
-              `${itemType}_DELETE:${itemToDelete.title}`
-            );
-            
-            console.log(`✅ Blockchain ${itemType} DELETE completed:`, txHash);
-            
-            // 🎯 SHOW BEAUTIFUL MODAL
-            setBlockchainSuccessData({
-              txHash,
-              action: 'deleted',
-              title: itemToDelete.title,
-              itemType: itemToDelete.type === 'note' ? 'Note' : 'Todo'
-            });
-            setIsBlockchainSuccessModalOpen(true);
-          } catch (blockchainError: any) {
-            console.error('Blockchain transaction failed:', blockchainError);
-            alert(
-              `✅ ${itemToDelete.type === 'note' ? 'Note' : 'Todo'} deleted from database!\n\n` +
-              `⚠️ Blockchain transaction failed: ${blockchainError?.message || 'Unknown error'}\n\n` +
-              `💡 Item is deleted, but deletion not recorded on blockchain.`
-            );
-          }
+          setPendingBlockchainAction({
+            type: itemToDelete.type,
+            action: 'delete',
+            data: itemToDelete,
+            callback: async (amount: string) => {
+              try {
+                const itemType = itemToDelete.type === 'note' ? 'NOTE' : 'TODO';
+                console.log(`🔗 Creating blockchain record for ${itemType} DELETE: ${itemToDelete.title} with ${amount} ADA`);
+                
+                const txHash = await createNoteWithMetadata(
+                  itemToDelete.id,
+                  `DELETE:${itemToDelete.title}`,
+                  amount,
+                  itemToDelete.title,
+                  itemToDelete.type
+                );
+                
+                console.log(`✅ Blockchain ${itemType} DELETE completed:`, txHash);
+                
+                // Show success modal
+                setBlockchainSuccessData({
+                  txHash,
+                  action: 'deleted',
+                  title: itemToDelete.title,
+                  itemType: itemToDelete.type === 'note' ? 'Note' : 'Todo'
+                });
+                setIsBlockchainSuccessModalOpen(true);
+                setIsAmountModalOpen(false);
+                setPendingBlockchainAction(null);
+              } catch (blockchainError: any) {
+                console.error('Blockchain transaction failed:', blockchainError);
+                alert(
+                  `✅ ${itemToDelete.type === 'note' ? 'Note' : 'Todo'} deleted from database!\n\n` +
+                  `⚠️ Blockchain transaction failed: ${blockchainError?.message || 'Unknown error'}\n\n` +
+                  `💡 Item is deleted, but deletion not recorded on blockchain.`
+                );
+                setIsAmountModalOpen(false);
+                setPendingBlockchainAction(null);
+              }
+            }
+          });
+          setIsAmountModalOpen(true);
         } else {
           // No wallet connected
           alert(`✅ ${itemToDelete.type === 'note' ? 'Note' : 'Todo'} deleted successfully!\n\n💡 Connect Cardano wallet for blockchain audit trail!`);
@@ -1409,7 +1497,34 @@ const Dashboard: React.FC = () => {
                 ))
               )
             ) : activeTab === 'cardano' ? (
-              <div className="col-span-full">
+              <div className="col-span-full space-y-6">
+                {/* 🔥 NEW ANALYTICS BUTTON */}
+                <div className="bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20 rounded-3xl p-6 border border-purple-200 dark:border-purple-700/50 shadow-xl">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-4">
+                      <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
+                        <BarChart3 className="w-6 h-6 text-white" />
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-bold text-purple-800 dark:text-purple-300">
+                          Blockchain Analytics Dashboard
+                        </h3>
+                        <p className="text-purple-600 dark:text-purple-400 text-sm">
+                          View detailed insights of your Web3 security investments
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => navigate('/analytics')}
+                      className="bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl flex items-center space-x-2"
+                    >
+                      <BarChart3 className="w-5 h-5" />
+                      <span>View Analytics</span>
+                    </button>
+                  </div>
+                </div>
+                
+                {/* Your existing CardanoWallet component */}
                 <CardanoWallet 
                   notes={notes || []}
                   onRefreshNotes={fetchNotes}
@@ -1419,6 +1534,19 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
       </div>
+
+      <BlockchainAmountModal
+        isOpen={isAmountModalOpen}
+        onClose={() => {
+          setIsAmountModalOpen(false);
+          setPendingBlockchainAction(null);
+        }}
+        onConfirm={pendingBlockchainAction?.callback || (async () => {})}
+        action={pendingBlockchainAction?.action || ''}
+        title={pendingBlockchainAction?.data?.title || ''}
+        itemType={pendingBlockchainAction?.type === 'note' ? 'Note' : 'Todo'}
+        loading={false}
+      />
 
       <BlockchainSuccessModal
         isOpen={isBlockchainSuccessModalOpen}

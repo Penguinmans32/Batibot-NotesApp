@@ -45,10 +45,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const logout = () => {
+    // 🔥 CLEAR ALL DATA FIRST
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    localStorage.removeItem('connectedWallet'); // Also clear wallet connection
     setIsAuthenticated(false);
     setUser(null);
+    
+    // 🎯 FORCE REDIRECT TO LOGIN PAGE
+    window.location.href = '/login';
+    
+    // Alternative: Use window.location.replace for no back button
+    // window.location.replace('/login');
   };
 
   return (

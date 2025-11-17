@@ -213,26 +213,71 @@ export const useCardano = () => {
     }
   };
 
-  const createNoteWithMetadata = async (noteId: number, noteHash: string) => {
+  const createNoteWithMetadata = async (
+    noteId: number, 
+    noteHash: string, 
+    customAmount?: string,  // ✅ Optional parameter
+    itemTitle?: string,     // ✅ Optional parameter  
+    itemType?: 'note' | 'todo'  // ✅ Optional parameter
+  ) => {
     if (!wallet) throw new Error('No wallet connected');
 
-    console.log(`🔒 Creating blockchain proof for note ${noteId}...`);
+    // Use defaults if not provided
+    const amount = customAmount || '0.5';
+    const title = itemTitle || 'Unknown Item';
+    const type = itemType || 'note';
+
+    console.log(`🔒 Creating blockchain proof for ${type} ${noteId} with ${amount} ADA...`);
     
     try {
-        // 🎯 SIMPLE FIX: Use a known good testnet address
-        const testnetAddress = 'addr_test1qpw0djgj0x59ngrjvqthn7enhvruxnsavsw5th63la3mjel3tkc974sr23jmlzgq5zda4gtv8k9cy38756r9y3qgmkqqjz6aa7';
-        
-        console.log('📍 Sending proof transaction to testnet address');
-        
-        // Send small transaction as blockchain proof
-        const proofTx = await sendADA(testnetAddress, '0.5');
-        console.log(`📝 Note ${noteId} secured on blockchain: ${proofTx}`);
-        return proofTx;
+      const testnetAddress = 'addr_test1qpw0djgj0x59ngrjvqthn7enhvruxnsavsw5th63la3mjel3tkc974sr23jmlzgq5zda4gtv8k9cy38756r9y3qgmkqqjz6aa7';
+      
+      console.log(`📍 Sending ${amount} ADA proof transaction to testnet address`);
+      
+      const proofTx = await sendADA(testnetAddress, amount);
+      console.log(`📝 ${type} ${noteId} secured on blockchain with ${amount} ADA: ${proofTx}`);
+      
+      // 🔥 SAVE TO DATABASE
+      const action = noteHash.split(':')[0]; // Extract action from noteHash
+      await saveBlockchainTransaction(noteId, type, action, title, amount, proofTx);
+      
+      return proofTx;
     } catch (error) {
-        console.error('Failed to create note proof:', error);
-        throw error;
+      console.error('Failed to create note proof:', error);
+      throw error;
     }
-    };
+  };
+
+  const saveBlockchainTransaction = async (
+    itemId: number,
+    itemType: 'note' | 'todo',
+    action: string,
+    itemTitle: string,
+    adaAmount: string,
+    txHash: string
+  ) => {
+    try {
+      const token = localStorage.getItem('token');
+      await fetch('http://localhost:5000/api/blockchain/transaction', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          item_id: itemId,
+          item_type: itemType,
+          action,
+          item_title: itemTitle,
+          ada_amount: parseFloat(adaAmount),
+          tx_hash: txHash
+        })
+      });
+      console.log('✅ Blockchain transaction saved to database');
+    } catch (error) {
+      console.error('❌ Failed to save blockchain transaction:', error);
+    }
+  };
 
   return {
     availableWallets,
@@ -244,6 +289,7 @@ export const useCardano = () => {
     disconnectWallet,
     sendADA,
     createNoteWithMetadata,
-    refreshBalance // Export refresh function
+    refreshBalance,
+    saveBlockchainTransaction // 🔥 EXPORT NEW FUNCTION
   };
 };
