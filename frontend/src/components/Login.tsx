@@ -329,7 +329,7 @@ const Login: React.FC = () => {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-primary hover:bg-primary-dark disabled:bg-secondary rounded-xl py-4 text-white font-semibold text-lg transition-all duration-300 hover:shadow-lg disabled:cursor-not-allowed relative overflow-hidden group"
+                  className="w-full bg-gradient-to-r from-emerald-500 to-blue-600 hover:from-emerald-600 hover:to-blue-700 disabled:from-gray-400 disabled:to-gray-500 rounded-xl py-4 text-white font-semibold text-lg transition-all duration-300 hover:shadow-lg hover:shadow-emerald-500/25 disabled:cursor-not-allowed relative overflow-hidden group"
                 >
                   <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 -skew-x-12 group-hover:animate-gradient"></div>
                   <span className="relative">
@@ -376,7 +376,7 @@ const Login: React.FC = () => {
               {/* Sign Up Link */}
               <div className="text-center mt-8">
                 <p className="text-text-secondary">
-                  Don't have an account?{' '}
+                  <span className="text-white dark:text-white">Don't have an account?</span>{' '}
                   <Link 
                     to="/signup" 
                     className="text-primary hover:text-primary-light font-semibold transition-colors duration-200 hover:underline"
