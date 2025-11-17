@@ -216,25 +216,30 @@ export const useCardano = () => {
   const createNoteWithMetadata = async (
     noteId: number, 
     noteHash: string, 
-    customAmount: string = '0.5',
-    itemTitle: string = 'Unknown Item',
-    itemType: 'note' | 'todo' = 'note'
+    customAmount?: string,  // ✅ Optional parameter
+    itemTitle?: string,     // ✅ Optional parameter  
+    itemType?: 'note' | 'todo'  // ✅ Optional parameter
   ) => {
     if (!wallet) throw new Error('No wallet connected');
 
-    console.log(`🔒 Creating blockchain proof for ${itemType} ${noteId} with ${customAmount} ADA...`);
+    // Use defaults if not provided
+    const amount = customAmount || '0.5';
+    const title = itemTitle || 'Unknown Item';
+    const type = itemType || 'note';
+
+    console.log(`🔒 Creating blockchain proof for ${type} ${noteId} with ${amount} ADA...`);
     
     try {
       const testnetAddress = 'addr_test1qpw0djgj0x59ngrjvqthn7enhvruxnsavsw5th63la3mjel3tkc974sr23jmlzgq5zda4gtv8k9cy38756r9y3qgmkqqjz6aa7';
       
-      console.log(`📍 Sending ${customAmount} ADA proof transaction to testnet address`);
+      console.log(`📍 Sending ${amount} ADA proof transaction to testnet address`);
       
-      const proofTx = await sendADA(testnetAddress, customAmount);
-      console.log(`📝 ${itemType} ${noteId} secured on blockchain with ${customAmount} ADA: ${proofTx}`);
+      const proofTx = await sendADA(testnetAddress, amount);
+      console.log(`📝 ${type} ${noteId} secured on blockchain with ${amount} ADA: ${proofTx}`);
       
       // 🔥 SAVE TO DATABASE
       const action = noteHash.split(':')[0]; // Extract action from noteHash
-      await saveBlockchainTransaction(noteId, itemType, action, itemTitle, customAmount, proofTx);
+      await saveBlockchainTransaction(noteId, type, action, title, amount, proofTx);
       
       return proofTx;
     } catch (error) {

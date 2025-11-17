@@ -17,7 +17,13 @@ interface CardanoContextType {
   connectWallet: (walletName: string) => Promise<void>;
   disconnectWallet: () => void;
   sendADA: (recipient: string, amount: string) => Promise<string>;
-  createNoteWithMetadata: (noteId: number, noteHash: string, customAmount?: string) => Promise<string>; // 🎯 MADE OPTIONAL
+  createNoteWithMetadata: (
+    noteId: number, 
+    noteHash: string, 
+    customAmount?: string,
+    itemTitle?: string,
+    itemType?: 'note' | 'todo'
+  ) => Promise<string>;
 }
 
 const CardanoContext = createContext<CardanoContextType | undefined>(undefined);

@@ -102,7 +102,13 @@ const Dashboard: React.FC = () => {
                 console.log(`🔗 Creating blockchain records for bulk delete of ${selectedNotes.length} notes with ${amount} ADA...`);
                 
                 const blockchainPromises = deletedNotes.map(note => 
-                  createNoteWithMetadata(note.id, `DELETE:${note.title}`, amount)
+                  createNoteWithMetadata(
+                    note.id, 
+                    `DELETE:${note.title}`, 
+                    amount,
+                    note.title, // 🎯 ADD REAL TITLE HERE
+                    'note' // 🎯 ADD ITEM TYPE
+                  )
                 );
                 
                 const txHashes = await Promise.all(blockchainPromises);
@@ -327,7 +333,9 @@ const Dashboard: React.FC = () => {
                 const txHash = await createNoteWithMetadata(
                   savedNote.id,
                   `${isEditing ? 'UPDATE' : 'CREATE'}:${savedNote.title}`,
-                  amount // Pass custom amount
+                  amount,
+                  savedNote.title,
+                  'note'
                 );
                 
                 console.log(`✅ Blockchain ${isEditing ? 'UPDATE' : 'CREATE'} completed:`, txHash);
@@ -425,6 +433,8 @@ const Dashboard: React.FC = () => {
                   savedTodo.id,
                   `TODO_${isEditing ? 'UPDATE' : 'CREATE'}:${savedTodo.title}`,
                   amount,
+                  savedTodo.title,
+                  'todo'
                 );
                 
                 console.log(`✅ Blockchain TODO ${isEditing ? 'UPDATE' : 'CREATE'} completed:`, txHash);
@@ -503,7 +513,9 @@ const Dashboard: React.FC = () => {
                 const txHash = await createNoteWithMetadata(
                   updatedTodo.id,
                   `TODO_${action.toUpperCase()}:${updatedTodo.title}`,
-                  amount // Pass custom amount
+                  amount,
+                  updatedTodo.title,
+                  'todo'
                 );
                 
                 console.log(`✅ Blockchain TODO ${action} completed:`, txHash);
@@ -573,7 +585,9 @@ const Dashboard: React.FC = () => {
                 const txHash = await createNoteWithMetadata(
                   itemToDelete.id,
                   `DELETE:${itemToDelete.title}`,
-                  amount // Pass custom amount
+                  amount,
+                  itemToDelete.title,
+                  itemToDelete.type
                 );
                 
                 console.log(`✅ Blockchain ${itemType} DELETE completed:`, txHash);
