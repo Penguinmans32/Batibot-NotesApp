@@ -820,7 +820,7 @@ const Dashboard: React.FC = () => {
                 <ThemeToggle />
                 <button
                   onClick={logout}
-                  className="flex items-center space-x-2 bg-error/10 hover:bg-error/20 dark:bg-red-900/20 dark:hover:bg-red-900/30 border border-error/30 dark:border-red-500/30 rounded-xl px-4 py-2 text-error dark:text-red-400 hover:text-white transition-all duration-300"
+                  className="flex items-center space-x-2 bg-error/10 hover:bg-error dark:bg-red-900/20 dark:hover:bg-red-600 border border-error/30 dark:border-red-500/30 rounded-xl px-4 py-2 text-error dark:text-red-400 hover:text-white dark:hover:text-white transition-all duration-500 transform hover:scale-105"
                 >
                   <LogOut className="w-4 h-4" />
                   <span>Logout</span>
@@ -924,7 +924,7 @@ const Dashboard: React.FC = () => {
                   {activeTab === 'notes' && (
                     <button
                       onClick={isSelectionMode ? exitSelectionMode : enterSelectionMode}
-                      className={`rounded-xl px-4 py-3 font-semibold transition-all duration-300 flex items-center justify-center space-x-2 whitespace-nowrap ${
+                      className={`rounded-xl px-4 py-3 font-semibold transition-all duration-500 transform hover:scale-[1.02] flex items-center justify-center space-x-2 whitespace-nowrap ${
                         isSelectionMode
                           ? 'bg-orange-500 hover:bg-orange-600 text-white'
                           : 'bg-secondary/10 dark:bg-text-dark-secondary/10 hover:bg-secondary/20 dark:hover:bg-text-dark-secondary/20 border border-secondary/30 dark:border-border-dark-primary text-text-primary dark:text-text-dark-primary'
@@ -1160,7 +1160,7 @@ const Dashboard: React.FC = () => {
                     {!searchTerm && (
                       <button
                         onClick={handleCreateNote}
-                        className="bg-primary hover:bg-primary-light rounded-xl px-6 py-3 text-white font-semibold transition-all duration-500 transform hover:scale-[1.02] flex items-center space-x-2 mx-auto"
+                        className="bg-primary hover:bg-primary-light rounded-xl px-6 py-3 text-white font-semibold transition-all duration-700 transform hover:scale-[1.02] flex items-center space-x-2 mx-auto"
                       >
                         <Plus className="w-5 h-5" />
                         <span>Create Your First Note</span>
