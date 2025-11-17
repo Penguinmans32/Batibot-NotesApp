@@ -914,7 +914,7 @@ const Dashboard: React.FC = () => {
                 <div className="flex flex-col sm:flex-row gap-3">
                   <button
                     onClick={activeTab === 'notes' ? handleCreateNote : handleCreateTodo}
-                    className="bg-primary hover:bg-primary-light rounded-xl px-6 py-3 text-white font-semibold transition-all duration-300 transform hover:scale-[1.02] flex items-center justify-center space-x-2"
+                    className="bg-primary hover:bg-primary-light rounded-xl px-6 py-3 text-white font-semibold transition-all duration-500 transform hover:scale-[1.02] flex items-center justify-center space-x-2"
                   >
                     <Plus className="w-5 h-5" />
                     <span>New {activeTab === 'notes' ? 'Note' : 'Todo'}</span>
@@ -948,7 +948,7 @@ const Dashboard: React.FC = () => {
                   {activeTab === 'notes' && (
                     <button
                       onClick={() => setIsRecycleBinModalOpen(true)}
-                      className="bg-red-500/15 hover:bg-red-500/25 dark:bg-red-600/20 dark:hover:bg-red-500/30 border border-red-400/40 dark:border-red-400/50 rounded-xl px-4 py-3 text-red-600 dark:text-red-300 hover:text-red-700 dark:hover:text-red-200 font-semibold transition-all duration-300 flex items-center justify-center space-x-2 whitespace-nowrap hover:scale-105 transform"
+                      className="bg-red-500/15 hover:bg-red-500/25 dark:bg-red-600/20 dark:hover:bg-red-500/30 border border-red-400/40 dark:border-red-400/50 rounded-xl px-4 py-3 text-red-600 dark:text-red-300 hover:text-red-700 dark:hover:text-red-200 font-semibold transition-all duration-500 transform hover:scale-105 flex items-center justify-center space-x-2 whitespace-nowrap"
                       title="Recycle Bin"
                     >
                       <Archive className="w-4 h-4" />
@@ -1086,7 +1086,7 @@ const Dashboard: React.FC = () => {
                   {selectedNotes.length < filteredNotes.length && filteredNotes.length > 0 && (
                     <button
                       onClick={selectAllFilteredNotes}
-                      className="bg-blue-100 dark:bg-blue-800/30 hover:bg-blue-200 dark:hover:bg-blue-700/40 border border-blue-300 dark:border-blue-600/50 rounded-xl px-4 py-2 text-blue-800 dark:text-blue-300 font-semibold transition-all duration-300 flex items-center space-x-2 hover:scale-105 transform"
+                      className="bg-blue-100 dark:bg-blue-800/30 hover:bg-blue-200 dark:hover:bg-blue-700/40 border border-blue-300 dark:border-blue-600/50 rounded-xl px-4 py-2 text-blue-800 dark:text-blue-300 font-semibold transition-all duration-500 transform hover:scale-105 flex items-center space-x-2"
                     >
                       <CheckSquare className="w-4 h-4" />
                       <span>Select All ({filteredNotes.length})</span>
@@ -1097,7 +1097,7 @@ const Dashboard: React.FC = () => {
                     <>
                       <button
                         onClick={deselectAllNotes}
-                        className="bg-gray-100 dark:bg-gray-700/30 hover:bg-gray-200 dark:hover:bg-gray-600/40 border border-gray-300 dark:border-gray-600/50 rounded-xl px-4 py-2 text-gray-700 dark:text-gray-300 font-semibold transition-all duration-300 flex items-center space-x-2 hover:scale-105 transform"
+                        className="bg-gray-100 dark:bg-gray-700/30 hover:bg-gray-200 dark:hover:bg-gray-600/40 border border-gray-300 dark:border-gray-600/50 rounded-xl px-4 py-2 text-gray-700 dark:text-gray-300 font-semibold transition-all duration-500 transform hover:scale-105 flex items-center space-x-2"
                       >
                         <Square className="w-4 h-4" />
                         <span>Deselect All</span>
@@ -1105,7 +1105,7 @@ const Dashboard: React.FC = () => {
                       
                       <button
                         onClick={handleBulkDeleteNotes}
-                        className="bg-red-100 dark:bg-red-900/30 hover:bg-red-200 dark:hover:bg-red-800/40 border border-red-300 dark:border-red-600/50 rounded-xl px-4 py-2 text-red-800 dark:text-red-400 hover:text-white dark:hover:text-white font-semibold transition-all duration-300 flex items-center space-x-2 hover:bg-red-500 dark:hover:bg-red-600 hover:scale-105 transform"
+                        className="bg-red-100 dark:bg-red-900/30 hover:bg-red-200 dark:hover:bg-red-800/40 border border-red-300 dark:border-red-600/50 rounded-xl px-4 py-2 text-red-800 dark:text-red-400 hover:text-white dark:hover:text-white font-semibold transition-all duration-500 transform hover:scale-105 flex items-center space-x-2 hover:bg-red-500 dark:hover:bg-red-600"
                       >
                         <Trash2 className="w-4 h-4" />
                         <span>Delete ({selectedNotes.length})</span>
@@ -1160,7 +1160,7 @@ const Dashboard: React.FC = () => {
                     {!searchTerm && (
                       <button
                         onClick={handleCreateNote}
-                        className="bg-primary hover:bg-primary-light rounded-xl px-6 py-3 text-white font-semibold transition-all duration-300 transform hover:scale-[1.02] flex items-center space-x-2 mx-auto"
+                        className="bg-primary hover:bg-primary-light rounded-xl px-6 py-3 text-white font-semibold transition-all duration-500 transform hover:scale-[1.02] flex items-center space-x-2 mx-auto"
                       >
                         <Plus className="w-5 h-5" />
                         <span>Create Your First Note</span>
@@ -1183,7 +1183,7 @@ const Dashboard: React.FC = () => {
                       {favoriteNotes.map((note) => (
                         <div
                           key={`fav-${note.id}`}
-                          className={`bg-background-card dark:bg-background-dark-card rounded-3xl p-6 border border-pink-300 dark:border-pink-500/30 transition-all duration-300 transform hover:scale-[1.02] group cursor-pointer theme-transition relative ${
+                          className={`bg-background-card dark:bg-background-dark-card rounded-3xl p-6 border border-pink-300 dark:border-pink-500/30 transition-all duration-500 transform hover:scale-[1.02] group cursor-pointer theme-transition relative ${
                             isSelectionMode
                               ? selectedNotes.includes(note.id)
                                 ? 'ring-4 ring-blue-500 dark:ring-blue-400 ring-opacity-50 bg-blue-50/50 dark:bg-blue-900/20 border-blue-400 dark:border-blue-500'
@@ -1295,7 +1295,7 @@ const Dashboard: React.FC = () => {
                   {otherNotes.map((note) => (
                     <div
                       key={note.id}
-                      className={`bg-background-card dark:bg-background-dark-card rounded-3xl p-6 border transition-all duration-700 ease-in-out transform hover:scale-[1.02] group cursor-pointer theme-transition relative ${
+                      className={`bg-background-card dark:bg-background-dark-card rounded-3xl p-6 border transition-all duration-500 transform hover:scale-[1.02] group cursor-pointer theme-transition relative ${
                         isSelectionMode
                           ? selectedNotes.includes(note.id)
                             ? 'ring-4 ring-blue-500 dark:ring-blue-400 ring-opacity-50 bg-blue-50/50 dark:bg-blue-900/20 border-blue-400 dark:border-blue-500'
@@ -1407,7 +1407,7 @@ const Dashboard: React.FC = () => {
                     {!searchTerm && (
                       <button
                         onClick={handleCreateTodo}
-                        className="bg-primary dark:bg-blue-600 hover:bg-primary-light dark:hover:bg-blue-500 rounded-xl px-6 py-3 text-white font-semibold transition-all duration-300 transform hover:scale-[1.02] flex items-center space-x-2 mx-auto"
+                        className="bg-primary dark:bg-blue-600 hover:bg-primary-light dark:hover:bg-blue-500 rounded-xl px-6 py-3 text-white font-semibold transition-all duration-500 transform hover:scale-[1.02] flex items-center space-x-2 mx-auto"
                       >
                         <Plus className="w-5 h-5" />
                         <span>Create Your First Todo</span>
@@ -1419,7 +1419,7 @@ const Dashboard: React.FC = () => {
                 filteredTodos.map((todo) => (
                   <div
                     key={todo.id}
-                    className={`bg-background-card dark:bg-background-dark-card rounded-3xl p-6 border transition-all duration-300 transform hover:scale-[1.02] group cursor-pointer theme-transition ${
+                    className={`bg-background-card dark:bg-background-dark-card rounded-3xl p-6 border transition-all duration-500 transform hover:scale-[1.02] group cursor-pointer theme-transition ${
                       todo.completed
                         ? 'border-green-200 dark:border-green-500/30 bg-green-50/50 dark:bg-green-400/5'
                         : todo.due_date && isOverdue(todo.due_date)
@@ -1516,7 +1516,7 @@ const Dashboard: React.FC = () => {
                     </div>
                     <button
                       onClick={() => navigate('/analytics')}
-                      className="bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-[1.02] flex items-center space-x-2"
+                      className="bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white font-semibold py-3 px-6 rounded-xl transition-colors duration-200 flex items-center space-x-2"
                     >
                       <BarChart3 className="w-5 h-5" />
                       <span>View Analytics</span>
