@@ -91,12 +91,14 @@ const AnimatedSelect: React.FC<AnimatedSelectProps> = ({
           style={{ top: 'calc(100% + 4px)' }}
         >
           <div className="max-h-60 overflow-y-auto dropdown-scroll py-1">
-            {options.map((option) => (
+            {options.map((option, index) => (
               <button
                 key={option.value}
                 type="button"
                 onClick={() => handleSelect(option.value)}
                 className={`w-full text-left px-4 py-2.5 transition-all duration-150 ${
+                  index !== 0 ? 'border-t border-secondary/10 dark:border-border-dark-primary/20' : ''
+                } ${
                   option.value === value
                     ? 'bg-primary/10 dark:bg-blue-600/20 text-primary dark:text-blue-400 font-semibold'
                     : 'text-text-primary dark:text-text-dark-primary hover:bg-secondary/10 dark:hover:bg-text-dark-secondary/10'
