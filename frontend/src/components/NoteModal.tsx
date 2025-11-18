@@ -199,8 +199,14 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
 
   return (
     <>
-      <div className="fixed inset-0 bg-black/50 dark:bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-        <div className="bg-background-card dark:bg-background-dark-card rounded-3xl w-full max-w-5xl max-h-[95vh] shadow-2xl border border-secondary/20 dark:border-text-dark-secondary/20 flex flex-col theme-transition">
+      <div 
+        className="fixed inset-0 bg-black/50 dark:bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto"
+        onClick={onClose}
+      >
+        <div 
+          className="bg-background-card dark:bg-background-dark-card rounded-3xl w-full max-w-5xl max-h-[90vh] shadow-2xl border border-secondary/20 dark:border-text-dark-secondary/20 flex flex-col theme-transition my-8"
+          onClick={(e) => e.stopPropagation()}
+        >
           {/* Header */}
           <div className="flex items-center justify-between p-6 border-b border-secondary/20 dark:border-text-dark-secondary/20 flex-shrink-0">
             <div className="flex items-center space-x-3">
@@ -219,7 +225,7 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
             </button>
           </div>
 
-          <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-hidden">
+          <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-y-auto">
             {/* Title Input */}
             <div className="p-6 pb-4 flex-shrink-0">
               <label className="text-text-secondary dark:text-text-dark-secondary font-medium text-sm block mb-2">
@@ -593,16 +599,17 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
             </div>
 
             {/* Rich Text Editor */}
-            <div className="px-6 pb-4 flex-1 flex flex-col overflow-hidden">
+            <div className="px-6 pb-4 flex-shrink-0">
               <label className="text-text-secondary dark:text-text-dark-secondary font-medium text-sm block mb-2">
                 Content
               </label>
               <div
                 ref={contentRef}
                 contentEditable
-                className="rich-editor flex-1 bg-background-light dark:bg-background-dark-card border border-secondary/20 dark:border-border-dark-primary rounded-xl px-4 py-3 text-text-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-light focus:border-transparent transition-shadow duration-500 ease-in-out overflow-y-auto"
+                className="rich-editor bg-background-light dark:bg-background-dark-card border border-secondary/20 dark:border-border-dark-primary rounded-xl px-4 py-3 text-text-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-light focus:border-transparent transition-shadow duration-500 ease-in-out overflow-y-auto"
                 style={{
                   minHeight: '300px',
+                  maxHeight: '400px',
                   fontFamily: fontFamily,
                   fontSize: fontSize + 'px',
                   whiteSpace: 'pre-wrap',
@@ -654,6 +661,16 @@ const NoteModal: React.FC<NoteModalProps> = ({ isOpen, onClose, onSave, note, lo
       </div>
 
       <style>{`
+        /* Hide scrollbar but keep functionality */
+        .overflow-y-auto::-webkit-scrollbar {
+          display: none;
+        }
+        
+        .overflow-y-auto {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+
         .rich-editor[contenteditable="true"]:empty:before {
           content: attr(data-placeholder);
           color: #6B7280;

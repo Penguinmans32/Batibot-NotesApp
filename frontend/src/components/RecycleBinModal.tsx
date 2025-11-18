@@ -197,8 +197,14 @@ const RecycleBinModal: React.FC<RecycleBinModalProps> = ({ isOpen, onClose, onRe
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 dark:bg-black dark:bg-opacity-70 flex items-center justify-center z-50 p-4">
-      <div className="bg-background-card dark:bg-background-dark-card rounded-3xl w-full max-w-4xl max-h-[80vh] overflow-hidden shadow-2xl border border-secondary/20 dark:border-text-dark-secondary/20 theme-transition">
+    <div 
+      className="fixed inset-0 bg-black bg-opacity-50 dark:bg-black dark:bg-opacity-70 flex items-center justify-center z-50 p-4 overflow-y-auto"
+      onClick={onClose}
+    >
+      <div 
+        className="bg-background-card dark:bg-background-dark-card rounded-3xl w-full max-w-4xl max-h-[90vh] overflow-hidden shadow-2xl border border-secondary/20 dark:border-text-dark-secondary/20 theme-transition my-8"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-secondary/20 dark:border-text-dark-secondary/20">
           <div className="flex items-center space-x-3">
@@ -276,7 +282,7 @@ const RecycleBinModal: React.FC<RecycleBinModalProps> = ({ isOpen, onClose, onRe
         )}
 
         {/* Content */}
-        <div className="p-6 overflow-y-auto max-h-[50vh]">
+        <div className="p-6 overflow-y-auto max-h-[50vh] scrollbar-hide">
           {loading ? (
             <div className="flex items-center justify-center py-12">
               <div className="flex items-center space-x-3">
@@ -412,6 +418,20 @@ const RecycleBinModal: React.FC<RecycleBinModalProps> = ({ isOpen, onClose, onRe
         isDestructive={true}
         loading={actionLoading}
       />
+
+      <style>{`
+        /* Hide scrollbar but keep functionality */
+        .overflow-y-auto::-webkit-scrollbar,
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+        }
+        
+        .overflow-y-auto,
+        .scrollbar-hide {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+      `}</style>
     </div>
   );
 };
