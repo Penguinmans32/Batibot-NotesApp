@@ -301,7 +301,7 @@ const Signup: React.FC = () => {
               <form onSubmit={handleSubmit} className="space-y-4">
                 {/* Name Field */}
                 <div className="space-y-1">
-                  <label className="text-text-primary dark:text-text-dark-primary font-medium text-sm block">
+                  <label className="text-text-primary dark:text-text-dark-primary font-semibold text-sm block mb-1">
                     Full Name
                   </label>
                   <div className="relative">
@@ -310,7 +310,7 @@ const Signup: React.FC = () => {
                       type="text"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      className="w-full bg-background-light dark:bg-background-dark-card border border-background-lighter dark:border-border-dark-primary rounded-xl pl-12 pr-4 py-3 text-text-primary dark:text-text-dark-primary placeholder-text-light dark:placeholder-text-dark-secondary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300"
+                      className="w-full bg-background-light dark:bg-background-dark-card border border-background-lighter dark:border-border-dark-primary rounded-xl pl-12 pr-4 py-3 text-text-primary dark:text-text-dark-primary placeholder-text-light dark:placeholder-text-dark-secondary focus:outline-none focus:ring-2 focus:ring-emerald-400/30 focus:border-transparent transition-all duration-300"
                       placeholder="Enter your full name"
                       required
                     />
@@ -319,7 +319,7 @@ const Signup: React.FC = () => {
 
                 {/* Email Field */}
                 <div className="space-y-1">
-                  <label className="text-text-primary dark:text-text-dark-primary font-medium text-sm block">
+                  <label className="text-text-primary dark:text-text-dark-primary font-semibold text-sm block mb-1">
                     Email Address
                   </label>
                   <div className="relative">
@@ -328,7 +328,7 @@ const Signup: React.FC = () => {
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="w-full bg-background-light dark:bg-background-dark-card border border-background-lighter dark:border-border-dark-primary rounded-xl pl-12 pr-4 py-3 text-text-primary dark:text-text-dark-primary placeholder-text-light dark:placeholder-text-dark-secondary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300"
+                      className="w-full bg-background-light dark:bg-background-dark-card border border-background-lighter dark:border-border-dark-primary rounded-xl pl-12 pr-4 py-3 text-text-primary dark:text-text-dark-primary placeholder-text-light dark:placeholder-text-dark-secondary focus:outline-none focus:ring-2 focus:ring-emerald-400/30 focus:border-transparent transition-all duration-300"
                       placeholder="Enter your email"
                       required
                     />
