@@ -1245,7 +1245,7 @@ const Dashboard: React.FC = () => {
                                       e.stopPropagation();
                                       handleDeleteItem(note, 'note');
                                     }}
-                                    className="p-2 bg-error/10 dark:bg-red-500/10 hover:bg-error/20 dark:hover:bg-red-500/20 rounded-lg text-error dark:text-red-400 hover:text-white dark:hover:text-white transition-colors duration-200"
+                                    className="p-2 rounded-lg text-text-secondary dark:text-text-dark-secondary hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 transition-all duration-200"
                                   >
                                     <Trash2 className="w-4 h-4" />
                                   </button>
@@ -1361,7 +1361,7 @@ const Dashboard: React.FC = () => {
                                   e.stopPropagation();
                                   handleDeleteItem(note, 'note');
                                 }}
-                                className="p-2 bg-error/10 dark:bg-red-500/10 hover:bg-error/20 dark:hover:bg-red-500/20 rounded-lg text-error dark:text-red-400 hover:text-white dark:hover:text-white transition-colors duration-200"
+                                className="p-2 rounded-lg text-text-secondary dark:text-text-dark-secondary hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 transition-all duration-200"
                               >
                                 <Trash2 className="w-4 h-4" />
                               </button>
@@ -1494,7 +1494,7 @@ const Dashboard: React.FC = () => {
                             e.stopPropagation();
                             handleDeleteItem(todo, 'todo');
                           }}
-                          className="p-2 bg-error/10 dark:bg-red-500/10 hover:bg-error/20 dark:hover:bg-red-500/20 rounded-lg text-error dark:text-red-400 hover:text-white dark:hover:text-white transition-colors duration-200"
+                          className="p-2 rounded-lg text-text-secondary dark:text-text-dark-secondary hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 transition-all duration-200"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
