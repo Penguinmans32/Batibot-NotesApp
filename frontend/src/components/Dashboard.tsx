@@ -28,6 +28,7 @@ import ThemeToggle from './ThemeToggle';
 import NoteModal from './NoteModal';
 import ViewNoteModal from './ViewNoteModal';
 import TodoModal from './TodoModal';
+import AnimatedSelect from './AnimatedSelect';
 import DeleteConfirmModal from './DeleteConfirmModal';
 import RecycleBinModal from './RecycleBinModal';
 import { Todo, FilterType, SortType } from '../types/Todo';
@@ -964,20 +965,19 @@ const Dashboard: React.FC = () => {
                   {/* Note Filters and Sort */}
                   {activeTab === 'notes' && (
                     <>
-                      <div className="flex items-center space-x-2 min-w-0">
-                        <Calendar className="w-5 h-5 text-text-secondary dark:text-text-dark-secondary flex-shrink-0" />
-                        <select
-                          value={noteDateFilter}
-                          onChange={(e) => setNoteDateFilter(e.target.value as 'all' | 'today' | 'week' | 'month' | 'specific')}
-                          className="bg-background-light dark:bg-background-dark-card border border-secondary/20 dark:border-border-dark-primary rounded-xl px-2 py-3 text-text-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-light focus:border-transparent transition-all duration-300"
-                        >
-                          <option value="all">All Time</option>
-                          <option value="today">Today</option>
-                          <option value="week">This Week</option>
-                          <option value="month">This Month</option>
-                          <option value="specific">Specific Date</option>
-                        </select>
-                      </div>
+                      <AnimatedSelect
+                        value={noteDateFilter}
+                        onChange={(value) => setNoteDateFilter(value as 'all' | 'today' | 'week' | 'month' | 'specific')}
+                        options={[
+                          { value: 'all', label: 'All Time' },
+                          { value: 'today', label: 'Today' },
+                          { value: 'week', label: 'This Week' },
+                          { value: 'month', label: 'This Month' },
+                          { value: 'specific', label: 'Specific Date' }
+                        ]}
+                        icon={<Calendar className="w-5 h-5 text-text-secondary dark:text-text-dark-secondary" />}
+                        className="bg-background-light dark:bg-background-dark-card border border-secondary/20 dark:border-border-dark-primary rounded-xl px-2 py-3 text-text-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-light focus:border-transparent"
+                      />
                       
                       {noteDateFilter === 'specific' && (
                         <div className="flex items-center space-x-2">
@@ -990,33 +990,32 @@ const Dashboard: React.FC = () => {
                         </div>
                       )}
                       
-                      <div className="flex items-center space-x-2 min-w-0">
-                        <Flag className="w-5 h-5 text-text-secondary dark:text-text-dark-secondary flex-shrink-0" />
-                        <select
-                          value={selectedTagFilter}
-                          onChange={(e) => setSelectedTagFilter(e.target.value)}
-                          className="bg-background-light dark:bg-background-dark-card border border-secondary/20 dark:border-border-dark-primary rounded-xl px-2 py-3 text-text-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-light focus:border-transparent transition-all duration-300"
-                        >
-                          <option value="all">All Tags</option>
-                          {Array.from(new Set(notes.flatMap(note => note.tags?.map(tag => tag.name) || []))).map(tagName => (
-                            <option key={tagName} value={tagName}>{tagName}</option>
-                          ))}
-                        </select>
-                      </div>
+                      <AnimatedSelect
+                        value={selectedTagFilter}
+                        onChange={(value) => setSelectedTagFilter(value)}
+                        options={[
+                          { value: 'all', label: 'All Tags' },
+                          ...Array.from(new Set(notes.flatMap(note => note.tags?.map(tag => tag.name) || []))).map(tagName => ({
+                            value: tagName,
+                            label: tagName
+                          }))
+                        ]}
+                        icon={<Flag className="w-5 h-5 text-text-secondary dark:text-text-dark-secondary" />}
+                        className="bg-background-light dark:bg-background-dark-card border border-secondary/20 dark:border-border-dark-primary rounded-xl px-2 py-3 text-text-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-light focus:border-transparent"
+                      />
                       
-                      <div className="flex items-center space-x-2 min-w-0">
-                        <SortAsc className="w-5 h-5 text-text-secondary dark:text-text-dark-secondary flex-shrink-0" />
-                        <select
-                          value={noteSortOrder}
-                          onChange={(e) => setNoteSortOrder(e.target.value as 'title-asc' | 'title-desc' | 'recent' | 'oldest')}
-                          className="bg-background-light dark:bg-background-dark-card border border-secondary/20 dark:border-border-dark-primary rounded-xl px-2 py-3 text-text-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-light focus:border-transparent transition-all duration-300"
-                        >
-                          <option value="recent">Recently Added</option>
-                          <option value="oldest">Oldest First</option>
-                          <option value="title-asc">Title A-Z</option>
-                          <option value="title-desc">Title Z-A</option>
-                        </select>
-                      </div>
+                      <AnimatedSelect
+                        value={noteSortOrder}
+                        onChange={(value) => setNoteSortOrder(value as 'title-asc' | 'title-desc' | 'recent' | 'oldest')}
+                        options={[
+                          { value: 'recent', label: 'Recently Added' },
+                          { value: 'oldest', label: 'Oldest First' },
+                          { value: 'title-asc', label: 'Title A-Z' },
+                          { value: 'title-desc', label: 'Title Z-A' }
+                        ]}
+                        icon={<SortAsc className="w-5 h-5 text-text-secondary dark:text-text-dark-secondary" />}
+                        className="bg-background-light dark:bg-background-dark-card border border-secondary/20 dark:border-border-dark-primary rounded-xl px-2 py-3 text-text-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-light focus:border-transparent"
+                      />
                       
                       {(noteDateFilter !== 'all' || noteSortOrder !== 'recent' || searchTerm || selectedTagFilter !== 'all') && (
                         <button
@@ -1040,25 +1039,27 @@ const Dashboard: React.FC = () => {
                   {/* Todo Filters and Sort */}
                   {activeTab === 'todos' && (
                     <>
-                      <select
+                      <AnimatedSelect
                         value={todoFilter}
-                        onChange={(e) => setTodoFilter(e.target.value as FilterType)}
-                        className="bg-background-light dark:bg-background-dark-card border border-secondary/20 dark:border-border-dark-primary rounded-xl px-4 py-3 pr-10 text-text-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-light focus:border-transparent transition-all duration-300"
-                      >
-                        <option value="all">All Todos</option>
-                        <option value="active">Active</option>
-                        <option value="completed">Completed</option>
-                        <option value="overdue">Overdue</option>
-                      </select>
-                      <select
+                        onChange={(value) => setTodoFilter(value as FilterType)}
+                        options={[
+                          { value: 'all', label: 'All Todos' },
+                          { value: 'active', label: 'Active' },
+                          { value: 'completed', label: 'Completed' },
+                          { value: 'overdue', label: 'Overdue' }
+                        ]}
+                        className="bg-background-light dark:bg-background-dark-card border border-secondary/20 dark:border-border-dark-primary rounded-xl px-4 py-3 pr-10 text-text-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-light focus:border-transparent"
+                      />
+                      <AnimatedSelect
                         value={todoSort}
-                        onChange={(e) => setTodoSort(e.target.value as SortType)}
-                        className="bg-background-light dark:bg-background-dark-card border border-secondary/20 dark:border-border-dark-primary rounded-xl px-4 py-3 pr-10 text-text-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-light focus:border-transparent transition-all duration-300"
-                      >
-                        <option value="due_date">Due Date</option>
-                        <option value="priority">Priority</option>
-                        <option value="created_at">Created</option>
-                      </select>
+                        onChange={(value) => setTodoSort(value as SortType)}
+                        options={[
+                          { value: 'due_date', label: 'Due Date' },
+                          { value: 'priority', label: 'Priority' },
+                          { value: 'created_at', label: 'Created' }
+                        ]}
+                        className="bg-background-light dark:bg-background-dark-card border border-secondary/20 dark:border-border-dark-primary rounded-xl px-4 py-3 pr-10 text-text-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-light focus:border-transparent"
+                      />
                     </>
                   )}
                 </div>

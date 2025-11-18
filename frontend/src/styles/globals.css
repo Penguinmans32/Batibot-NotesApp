@@ -110,3 +110,78 @@ body {
 .dark-border {
   @apply border-secondary/20 dark:border-text-dark-secondary/20;
 }
+
+/* Simple dropdown styling - native select elements cannot be animated */
+select {
+  cursor: pointer;
+}
+
+/* Better option padding */
+select option {
+  padding: 8px 12px;
+}
+
+/* Custom animated dropdown menu */
+.dropdown-menu {
+  animation: slideDown 0.35s ease-out forwards;
+  transform-origin: top;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scaleY(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scaleY(1);
+  }
+}
+
+/* Dropdown closing animation */
+.dropdown-menu-closing {
+  animation: slideUp 0.2s ease-in forwards;
+  transform-origin: top;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 1;
+    transform: translateY(0) scaleY(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-8px) scaleY(0.95);
+  }
+}
+
+/* Custom scrollbar for dropdown - NOT gradient */
+.dropdown-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+
+.dropdown-scroll::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+
+.dark .dropdown-scroll::-webkit-scrollbar-track {
+  background: #334155;
+}
+
+.dropdown-scroll::-webkit-scrollbar-thumb {
+  background: #94a3b8;
+  border-radius: 4px;
+}
+
+.dropdown-scroll::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+.dark .dropdown-scroll::-webkit-scrollbar-thumb {
+  background: #475569;
+}
+
+.dark .dropdown-scroll::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}

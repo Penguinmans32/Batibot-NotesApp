@@ -3,6 +3,7 @@ import { Wallet, Send, Shield, Copy, ExternalLink, X } from 'lucide-react';
 import { useCardanoContext } from '../contexts/CardanoContext';
 import TransactionSuccessModal from './TranscationModelSuccess';
 import SecureNoteModal from './SecureNoteModal';
+import AnimatedSelect from './AnimatedSelect';
 
 interface CardanoWalletProps {
   className?: string;
@@ -102,18 +103,19 @@ const CardanoWallet: React.FC<CardanoWalletProps> = ({ className, notes = [], on
           </div>
         ) : (
           <div>
-            <select
+            <AnimatedSelect
               value={localSelectedWallet}
-              onChange={(e) => setLocalSelectedWallet(e.target.value)}
+              onChange={(value) => setLocalSelectedWallet(value)}
+              options={[
+                { value: '', label: 'Select Wallet' },
+                ...availableWallets.map(walletName => ({
+                  value: walletName,
+                  label: walletName.charAt(0).toUpperCase() + walletName.slice(1)
+                }))
+              ]}
+              icon={<Wallet className="w-5 h-5 text-blue-600 dark:text-blue-400" />}
               className="w-full bg-white dark:bg-gray-800 border border-blue-300 dark:border-blue-600 rounded-xl px-4 py-3 text-blue-900 dark:text-blue-100 mb-4"
-            >
-              <option value="">Select Wallet</option>
-              {availableWallets.map(walletName => (
-                <option key={walletName} value={walletName}>
-                  {walletName.charAt(0).toUpperCase() + walletName.slice(1)}
-                </option>
-              ))}
-            </select>
+            />
 
             <button
               onClick={() => localSelectedWallet && connectWallet(localSelectedWallet)}
