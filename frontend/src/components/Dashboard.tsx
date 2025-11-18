@@ -806,11 +806,11 @@ const Dashboard: React.FC = () => {
   return (
     <>
       <div className="min-h-screen bg-background-light dark:bg-background-dark-light theme-transition">
-        <div className="relative z-10 max-w-7xl mx-auto px-4 py-8">
+        <div className="relative z-10 max-w-7xl mx-auto px-2 sm:px-4 py-4 sm:py-8">
           {/* Header */}
-          <div className="bg-background-card dark:bg-background-dark-card rounded-3xl p-6 border border-secondary/20 dark:border-text-dark-secondary/20 mb-8 theme-transition">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
+          <div className="bg-background-card dark:bg-background-dark-card rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-secondary/20 dark:border-text-dark-secondary/20 mb-4 sm:mb-8 theme-transition">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="flex items-center space-x-3 sm:space-x-4">
                 <div className="w-12 h-12 bg-primary dark:bg-blue-600 rounded-xl flex items-center justify-center">
                   <User className="w-6 h-6 text-white" />
                 </div>
@@ -837,8 +837,8 @@ const Dashboard: React.FC = () => {
           </div>
 
           {/* Tab Navigation */}
-          <div className="bg-background-card dark:bg-background-dark-card rounded-3xl p-6 border border-secondary/20 dark:border-text-dark-secondary/20 mb-8 theme-transition shadow-[0_0_15px_rgba(0,0,0,0.05)] dark:shadow-[0_0_20px_rgba(0,0,0,0.3)]">
-            <div className="flex space-x-4 mb-6">
+          <div className="bg-background-card dark:bg-background-dark-card rounded-2xl sm:rounded-3xl p-3 sm:p-6 border border-secondary/20 dark:border-text-dark-secondary/20 mb-4 sm:mb-8 theme-transition shadow-[0_0_15px_rgba(0,0,0,0.05)] dark:shadow-[0_0_20px_rgba(0,0,0,0.3)]">
+            <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4 mb-4 sm:mb-6">
               <button
                 onClick={() => setActiveTab('notes')}
                 className={`flex items-center space-x-2 px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
@@ -853,7 +853,7 @@ const Dashboard: React.FC = () => {
               </button>
               <button
                 onClick={() => setActiveTab('todos')}
-                className={`flex items-center space-x-2 px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
+                className={`flex items-center justify-center sm:justify-start space-x-2 px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg sm:rounded-xl font-semibold text-sm sm:text-base transition-all duration-300 ${
                   activeTab === 'todos'
                     ? 'bg-primary dark:bg-blue-600 text-white'
                     : 'bg-secondary/10 dark:bg-text-dark-secondary/10 text-text-secondary dark:text-text-dark-secondary hover:bg-secondary/20 dark:hover:bg-text-dark-secondary/20'
@@ -865,7 +865,7 @@ const Dashboard: React.FC = () => {
               </button>
               <button
                 onClick={() => setActiveTab('cardano')}
-                className={`flex items-center space-x-2 px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
+                className={`flex items-center justify-center sm:justify-start space-x-2 px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg sm:rounded-xl font-semibold text-sm sm:text-base transition-all duration-300 ${
                   activeTab === 'cardano'
                     ? 'bg-blue-500 dark:bg-blue-600 text-white'
                     : 'bg-secondary/10 dark:bg-text-dark-secondary/10 text-text-secondary dark:text-text-dark-secondary hover:bg-secondary/20 dark:hover:bg-text-dark-secondary/20'
@@ -878,7 +878,7 @@ const Dashboard: React.FC = () => {
 
             {/* Todo Statistics */}
             {activeTab === 'todos' && (
-              <div className="grid grid-cols-3 gap-4 mb-6">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-4 sm:mb-6">
                 <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-500/30 rounded-xl p-4 theme-transition">
                   <div className="flex items-center space-x-2">
                     <ListTodo className="w-5 h-5 text-blue-600 dark:text-blue-400" />
@@ -908,12 +908,12 @@ const Dashboard: React.FC = () => {
               {/* First Row: Search and Primary Actions */}
               <div className="flex flex-col sm:flex-row gap-4">
                 <div className="relative flex-1">
-                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-text-secondary dark:text-text-dark-secondary w-5 h-5" />
+                  <Search className="absolute left-3 sm:left-4 top-1/2 transform -translate-y-1/2 text-text-secondary dark:text-text-dark-secondary w-4 h-4 sm:w-5 sm:h-5" />
                   <input
                     type="text"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full bg-background-light dark:bg-background-dark-lighter border border-secondary/20 dark:border-text-dark-secondary/20 rounded-xl pl-12 pr-4 py-3 text-text-primary dark:text-text-dark-primary placeholder-text-secondary dark:placeholder-text-dark-secondary focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-blue-400 focus:border-transparent transition-all duration-300"
+                    className="w-full bg-background-light dark:bg-background-dark-lighter border border-secondary/20 dark:border-text-dark-secondary/20 rounded-lg sm:rounded-xl pl-10 sm:pl-12 pr-3 sm:pr-4 py-2.5 sm:py-3 text-sm sm:text-base text-text-primary dark:text-text-dark-primary placeholder-text-secondary dark:placeholder-text-dark-secondary focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-blue-400 focus:border-transparent transition-all duration-300"
                     placeholder={`Search your ${activeTab}...`}
                   />
                 </div>
@@ -931,7 +931,7 @@ const Dashboard: React.FC = () => {
                   {activeTab === 'notes' && (
                     <button
                       onClick={isSelectionMode ? exitSelectionMode : enterSelectionMode}
-                      className={`rounded-xl px-4 py-3 font-semibold transition-all duration-500 transform hover:scale-[1.02] flex items-center justify-center space-x-2 whitespace-nowrap ${
+                      className={`rounded-lg sm:rounded-xl px-3 sm:px-4 py-2.5 sm:py-3 font-semibold text-sm sm:text-base transition-all duration-500 transform hover:scale-[1.02] flex items-center justify-center space-x-1 sm:space-x-2 whitespace-nowrap ${
                         isSelectionMode
                           ? 'bg-orange-500 hover:bg-orange-600 text-white'
                           : 'bg-secondary/10 dark:bg-text-dark-secondary/10 hover:bg-secondary/20 dark:hover:bg-text-dark-secondary/20 border border-secondary/30 dark:border-border-dark-primary text-text-primary dark:text-text-dark-primary'
@@ -955,7 +955,7 @@ const Dashboard: React.FC = () => {
                   {activeTab === 'notes' && (
                     <button
                       onClick={() => setIsRecycleBinModalOpen(true)}
-                      className="bg-red-500/15 hover:bg-red-500/25 dark:bg-red-600/20 dark:hover:bg-red-500/30 border border-red-400/40 dark:border-red-400/50 rounded-xl px-4 py-3 text-red-600 dark:text-red-300 hover:text-red-700 dark:hover:text-red-200 font-semibold transition-all duration-500 transform hover:scale-105 flex items-center justify-center space-x-2 whitespace-nowrap"
+                      className="bg-red-500/15 hover:bg-red-500/25 dark:bg-red-600/20 dark:hover:bg-red-500/30 border border-red-400/40 dark:border-red-400/50 rounded-lg sm:rounded-xl px-3 sm:px-4 py-2.5 sm:py-3 text-red-600 dark:text-red-300 hover:text-red-700 dark:hover:text-red-200 font-semibold text-sm sm:text-base transition-all duration-500 transform hover:scale-105 flex items-center justify-center space-x-1 sm:space-x-2 whitespace-nowrap"
                       title="Recycle Bin"
                     >
                       <Archive className="w-4 h-4" />
@@ -967,7 +967,7 @@ const Dashboard: React.FC = () => {
 
               {/* Second Row: Filters and Sorting - Only show when relevant */}
               {(activeTab === 'notes' || activeTab === 'todos') && (
-                <div className="flex flex-wrap justify-center gap-4">
+                <div className="flex flex-wrap justify-start sm:justify-center gap-2 sm:gap-4">
                   {/* Note Filters and Sort */}
                   {activeTab === 'notes' && (
                     <>
@@ -991,7 +991,7 @@ const Dashboard: React.FC = () => {
                             type="date"
                             value={specificDate}
                             onChange={(e) => setSpecificDate(e.target.value)}
-                            className="bg-background-light dark:bg-background-dark-card border border-secondary/20 dark:border-border-dark-primary rounded-xl px-4 py-3 text-text-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-light focus:border-transparent transition-all duration-300"
+                            className="bg-background-light dark:bg-background-dark-card border border-secondary/20 dark:border-border-dark-primary rounded-lg sm:rounded-xl px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base text-text-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-light focus:border-transparent transition-all duration-300"
                           />
                         </div>
                       )}
@@ -1032,7 +1032,7 @@ const Dashboard: React.FC = () => {
                             setSearchTerm('');
                             setSelectedTagFilter('all');
                           }}
-                          className="px-4 py-3 text-text-secondary dark:text-text-dark-secondary hover:text-text-primary dark:hover:text-text-dark-primary bg-background-light dark:bg-background-dark-card hover:bg-background-lighter dark:hover:bg-background-dark-lighter border border-secondary/20 dark:border-border-dark-primary rounded-xl transition-all duration-300 flex items-center space-x-2 whitespace-nowrap"
+                          className="px-3 sm:px-4 py-2 sm:py-3 text-text-secondary dark:text-text-dark-secondary hover:text-text-primary dark:hover:text-text-dark-primary bg-background-light dark:bg-background-dark-card hover:bg-background-lighter dark:hover:bg-background-dark-lighter border border-secondary/20 dark:border-border-dark-primary rounded-lg sm:rounded-xl transition-all duration-300 flex items-center space-x-1 sm:space-x-2 whitespace-nowrap"
                           title="Clear all filters"
                         >
                           <Filter className="w-4 h-4" />
@@ -1075,8 +1075,8 @@ const Dashboard: React.FC = () => {
 
           {/* Selection Controls Bar - Only show for notes in selection mode */}
           {activeTab === 'notes' && isSelectionMode && (
-            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border border-blue-200 dark:border-blue-500/30 rounded-3xl p-4 mb-8 theme-transition animate-in slide-in-from-top-2 duration-300 shadow-[0_0_15px_rgba(59,130,246,0.15)] dark:shadow-[0_0_20px_rgba(59,130,246,0.3)]">
-              <div className="flex items-center justify-between">
+            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border border-blue-200 dark:border-blue-500/30 rounded-2xl sm:rounded-3xl p-3 sm:p-4 mb-4 sm:mb-8 theme-transition animate-in slide-in-from-top-2 duration-300 shadow-[0_0_15px_rgba(59,130,246,0.15)] dark:shadow-[0_0_20px_rgba(59,130,246,0.3)]">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
                 <div className="flex items-center space-x-4">
                   <div className="flex items-center space-x-3">
                     <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
@@ -1150,14 +1150,14 @@ const Dashboard: React.FC = () => {
           )}
 
           {/* Content Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
             {activeTab === 'notes' ? (
               filteredNotes.length === 0 ? (
                 <div className="col-span-full">
-                  <div className="bg-background-card dark:bg-background-dark-card rounded-3xl p-12 border border-secondary/20 dark:border-text-dark-secondary/20 text-center theme-transition shadow-[0_0_15px_rgba(0,0,0,0.05)] dark:shadow-[0_0_20px_rgba(0,0,0,0.3)]">
-                    <FileText className="w-16 h-16 text-text-secondary dark:text-text-dark-secondary mx-auto mb-4" />
-                    <h3 className="text-2xl font-bold text-text-primary dark:text-text-dark-primary mb-2">No notes yet</h3>
-                    <p className="text-text-secondary dark:text-text-dark-secondary mb-6">
+                  <div className="bg-background-card dark:bg-background-dark-card rounded-2xl sm:rounded-3xl p-6 sm:p-8 lg:p-12 border border-secondary/20 dark:border-text-dark-secondary/20 text-center theme-transition shadow-[0_0_15px_rgba(0,0,0,0.05)] dark:shadow-[0_0_20px_rgba(0,0,0,0.3)]">
+                    <FileText className="w-12 h-12 sm:w-16 sm:h-16 text-text-secondary dark:text-text-dark-secondary mx-auto mb-3 sm:mb-4" />
+                    <h3 className="text-xl sm:text-2xl font-bold text-text-primary dark:text-text-dark-primary mb-2">No notes yet</h3>
+                    <p className="text-sm sm:text-base text-text-secondary dark:text-text-dark-secondary mb-4 sm:mb-6">
                       {noteDateFilter === 'specific' && specificDate
                         ? 'No existing notes on this day.'
                         : searchTerm
@@ -1302,7 +1302,7 @@ const Dashboard: React.FC = () => {
                   {otherNotes.map((note) => (
                     <div
                       key={note.id}
-                      className={`bg-background-card dark:bg-background-dark-card rounded-3xl p-6 border transition-all duration-300 ease-out transform hover:scale-[1.01] group cursor-pointer theme-transition relative shadow-[0_0_10px_rgba(0,0,0,0.05)] hover:shadow-[0_0_15px_rgba(0,0,0,0.1)] dark:shadow-[0_0_15px_rgba(0,0,0,0.3)] dark:hover:shadow-[0_0_25px_rgba(0,0,0,0.4)] ${
+                      className={`bg-background-card dark:bg-background-dark-card rounded-2xl sm:rounded-3xl p-4 sm:p-6 border transition-all duration-300 ease-out transform hover:scale-[1.01] group cursor-pointer theme-transition relative shadow-[0_0_10px_rgba(0,0,0,0.05)] hover:shadow-[0_0_15px_rgba(0,0,0,0.1)] dark:shadow-[0_0_15px_rgba(0,0,0,0.3)] dark:hover:shadow-[0_0_25px_rgba(0,0,0,0.4)] ${
                         isSelectionMode
                           ? selectedNotes.includes(note.id)
                             ? 'ring-4 ring-blue-500 dark:ring-blue-400 ring-opacity-50 bg-blue-50/50 dark:bg-blue-900/20 border-blue-400 dark:border-blue-500'
@@ -1426,7 +1426,7 @@ const Dashboard: React.FC = () => {
                 filteredTodos.map((todo) => (
                   <div
                     key={todo.id}
-                    className={`bg-background-card dark:bg-background-dark-card rounded-3xl p-6 border transition-all duration-300 ease-out transform hover:scale-[1.01] group cursor-pointer theme-transition shadow-[0_0_10px_rgba(0,0,0,0.05)] hover:shadow-[0_0_15px_rgba(0,0,0,0.1)] dark:shadow-[0_0_15px_rgba(0,0,0,0.3)] dark:hover:shadow-[0_0_25px_rgba(0,0,0,0.4)] ${
+                    className={`bg-background-card dark:bg-background-dark-card rounded-2xl sm:rounded-3xl p-4 sm:p-6 border transition-all duration-300 ease-out transform hover:scale-[1.01] group cursor-pointer theme-transition shadow-[0_0_10px_rgba(0,0,0,0.05)] hover:shadow-[0_0_15px_rgba(0,0,0,0.1)] dark:shadow-[0_0_15px_rgba(0,0,0,0.3)] dark:hover:shadow-[0_0_25px_rgba(0,0,0,0.4)] ${
                       todo.completed
                         ? 'border-green-200 dark:border-green-500/30 bg-green-50/50 dark:bg-green-400/5'
                         : todo.due_date && isOverdue(todo.due_date)
@@ -1504,10 +1504,10 @@ const Dashboard: React.FC = () => {
                 ))
               )
             ) : activeTab === 'cardano' ? (
-              <div className="col-span-full space-y-6">
+              <div className="col-span-full space-y-4 sm:space-y-6">
                 {/* 🔥 NEW ANALYTICS BUTTON */}
-                <div className="bg-indigo-50/50 dark:bg-indigo-900/10 rounded-3xl p-6 border border-indigo-200/60 dark:border-indigo-700/30 theme-transition shadow-[0_0_20px_rgba(99,102,241,0.15)] dark:shadow-[0_0_25px_rgba(99,102,241,0.3)]">
-                  <div className="flex items-center justify-between">
+                <div className="bg-indigo-50/50 dark:bg-indigo-900/10 rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-indigo-200/60 dark:border-indigo-700/30 theme-transition shadow-[0_0_20px_rgba(99,102,241,0.15)] dark:shadow-[0_0_25px_rgba(99,102,241,0.3)]">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                     <div className="flex items-center space-x-4">
                       <div className="w-12 h-12 bg-indigo-500 dark:bg-indigo-600 rounded-xl flex items-center justify-center">
                         <BarChart3 className="w-6 h-6 text-white" />
