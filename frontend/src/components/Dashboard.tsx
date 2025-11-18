@@ -31,6 +31,7 @@ import TodoModal from './TodoModal';
 import AnimatedSelect from './AnimatedSelect';
 import DeleteConfirmModal from './DeleteConfirmModal';
 import RecycleBinModal from './RecycleBinModal';
+import Toast from './Toast';
 import { Todo, FilterType, SortType } from '../types/Todo';
 import { Note, NoteTag } from '../types/Note';
 import { toggleNoteFavorite } from '../utils/api';
@@ -130,10 +131,9 @@ const Dashboard: React.FC = () => {
                 setPendingBlockchainAction(null);
               } catch (blockchainError: any) {
                 console.error('Bulk blockchain transaction failed:', blockchainError);
-                alert(
-                  `✅ ${selectedNotes.length} notes deleted from database!\n\n` +
-                  `⚠️ Blockchain transactions failed: ${blockchainError?.message || 'Unknown error'}\n\n` +
-                  `💡 Notes are deleted, but deletions not recorded on blockchain.`
+                showToast(
+                  `✅ ${selectedNotes.length} notes deleted from database!\n\n⚠️ Blockchain transactions failed: ${blockchainError?.message || 'Unknown error'}\n\n💡 Notes are deleted, but deletions not recorded on blockchain.`,
+                  'error'
                 );
                 setIsAmountModalOpen(false);
                 setPendingBlockchainAction(null);
@@ -143,7 +143,7 @@ const Dashboard: React.FC = () => {
           setIsAmountModalOpen(true);
         } else {
           // No wallet connected
-          alert(`✅ ${selectedNotes.length} notes deleted successfully!\n\n💡 Connect Cardano wallet for blockchain audit trail!`);
+          showToast(`✅ ${selectedNotes.length} notes deleted successfully!\n\n💡 Connect Cardano wallet for blockchain audit trail!`, 'info');
         }
 
         // 3. UPDATE UI STATE
@@ -153,7 +153,7 @@ const Dashboard: React.FC = () => {
       }
     } catch (error) {
       console.error('Error bulk deleting notes:', error);
-      alert('❌ Failed to delete notes. Please try again.');
+      showToast('❌ Failed to delete notes. Please try again.', 'error');
     } finally {
       setDeleteLoading(false);
       setPendingBulkDelete(false);
@@ -217,6 +217,15 @@ const Dashboard: React.FC = () => {
 
   // Recycle bin modal state
   const [isRecycleBinModalOpen, setIsRecycleBinModalOpen] = useState(false);
+
+  // Toast notification state
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [toastType, setToastType] = useState<'success' | 'info' | 'error'>('success');
+
+  const showToast = (message: string, type: 'success' | 'info' | 'error' = 'success') => {
+    setToastMessage(message);
+    setToastType(type);
+  };
 
   useEffect(() => {
     fetchNotes();
@@ -353,10 +362,9 @@ const Dashboard: React.FC = () => {
                 setPendingBlockchainAction(null);
               } catch (blockchainError: any) {
                 console.error('Blockchain transaction failed:', blockchainError);
-                alert(
-                  `✅ Note ${action} in database!\n\n` +
-                  `⚠️ Blockchain transaction failed: ${blockchainError?.message || 'Unknown error'}\n\n` +
-                  `💡 Your note is saved, but not secured on blockchain.`
+                showToast(
+                  `✅ Note ${action} in database!\n\n⚠️ Blockchain transaction failed: ${blockchainError?.message || 'Unknown error'}\n\n💡 Your note is saved, but not secured on blockchain.`,
+                  'error'
                 );
                 setIsAmountModalOpen(false);
                 setPendingBlockchainAction(null);
@@ -366,7 +374,7 @@ const Dashboard: React.FC = () => {
           setIsAmountModalOpen(true);
         } else {
           // No wallet connected - show regular success
-          alert(`✅ Note ${isEditing ? 'updated' : 'created'} successfully!\n\n💡 Connect Cardano wallet for blockchain security!`);
+          showToast(`✅ Note ${isEditing ? 'updated' : 'created'} successfully!\n\n💡 Connect Cardano wallet for blockchain security!`, 'info');
         }
 
         // 3. UPDATE UI STATE
@@ -380,7 +388,7 @@ const Dashboard: React.FC = () => {
       }
     } catch (error) {
       console.error('Error saving note:', error);
-      alert('❌ Failed to save note. Please try again.');
+      showToast('❌ Failed to save note. Please try again.', 'error');
     } finally {
       setNoteModalLoading(false);
     }
@@ -452,10 +460,9 @@ const Dashboard: React.FC = () => {
                 setPendingBlockchainAction(null);
               } catch (blockchainError: any) {
                 console.error('Blockchain transaction failed:', blockchainError);
-                alert(
-                  `✅ Todo ${action} in database!\n\n` +
-                  `⚠️ Blockchain transaction failed: ${blockchainError?.message || 'Unknown error'}\n\n` +
-                  `💡 Your todo is saved, but not secured on blockchain.`
+                showToast(
+                  `✅ Todo ${action} in database!\n\n⚠️ Blockchain transaction failed: ${blockchainError?.message || 'Unknown error'}\n\n💡 Your todo is saved, but not secured on blockchain.`,
+                  'error'
                 );
                 setIsAmountModalOpen(false);
                 setPendingBlockchainAction(null);
@@ -465,7 +472,7 @@ const Dashboard: React.FC = () => {
           setIsAmountModalOpen(true);
         } else {
           // No wallet connected - show regular success
-          alert(`✅ Todo ${isEditing ? 'updated' : 'created'} successfully!\n\n💡 Connect Cardano wallet for blockchain security!`);
+          showToast(`✅ Todo ${isEditing ? 'updated' : 'created'} successfully!\n\n💡 Connect Cardano wallet for blockchain security!`, 'info');
         }
 
         // 3. UPDATE UI STATE
@@ -479,7 +486,7 @@ const Dashboard: React.FC = () => {
       }
     } catch (error) {
       console.error('Error saving todo:', error);
-      alert('❌ Failed to save todo. Please try again.');
+      showToast('❌ Failed to save todo. Please try again.', 'error');
     } finally {
       setTodoModalLoading(false);
     }
@@ -605,10 +612,9 @@ const Dashboard: React.FC = () => {
                 setPendingBlockchainAction(null);
               } catch (blockchainError: any) {
                 console.error('Blockchain transaction failed:', blockchainError);
-                alert(
-                  `✅ ${itemToDelete.type === 'note' ? 'Note' : 'Todo'} deleted from database!\n\n` +
-                  `⚠️ Blockchain transaction failed: ${blockchainError?.message || 'Unknown error'}\n\n` +
-                  `💡 Item is deleted, but deletion not recorded on blockchain.`
+                showToast(
+                  `✅ ${itemToDelete.type === 'note' ? 'Note' : 'Todo'} deleted from database!\n\n⚠️ Blockchain transaction failed: ${blockchainError?.message || 'Unknown error'}\n\n💡 Item is deleted, but deletion not recorded on blockchain.`,
+                  'error'
                 );
                 setIsAmountModalOpen(false);
                 setPendingBlockchainAction(null);
@@ -618,7 +624,7 @@ const Dashboard: React.FC = () => {
           setIsAmountModalOpen(true);
         } else {
           // No wallet connected
-          alert(`✅ ${itemToDelete.type === 'note' ? 'Note' : 'Todo'} deleted successfully!\n\n💡 Connect Cardano wallet for blockchain audit trail!`);
+          showToast(`✅ ${itemToDelete.type === 'note' ? 'Note' : 'Todo'} deleted successfully!\n\n💡 Connect Cardano wallet for blockchain audit trail!`, 'info');
         }
 
         // 3. UPDATE UI STATE
@@ -633,7 +639,7 @@ const Dashboard: React.FC = () => {
       }
     } catch (error) {
       console.error('Error deleting item:', error);
-      alert('❌ Failed to delete item. Please try again.');
+      showToast('❌ Failed to delete item. Please try again.', 'error');
     } finally {
       setDeleteLoading(false);
     }
@@ -1604,6 +1610,15 @@ const Dashboard: React.FC = () => {
         onClose={() => setIsRecycleBinModalOpen(false)}
         onRefresh={fetchNotes}
       />
+
+      {/* Toast Notification */}
+      {toastMessage && (
+        <Toast
+          message={toastMessage}
+          type={toastType}
+          onClose={() => setToastMessage(null)}
+        />
+      )}
     </>
   );
 };
