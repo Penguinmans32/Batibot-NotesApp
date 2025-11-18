@@ -75,7 +75,7 @@ const Signup: React.FC = () => {
         }}></div>
         
         {/* Floating Notes */}
-        <div className="absolute inset-0">
+        <div className="absolute inset-0 hidden sm:block">
           <div className="absolute top-10 left-10 w-16 h-20 bg-yellow-300/70 dark:bg-yellow-400/40 rounded-lg shadow-xl border-2 border-yellow-400/80 dark:border-yellow-400/50" style={{transform: 'rotate(12deg)', animation: 'float 6s ease-in-out infinite'}}></div>
           <div className="absolute top-20 right-20 w-12 h-16 bg-blue-300/70 dark:bg-blue-400/40 rounded-lg shadow-xl border-2 border-blue-400/80 dark:border-blue-400/50" style={{transform: 'rotate(-6deg)', animation: 'float 8s ease-in-out infinite', animationDelay: '1s'}}></div>
           <div className="absolute bottom-32 left-16 w-14 h-18 bg-green-300/70 dark:bg-green-400/40 rounded-lg shadow-xl border-2 border-green-400/80 dark:border-green-400/50" style={{transform: 'rotate(6deg)', animation: 'float 7s ease-in-out infinite', animationDelay: '2s'}}></div>
@@ -85,7 +85,7 @@ const Signup: React.FC = () => {
         </div>
 
         {/* Animated Writing Lines */}
-        <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute inset-0 pointer-events-none hidden md:block">
           <svg className="absolute top-1/4 left-1/4 w-64 h-32 opacity-10" viewBox="0 0 200 100">
             <path 
               d="M10,30 Q50,10 90,30 T170,30" 
@@ -159,7 +159,7 @@ const Signup: React.FC = () => {
         </div>
 
         {/* Floating Dots Pattern */}
-        <div className="absolute inset-0">
+        <div className="absolute inset-0 hidden sm:block">
           <div className="absolute top-1/3 left-1/5 w-3 h-3 bg-indigo-500/80 dark:bg-indigo-400/60 rounded-full animate-ping shadow-lg" style={{animationDelay: '0s'}}></div>
           <div className="absolute top-1/2 left-1/3 w-2 h-2 bg-purple-500/90 dark:bg-purple-400/70 rounded-full animate-ping shadow-lg" style={{animationDelay: '1s'}}></div>
           <div className="absolute top-2/3 right-1/4 w-3 h-3 bg-blue-500/80 dark:bg-blue-400/60 rounded-full animate-ping shadow-lg" style={{animationDelay: '2s'}}></div>
@@ -168,7 +168,7 @@ const Signup: React.FC = () => {
         </div>
 
         {/* Pen/Pencil Animation */}
-        <div className="absolute top-1/3 right-1/5 opacity-15">
+        <div className="absolute top-1/3 right-1/5 opacity-15 hidden lg:block">
           <div className="relative" style={{animation: 'float 4s ease-in-out infinite', animationDelay: '1s'}}>
             <div className="w-1 h-16 bg-gradient-to-b from-yellow-600 to-yellow-800 rounded-full transform rotate-45"></div>
             <div className="absolute -top-2 -left-1 w-3 h-6 bg-gradient-to-b from-pink-300 to-pink-400 rounded-full transform rotate-45"></div>
@@ -177,7 +177,7 @@ const Signup: React.FC = () => {
         </div>
 
         {/* Another pen */}
-        <div className="absolute bottom-1/3 left-1/6 opacity-12">
+        <div className="absolute bottom-1/3 left-1/6 opacity-12 hidden lg:block">
           <div className="relative" style={{animation: 'float 5s ease-in-out infinite', animationDelay: '3s'}}>
             <div className="w-1 h-12 bg-gradient-to-b from-blue-600 to-blue-800 rounded-full transform rotate-12"></div>
             <div className="absolute -top-1 -left-0.5 w-2 h-4 bg-gradient-to-b from-silver to-gray-400 rounded-full transform rotate-12"></div>
@@ -185,7 +185,7 @@ const Signup: React.FC = () => {
         </div>
 
         {/* Paper Sheets */}
-        <div className="absolute top-16 right-16 opacity-40 dark:opacity-50">
+        <div className="absolute top-16 right-16 opacity-40 dark:opacity-50 hidden md:block">
           <div className="w-20 h-24 bg-white/90 dark:bg-gray-500/60 rounded-lg shadow-2xl border-2 border-gray-400/80 dark:border-gray-400/60" style={{transform: 'rotate(12deg)', animation: 'float 8s ease-in-out infinite'}}>
             <div className="h-2 bg-indigo-400/80 dark:bg-indigo-400/50 mx-2 mt-4 rounded"></div>
             <div className="h-1 bg-gray-400/70 dark:bg-gray-400/50 mx-2 mt-2 rounded"></div>
@@ -195,7 +195,7 @@ const Signup: React.FC = () => {
           </div>
         </div>
 
-        <div className="absolute bottom-20 left-20 opacity-40 dark:opacity-50">
+        <div className="absolute bottom-20 left-20 opacity-40 dark:opacity-50 hidden md:block">
           <div className="w-16 h-20 bg-white/90 dark:bg-gray-500/60 rounded-lg shadow-2xl border-2 border-gray-400/80 dark:border-gray-400/60" style={{transform: 'rotate(-6deg)', animation: 'float 6s ease-in-out infinite', animationDelay: '2s'}}>
             <div className="h-2 bg-blue-400/80 dark:bg-blue-400/50 mx-2 mt-3 rounded"></div>
             <div className="h-1 bg-gray-400/70 dark:bg-gray-400/50 mx-2 mt-2 rounded"></div>
@@ -205,7 +205,7 @@ const Signup: React.FC = () => {
         </div>
 
         {/* Additional floating paper */}
-        <div className="absolute top-1/2 right-10 opacity-30 dark:opacity-40">
+        <div className="absolute top-1/2 right-10 opacity-30 dark:opacity-40 hidden md:block">
           <div className="w-12 h-15 bg-white/80 dark:bg-gray-500/50 rounded-lg shadow-2xl border-2 border-gray-400/70 dark:border-gray-400/50" style={{transform: 'rotate(25deg)', animation: 'float 7s ease-in-out infinite', animationDelay: '4s'}}>
             <div className="h-1 bg-gray-400/70 dark:bg-gray-400/50 mx-1 mt-2 rounded"></div>
             <div className="h-1 bg-gray-400/60 dark:bg-gray-400/40 mx-1 mt-1 rounded w-3/4"></div>
@@ -216,10 +216,10 @@ const Signup: React.FC = () => {
 
       {/* Signup Card */}
       <div className="relative z-10 w-full max-w-6xl">
-        <div className="bg-background-card dark:bg-background-dark-card backdrop-blur-xl rounded-3xl p-10 shadow-2xl border border-background-light dark:border-text-dark-secondary/20 theme-transition">
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-12">
+        <div className="bg-background-card dark:bg-background-dark-card backdrop-blur-xl rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-10 shadow-2xl border border-background-light dark:border-text-dark-secondary/20 theme-transition">
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 lg:gap-12">
             {/* Left Column - App Features & Benefits */}
-            <div className="lg:col-span-3 flex flex-col justify-center p-8 lg:border-r border-background-lighter dark:border-text-dark-secondary/20">
+            <div className="hidden lg:flex lg:col-span-3 flex-col justify-center p-4 lg:p-8 lg:border-r border-background-lighter dark:border-text-dark-secondary/20">
               <div className="mb-6">
                 <div className="flex items-center gap-4 mb-6">
                   <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-emerald-500 to-blue-600 dark:from-emerald-400 dark:to-blue-500 rounded-3xl shadow-xl">
@@ -285,12 +285,12 @@ const Signup: React.FC = () => {
             </div>
             
             {/* Right Column - Signup Form */}
-            <div className="lg:col-span-2 p-8 flex flex-col justify-center">
-              <div className="text-center mb-6">
-                <h1 className="text-3xl font-bold text-text-primary dark:text-text-dark-primary mb-2">
+            <div className="lg:col-span-2 p-2 sm:p-4 lg:p-8 flex flex-col justify-center">
+              <div className="text-center mb-4 sm:mb-6">
+                <h1 className="text-2xl sm:text-3xl font-bold text-text-primary dark:text-text-dark-primary mb-2">
                   Join Today
                 </h1>
-                <p className="text-text-secondary dark:text-text-dark-secondary text-lg">
+                <p className="text-text-secondary dark:text-text-dark-secondary text-sm sm:text-base lg:text-lg">
                   Create your free account
                 </p>
               </div>
@@ -396,7 +396,7 @@ const Signup: React.FC = () => {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-gradient-to-r from-emerald-500 to-blue-600 hover:from-emerald-600 hover:to-blue-700 disabled:from-gray-400 disabled:to-gray-500 rounded-xl py-4 text-white font-semibold text-lg transition-all duration-300 hover:shadow-lg hover:shadow-emerald-500/25 disabled:cursor-not-allowed relative overflow-hidden group"
+                  className="w-full bg-gradient-to-r from-emerald-500 to-blue-600 hover:from-emerald-600 hover:to-blue-700 disabled:from-gray-400 disabled:to-gray-500 rounded-xl py-3 sm:py-4 text-white font-semibold text-base sm:text-lg transition-all duration-300 hover:shadow-lg hover:shadow-emerald-500/25 disabled:cursor-not-allowed relative overflow-hidden group"
                 >
                   <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 -skew-x-12 group-hover:animate-gradient"></div>
                   <span className="relative">
@@ -413,35 +413,35 @@ const Signup: React.FC = () => {
               </form>
 
               {/* Divider */}
-              <div className="relative flex items-center justify-center my-6">
+              <div className="relative flex items-center justify-center my-4 sm:my-6">
                 <div className="absolute inset-0 flex items-center">
                   <div className="w-full border-t border-background-lighter dark:border-text-dark-secondary/20"></div>
                 </div>
                 <div className="relative bg-background-card dark:bg-background-dark-card px-6">
-                  <span className="text-text-light dark:text-text-dark-secondary font-medium">or</span>
+                  <span className="text-text-light dark:text-text-dark-secondary font-medium text-sm sm:text-base">or</span>
                 </div>
               </div>
 
               {/* Google Signup Button (moved below form) */}
               <button
                 onClick={handleGoogleSignup}
-                className="w-full bg-background-light dark:bg-background-dark-lighter hover:bg-background-lighter dark:hover:bg-background-dark-light backdrop-blur-sm border border-background-lighter dark:border-text-dark-secondary/20 rounded-2xl p-5 mb-6 transition-all duration-300 group hover:scale-[1.02] hover:shadow-xl"
+                className="w-full bg-background-light dark:bg-background-dark-lighter hover:bg-background-lighter dark:hover:bg-background-dark-light backdrop-blur-sm border border-background-lighter dark:border-text-dark-secondary/20 rounded-xl sm:rounded-2xl p-3 sm:p-4 lg:p-5 mb-4 sm:mb-6 transition-all duration-300 group hover:scale-[1.02] hover:shadow-xl"
               >
-                <div className="flex items-center justify-center space-x-3">
-                  <svg className="w-6 h-6" viewBox="0 0 24 24">
+                <div className="flex items-center justify-center space-x-2 sm:space-x-3">
+                  <svg className="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24">
                     <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                     <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
                     <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
                     <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
                   </svg>
-                  <span className="text-text-primary dark:text-text-dark-primary font-semibold text-lg group-hover:text-text-primary/90 dark:group-hover:text-text-dark-primary/90">
+                  <span className="text-text-primary dark:text-text-dark-primary font-semibold text-sm sm:text-base lg:text-lg group-hover:text-text-primary/90 dark:group-hover:text-text-dark-primary/90">
                     Continue with Google
                   </span>
                 </div>
               </button>
 
               {/* Login Link */}
-              <div className="text-center mt-6">
+              <div className="text-center mt-4 sm:mt-6">
                 <p className="text-text-secondary dark:text-text-dark-secondary">
                   Already have an account?{' '}
                   <Link 
