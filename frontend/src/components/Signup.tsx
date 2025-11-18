@@ -216,10 +216,10 @@ const Signup: React.FC = () => {
 
       {/* Signup Card */}
       <div className="relative z-10 w-full max-w-6xl">
-        <div className="bg-background-card dark:bg-background-dark-card backdrop-blur-xl rounded-3xl p-6 shadow-2xl border border-background-light dark:border-text-dark-secondary/20 theme-transition">
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+        <div className="bg-background-card dark:bg-background-dark-card backdrop-blur-xl rounded-3xl p-10 shadow-2xl border border-background-light dark:border-text-dark-secondary/20 theme-transition">
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-12">
             {/* Left Column - App Features & Benefits */}
-            <div className="lg:col-span-3 flex flex-col justify-center p-4 lg:border-r border-background-lighter dark:border-text-dark-secondary/20">
+            <div className="lg:col-span-3 flex flex-col justify-center p-8 lg:border-r border-background-lighter dark:border-text-dark-secondary/20">
               <div className="mb-6">
                 <div className="flex items-center gap-4 mb-6">
                   <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-emerald-500 to-blue-600 dark:from-emerald-400 dark:to-blue-500 rounded-3xl shadow-xl">
@@ -285,7 +285,7 @@ const Signup: React.FC = () => {
             </div>
             
             {/* Right Column - Signup Form */}
-            <div className="lg:col-span-2 p-4 flex flex-col justify-center">
+            <div className="lg:col-span-2 p-8 flex flex-col justify-center">
               <div className="text-center mb-6">
                 <h1 className="text-3xl font-bold text-text-primary dark:text-text-dark-primary mb-2">
                   Join Today
@@ -301,7 +301,7 @@ const Signup: React.FC = () => {
               <form onSubmit={handleSubmit} className="space-y-4">
                 {/* Name Field */}
                 <div className="space-y-1">
-                  <label className="text-text-primary dark:text-text-dark-primary font-medium text-sm block">
+                  <label className="text-text-primary dark:text-text-dark-primary font-semibold text-sm block mb-1">
                     Full Name
                   </label>
                   <div className="relative">
@@ -310,7 +310,7 @@ const Signup: React.FC = () => {
                       type="text"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      className="w-full bg-background-light dark:bg-background-dark-card border border-background-lighter dark:border-border-dark-primary rounded-xl pl-12 pr-4 py-3 text-text-primary dark:text-text-dark-primary placeholder-text-light dark:placeholder-text-dark-secondary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300"
+                      className="w-full bg-background-light dark:bg-background-dark-card border border-background-lighter dark:border-border-dark-primary rounded-xl pl-12 pr-4 py-3 text-text-primary dark:text-text-dark-primary placeholder-text-light dark:placeholder-text-dark-secondary focus:outline-none focus:ring-2 focus:ring-emerald-400/30 focus:border-transparent transition-all duration-300"
                       placeholder="Enter your full name"
                       required
                     />
@@ -319,7 +319,7 @@ const Signup: React.FC = () => {
 
                 {/* Email Field */}
                 <div className="space-y-1">
-                  <label className="text-text-primary dark:text-text-dark-primary font-medium text-sm block">
+                  <label className="text-text-primary dark:text-text-dark-primary font-semibold text-sm block mb-1">
                     Email Address
                   </label>
                   <div className="relative">
@@ -328,7 +328,7 @@ const Signup: React.FC = () => {
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="w-full bg-background-light dark:bg-background-dark-card border border-background-lighter dark:border-border-dark-primary rounded-xl pl-12 pr-4 py-3 text-text-primary dark:text-text-dark-primary placeholder-text-light dark:placeholder-text-dark-secondary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300"
+                      className="w-full bg-background-light dark:bg-background-dark-card border border-background-lighter dark:border-border-dark-primary rounded-xl pl-12 pr-4 py-3 text-text-primary dark:text-text-dark-primary placeholder-text-light dark:placeholder-text-dark-secondary focus:outline-none focus:ring-2 focus:ring-emerald-400/30 focus:border-transparent transition-all duration-300"
                       placeholder="Enter your email"
                       required
                     />
@@ -396,7 +396,7 @@ const Signup: React.FC = () => {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-gradient-to-r from-emerald-500 to-blue-600 hover:from-emerald-600 hover:to-blue-700 disabled:from-gray-400 disabled:to-gray-500 rounded-xl py-3 text-white font-semibold text-lg transition-all duration-300 hover:shadow-lg hover:shadow-emerald-500/25 disabled:cursor-not-allowed relative overflow-hidden group"
+                  className="w-full bg-gradient-to-r from-emerald-500 to-blue-600 hover:from-emerald-600 hover:to-blue-700 disabled:from-gray-400 disabled:to-gray-500 rounded-xl py-4 text-white font-semibold text-lg transition-all duration-300 hover:shadow-lg hover:shadow-emerald-500/25 disabled:cursor-not-allowed relative overflow-hidden group"
                 >
                   <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 -skew-x-12 group-hover:animate-gradient"></div>
                   <span className="relative">
@@ -417,7 +417,7 @@ const Signup: React.FC = () => {
                 <div className="absolute inset-0 flex items-center">
                   <div className="w-full border-t border-background-lighter dark:border-text-dark-secondary/20"></div>
                 </div>
-                <div className="relative bg-background-card dark:bg-background-dark-card px-4">
+                <div className="relative bg-background-card dark:bg-background-dark-card px-6">
                   <span className="text-text-light dark:text-text-dark-secondary font-medium">or</span>
                 </div>
               </div>
@@ -425,7 +425,7 @@ const Signup: React.FC = () => {
               {/* Google Signup Button (moved below form) */}
               <button
                 onClick={handleGoogleSignup}
-                className="w-full bg-background-light dark:bg-background-dark-lighter hover:bg-background-lighter dark:hover:bg-background-dark-light backdrop-blur-sm border border-background-lighter dark:border-text-dark-secondary/20 rounded-2xl p-4 mb-6 transition-all duration-300 group hover:scale-[1.02] hover:shadow-xl"
+                className="w-full bg-background-light dark:bg-background-dark-lighter hover:bg-background-lighter dark:hover:bg-background-dark-light backdrop-blur-sm border border-background-lighter dark:border-text-dark-secondary/20 rounded-2xl p-5 mb-6 transition-all duration-300 group hover:scale-[1.02] hover:shadow-xl"
               >
                 <div className="flex items-center justify-center space-x-3">
                   <svg className="w-6 h-6" viewBox="0 0 24 24">

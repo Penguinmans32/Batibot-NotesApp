@@ -277,16 +277,16 @@ const Login: React.FC = () => {
               <form onSubmit={handleSubmit} className="space-y-8">
                 {/* Email Field */}
                 <div className="space-y-2">
-                  <label className="text-text-primary dark:text-text-dark-primary font-medium text-sm block">
-                    Email Address
-                  </label>
+                  <label className="text-text-primary dark:text-text-dark-primary font-semibold text-sm block mb-1">
+                      Email Address
+                    </label>
                   <div className="relative">
                     <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-text-light dark:text-text-dark-secondary w-5 h-5" />
                     <input
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="w-full bg-background-light dark:bg-background-dark-card border border-background-lighter dark:border-border-dark-primary rounded-xl pl-12 pr-4 py-4 text-text-primary dark:text-text-dark-primary placeholder-text-light dark:placeholder-text-dark-secondary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300"
+                      className="w-full bg-background-light dark:bg-background-dark-card border border-background-lighter dark:border-border-dark-primary rounded-xl pl-12 pr-4 py-3 text-text-primary dark:text-text-dark-primary placeholder-text-light dark:placeholder-text-dark-secondary focus:outline-none focus:ring-2 focus:ring-emerald-400/30 focus:border-transparent transition-all duration-300"
                       placeholder="Enter your email"
                       required
                     />
@@ -295,7 +295,7 @@ const Login: React.FC = () => {
 
                 {/* Password Field */}
                 <div className="space-y-2">
-                  <label className="text-text-primary dark:text-text-dark-primary font-medium text-sm block">
+                  <label className="text-text-primary dark:text-text-dark-primary font-semibold text-sm block mb-1">
                     Password
                   </label>
                   <div className="relative">
@@ -304,7 +304,7 @@ const Login: React.FC = () => {
                       type={showPassword ? 'text' : 'password'}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="w-full bg-background-light dark:bg-background-dark-card border border-background-lighter dark:border-border-dark-primary rounded-xl pl-12 pr-12 py-4 text-text-primary dark:text-text-dark-primary placeholder-text-light dark:placeholder-text-dark-secondary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300"
+                      className="w-full bg-background-light dark:bg-background-dark-card border border-background-lighter dark:border-border-dark-primary rounded-xl pl-12 pr-12 py-3 text-text-primary dark:text-text-dark-primary placeholder-text-light dark:placeholder-text-dark-secondary focus:outline-none focus:ring-2 focus:ring-emerald-400/30 focus:border-transparent transition-all duration-300"
                       placeholder="Enter your password"
                       required
                     />
