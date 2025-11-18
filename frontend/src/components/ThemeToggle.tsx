@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Moon, Sun } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 
+// Theme toggle with proper icon colors for dark/light mode preview
 interface ThemeToggleProps {
   className?: string;
   size?: 'sm' | 'md' | 'lg';
@@ -12,6 +13,8 @@ const ThemeToggle: React.FC<ThemeToggleProps> = ({
   size = 'md' 
 }) => {
   const { theme, toggleTheme } = useTheme();
+  const [justClicked, setJustClicked] = useState(false);
+  const [isHovering, setIsHovering] = useState(false);
 
   const sizeClasses = {
     sm: 'w-8 h-8 p-1',
@@ -25,21 +28,51 @@ const ThemeToggle: React.FC<ThemeToggleProps> = ({
     lg: 'w-6 h-6'
   };
 
+  const handleClick = () => {
+    setJustClicked(true);
+    setIsHovering(false);
+    toggleTheme();
+  };
+
+  const handleMouseEnter = () => {
+    if (!justClicked) {
+      setIsHovering(true);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovering(false);
+    setJustClicked(false);
+  };
+
+  const shouldShowHover = isHovering && !justClicked;
+
   return (
     <button
-      onClick={toggleTheme}
+      onClick={handleClick}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
       className={`
         ${sizeClasses[size]}
-        relative rounded-xl bg-background-light hover:bg-background-lighter 
-        dark:bg-background-dark-lighter dark:hover:bg-background-dark-light
+        relative rounded-xl 
+        bg-background-light dark:bg-background-dark-lighter
         border border-secondary/20 dark:border-text-dark-secondary/20
-        text-text-secondary hover:text-text-primary 
-        dark:text-text-dark-secondary dark:hover:text-text-dark-primary
-        transition-all duration-300 ease-in-out
-        hover:scale-105 active:scale-95
+        text-text-secondary dark:text-text-dark-secondary
+        transition-all duration-[400ms] ease-in-out
+        transform
         focus:outline-none focus:ring-2 focus:ring-primary/50 dark:focus:ring-blue-400/50
+        group
         ${className}
       `}
+      style={{
+        backgroundColor: shouldShowHover 
+          ? (theme === 'light' ? 'var(--background-dark-card)' : 'var(--background-card)')
+          : undefined,
+        color: shouldShowHover
+          ? (theme === 'light' ? 'var(--text-dark-primary)' : 'var(--text-primary)')
+          : undefined,
+        transform: shouldShowHover ? 'scale(1.02)' : 'scale(1)'
+      }}
       title={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
       aria-label={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
     >
@@ -48,24 +81,38 @@ const ThemeToggle: React.FC<ThemeToggleProps> = ({
         <Sun 
           className={`
             ${iconSizes[size]}
-            absolute transition-all duration-300 ease-in-out
-            ${theme === 'light' 
-              ? 'opacity-100 rotate-0 scale-100' 
-              : 'opacity-0 rotate-90 scale-0'
-            }
+            absolute transition-all duration-[400ms] ease-in-out
           `}
+          style={{
+            opacity: theme === 'light' 
+              ? (shouldShowHover ? 0 : 1)
+              : (shouldShowHover ? 1 : 0),
+            transform: theme === 'light'
+              ? (shouldShowHover ? 'rotate(90deg) scale(0)' : 'rotate(0deg) scale(1)')
+              : (shouldShowHover ? 'rotate(0deg) scale(1)' : 'rotate(90deg) scale(0)'),
+            color: theme === 'light'
+              ? '#6B7280'  // Gray in normal light mode
+              : '#F8FAFC'  // Light color when previewing from dark mode
+          }}
         />
         
         {/* Moon icon for dark mode */}
         <Moon 
           className={`
             ${iconSizes[size]}
-            absolute transition-all duration-300 ease-in-out
-            ${theme === 'dark' 
-              ? 'opacity-100 rotate-0 scale-100' 
-              : 'opacity-0 -rotate-90 scale-0'
-            }
+            absolute transition-all duration-[400ms] ease-in-out
           `}
+          style={{
+            opacity: theme === 'dark'
+              ? (shouldShowHover ? 0 : 1)
+              : (shouldShowHover ? 1 : 0),
+            transform: theme === 'dark'
+              ? (shouldShowHover ? 'rotate(-90deg) scale(0)' : 'rotate(0deg) scale(1)')
+              : (shouldShowHover ? 'rotate(0deg) scale(1)' : 'rotate(-90deg) scale(0)'),
+            color: theme === 'dark'
+              ? '#CBD5E1'  // Light gray in normal dark mode
+              : '#111827'  // Dark color when previewing from light mode
+          }}
         />
       </div>
 

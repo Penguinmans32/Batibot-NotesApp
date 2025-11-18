@@ -820,7 +820,7 @@ const Dashboard: React.FC = () => {
                 <ThemeToggle />
                 <button
                   onClick={logout}
-                  className="flex items-center space-x-2 bg-error/10 hover:bg-error dark:bg-red-900/20 dark:hover:bg-red-600 border border-error/30 dark:border-red-500/30 rounded-xl px-4 py-2 text-error dark:text-red-400 hover:text-white dark:hover:text-white transition-all duration-500 transform hover:scale-105"
+                  className="flex items-center space-x-2 bg-error/10 hover:bg-error/20 dark:bg-red-900/20 dark:hover:bg-red-900/30 border border-error/30 dark:border-red-500/30 rounded-xl px-4 py-2 text-error dark:text-red-400 hover:text-error dark:hover:text-red-400 transition-all duration-500 transform hover:scale-[1.02]"
                 >
                   <LogOut className="w-4 h-4" />
                   <span>Logout</span>
