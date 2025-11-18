@@ -77,14 +77,14 @@ const CardanoWallet: React.FC<CardanoWalletProps> = ({ className, notes = [], on
 
   if (!wallet) {
     return (
-      <div className={`bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-blue-900/20 dark:to-indigo-900/30 rounded-3xl p-6 border border-blue-200 dark:border-blue-500/30 ${className}`}>
+      <div className={`bg-teal-50/50 dark:bg-teal-900/10 rounded-3xl p-6 border border-teal-200/60 dark:border-teal-700/30 theme-transition shadow-[0_0_20px_rgba(20,184,166,0.15)] dark:shadow-[0_0_25px_rgba(20,184,166,0.3)] ${className}`}>
         <div className="flex items-center space-x-3 mb-4">
-          <div className="w-10 h-10 bg-blue-500 dark:bg-blue-600 rounded-xl flex items-center justify-center">
+          <div className="w-10 h-10 bg-teal-500 dark:bg-teal-600 rounded-xl flex items-center justify-center">
             <Wallet className="w-5 h-5 text-white" />
           </div>
           <div>
-            <h3 className="text-lg font-bold text-blue-900 dark:text-blue-100">Cardano Wallet</h3>
-            <p className="text-blue-700 dark:text-blue-300 text-sm">Connect to send ADA & secure notes</p>
+            <h3 className="text-lg font-bold text-teal-900 dark:text-teal-200">Cardano Wallet</h3>
+            <p className="text-teal-600 dark:text-teal-400 text-sm">Connect to send ADA & secure notes</p>
           </div>
         </div>
 
@@ -143,45 +143,45 @@ const CardanoWallet: React.FC<CardanoWalletProps> = ({ className, notes = [], on
 
   return (
     <>
-      <div className={`bg-gradient-to-br from-green-50 to-emerald-100 dark:from-green-900/20 dark:to-emerald-900/30 rounded-3xl p-6 border border-green-200 dark:border-green-500/30 ${className}`}>
+      <div className={`bg-teal-50/50 dark:bg-teal-900/10 rounded-3xl p-6 border border-teal-200/60 dark:border-teal-700/30 theme-transition shadow-[0_0_20px_rgba(20,184,166,0.15)] dark:shadow-[0_0_25px_rgba(20,184,166,0.3)] ${className}`}>
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-green-500 dark:bg-green-600 rounded-xl flex items-center justify-center">
+            <div className="w-10 h-10 bg-teal-500 dark:bg-teal-600 rounded-xl flex items-center justify-center">
               <Wallet className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-green-900 dark:text-green-100">
+              <h3 className="text-lg font-bold text-teal-900 dark:text-teal-200">
                 {selectedWallet.charAt(0).toUpperCase() + selectedWallet.slice(1)} Connected
               </h3>
-              <p className="text-green-700 dark:text-green-300 text-sm">Ready for transactions</p>
+              <p className="text-teal-600 dark:text-teal-400 text-sm">Ready for transactions</p>
             </div>
           </div>
           <button
             onClick={disconnectWallet}
-            className="p-2 hover:bg-green-200 dark:hover:bg-green-800/30 rounded-lg transition-colors"
+            className="p-2 hover:bg-teal-100 dark:hover:bg-teal-800/30 rounded-lg transition-colors"
           >
-            <X className="w-4 h-4 text-green-700 dark:text-green-300" />
+            <X className="w-4 h-4 text-teal-600 dark:text-teal-400" />
           </button>
         </div>
 
         <div className="space-y-3">
-          <div className="bg-white dark:bg-gray-800/50 rounded-xl p-4 border border-green-200 dark:border-green-600/30">
+          <div className="bg-white dark:bg-gray-800/50 rounded-xl p-4 border border-teal-200/60 dark:border-teal-700/30 theme-transition">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-green-800 dark:text-green-200 font-medium">Balance:</span>
-              <span className="text-2xl font-bold text-green-900 dark:text-green-100">
+              <span className="text-teal-700 dark:text-teal-300 font-medium">Balance:</span>
+              <span className="text-2xl font-bold text-teal-900 dark:text-teal-200">
                 ₳{formatADA(wallet.balance)}
               </span>
             </div>
             
             <div className="flex items-center space-x-2">
-              <span className="text-green-700 dark:text-green-300 text-xs font-mono truncate flex-1">
+              <span className="text-teal-600 dark:text-teal-400 text-xs font-mono truncate flex-1">
                 {wallet.address.slice(0, 20)}...{wallet.address.slice(-10)}
               </span>
               <button
                 onClick={copyAddress}
-                className="p-1 hover:bg-green-200 dark:hover:bg-green-700/30 rounded transition-colors"
+                className="p-1 hover:bg-teal-100 dark:hover:bg-teal-700/30 rounded transition-colors"
               >
-                <Copy className="w-3 h-3 text-green-600 dark:text-green-400" />
+                <Copy className="w-3 h-3 text-teal-500 dark:text-teal-400" />
               </button>
             </div>
           </div>

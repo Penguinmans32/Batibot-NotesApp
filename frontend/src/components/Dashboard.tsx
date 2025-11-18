@@ -830,7 +830,7 @@ const Dashboard: React.FC = () => {
           </div>
 
           {/* Tab Navigation */}
-          <div className="bg-background-card dark:bg-background-dark-card rounded-3xl p-6 border border-secondary/20 dark:border-text-dark-secondary/20 mb-8 theme-transition">
+          <div className="bg-background-card dark:bg-background-dark-card rounded-3xl p-6 border border-secondary/20 dark:border-text-dark-secondary/20 mb-8 theme-transition shadow-[0_0_15px_rgba(0,0,0,0.05)] dark:shadow-[0_0_20px_rgba(0,0,0,0.3)]">
             <div className="flex space-x-4 mb-6">
               <button
                 onClick={() => setActiveTab('notes')}
@@ -1068,7 +1068,7 @@ const Dashboard: React.FC = () => {
 
           {/* Selection Controls Bar - Only show for notes in selection mode */}
           {activeTab === 'notes' && isSelectionMode && (
-            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border border-blue-200 dark:border-blue-500/30 rounded-3xl p-4 mb-8 theme-transition animate-in slide-in-from-top-2 duration-300">
+            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border border-blue-200 dark:border-blue-500/30 rounded-3xl p-4 mb-8 theme-transition animate-in slide-in-from-top-2 duration-300 shadow-[0_0_15px_rgba(59,130,246,0.15)] dark:shadow-[0_0_20px_rgba(59,130,246,0.3)]">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-4">
                   <div className="flex items-center space-x-3">
@@ -1147,7 +1147,7 @@ const Dashboard: React.FC = () => {
             {activeTab === 'notes' ? (
               filteredNotes.length === 0 ? (
                 <div className="col-span-full">
-                  <div className="bg-background-card dark:bg-background-dark-card rounded-3xl p-12 border border-secondary/20 dark:border-text-dark-secondary/20 text-center theme-transition">
+                  <div className="bg-background-card dark:bg-background-dark-card rounded-3xl p-12 border border-secondary/20 dark:border-text-dark-secondary/20 text-center theme-transition shadow-[0_0_15px_rgba(0,0,0,0.05)] dark:shadow-[0_0_20px_rgba(0,0,0,0.3)]">
                     <FileText className="w-16 h-16 text-text-secondary dark:text-text-dark-secondary mx-auto mb-4" />
                     <h3 className="text-2xl font-bold text-text-primary dark:text-text-dark-primary mb-2">No notes yet</h3>
                     <p className="text-text-secondary dark:text-text-dark-secondary mb-6">
@@ -1183,7 +1183,7 @@ const Dashboard: React.FC = () => {
                       {favoriteNotes.map((note) => (
                         <div
                           key={`fav-${note.id}`}
-                          className={`bg-background-card dark:bg-background-dark-card rounded-3xl p-6 border border-pink-300 dark:border-pink-500/30 transition-all duration-500 transform hover:scale-[1.02] group cursor-pointer theme-transition relative ${
+                          className={`bg-background-card dark:bg-background-dark-card rounded-3xl p-6 border border-pink-300 dark:border-pink-500/30 transition-all duration-500 transform hover:scale-[1.02] group cursor-pointer theme-transition relative shadow-[0_0_10px_rgba(0,0,0,0.05)] hover:shadow-[0_0_15px_rgba(0,0,0,0.1)] dark:shadow-[0_0_15px_rgba(0,0,0,0.3)] dark:hover:shadow-[0_0_25px_rgba(0,0,0,0.4)] ${
                             isSelectionMode
                               ? selectedNotes.includes(note.id)
                                 ? 'ring-4 ring-blue-500 dark:ring-blue-400 ring-opacity-50 bg-blue-50/50 dark:bg-blue-900/20 border-blue-400 dark:border-blue-500'
@@ -1295,7 +1295,7 @@ const Dashboard: React.FC = () => {
                   {otherNotes.map((note) => (
                     <div
                       key={note.id}
-                      className={`bg-background-card dark:bg-background-dark-card rounded-3xl p-6 border transition-all duration-500 transform hover:scale-[1.02] group cursor-pointer theme-transition relative ${
+                      className={`bg-background-card dark:bg-background-dark-card rounded-3xl p-6 border transition-all duration-500 transform hover:scale-[1.02] group cursor-pointer theme-transition relative shadow-[0_0_10px_rgba(0,0,0,0.05)] hover:shadow-[0_0_15px_rgba(0,0,0,0.1)] dark:shadow-[0_0_15px_rgba(0,0,0,0.3)] dark:hover:shadow-[0_0_25px_rgba(0,0,0,0.4)] ${
                         isSelectionMode
                           ? selectedNotes.includes(note.id)
                             ? 'ring-4 ring-blue-500 dark:ring-blue-400 ring-opacity-50 bg-blue-50/50 dark:bg-blue-900/20 border-blue-400 dark:border-blue-500'
@@ -1398,7 +1398,7 @@ const Dashboard: React.FC = () => {
             ) : activeTab === 'todos' ? (
               filteredTodos.length === 0 ? (
                 <div className="col-span-full">
-                  <div className="bg-background-card dark:bg-background-dark-card rounded-3xl p-12 border border-secondary/20 dark:border-text-dark-secondary/20 text-center theme-transition">
+                  <div className="bg-background-card dark:bg-background-dark-card rounded-3xl p-12 border border-secondary/20 dark:border-text-dark-secondary/20 text-center theme-transition shadow-[0_0_15px_rgba(0,0,0,0.05)] dark:shadow-[0_0_20px_rgba(0,0,0,0.3)]">
                     <ListTodo className="w-16 h-16 text-text-secondary dark:text-text-dark-secondary mx-auto mb-4" />
                     <h3 className="text-2xl font-bold text-text-primary dark:text-text-dark-primary mb-2">No todos yet</h3>
                     <p className="text-text-secondary dark:text-text-dark-secondary mb-6">
@@ -1419,7 +1419,7 @@ const Dashboard: React.FC = () => {
                 filteredTodos.map((todo) => (
                   <div
                     key={todo.id}
-                    className={`bg-background-card dark:bg-background-dark-card rounded-3xl p-6 border transition-all duration-500 transform hover:scale-[1.02] group cursor-pointer theme-transition ${
+                    className={`bg-background-card dark:bg-background-dark-card rounded-3xl p-6 border transition-all duration-500 transform hover:scale-[1.02] group cursor-pointer theme-transition shadow-[0_0_10px_rgba(0,0,0,0.05)] hover:shadow-[0_0_15px_rgba(0,0,0,0.1)] dark:shadow-[0_0_15px_rgba(0,0,0,0.3)] dark:hover:shadow-[0_0_25px_rgba(0,0,0,0.4)] ${
                       todo.completed
                         ? 'border-green-200 dark:border-green-500/30 bg-green-50/50 dark:bg-green-400/5'
                         : todo.due_date && isOverdue(todo.due_date)
@@ -1499,24 +1499,24 @@ const Dashboard: React.FC = () => {
             ) : activeTab === 'cardano' ? (
               <div className="col-span-full space-y-6">
                 {/* 🔥 NEW ANALYTICS BUTTON */}
-                <div className="bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20 rounded-3xl p-6 border border-purple-200 dark:border-purple-700/50">
+                <div className="bg-indigo-50/50 dark:bg-indigo-900/10 rounded-3xl p-6 border border-indigo-200/60 dark:border-indigo-700/30 theme-transition shadow-[0_0_20px_rgba(99,102,241,0.15)] dark:shadow-[0_0_25px_rgba(99,102,241,0.3)]">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-4">
-                      <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-indigo-600 rounded-xl flex items-center justify-center">
+                      <div className="w-12 h-12 bg-indigo-500 dark:bg-indigo-600 rounded-xl flex items-center justify-center">
                         <BarChart3 className="w-6 h-6 text-white" />
                       </div>
                       <div>
-                        <h3 className="text-lg font-bold text-purple-800 dark:text-purple-300">
+                        <h3 className="text-lg font-bold text-indigo-900 dark:text-indigo-200">
                           Blockchain Analytics Dashboard
                         </h3>
-                        <p className="text-purple-600 dark:text-purple-400 text-sm">
+                        <p className="text-indigo-600 dark:text-indigo-400 text-sm">
                           View detailed insights of your Web3 security investments
                         </p>
                       </div>
                     </div>
                     <button
                       onClick={() => navigate('/analytics')}
-                      className="bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white font-semibold py-3 px-6 rounded-xl transition-colors duration-200 flex items-center space-x-2"
+                      className="bg-indigo-500 hover:bg-indigo-600 dark:bg-indigo-600 dark:hover:bg-indigo-500 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-500 transform hover:scale-[1.02] flex items-center space-x-2"
                     >
                       <BarChart3 className="w-5 h-5" />
                       <span>View Analytics</span>
