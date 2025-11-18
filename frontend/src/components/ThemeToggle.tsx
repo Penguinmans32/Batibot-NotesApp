@@ -58,8 +58,8 @@ const ThemeToggle: React.FC<ThemeToggleProps> = ({
         bg-background-light dark:bg-background-dark-lighter
         border border-secondary/20 dark:border-text-dark-secondary/20
         text-text-secondary dark:text-text-dark-secondary
-        transition-all duration-[400ms] ease-in-out
-        transform
+        transition-all duration-500
+        transform hover:scale-[1.02]
         focus:outline-none focus:ring-2 focus:ring-primary/50 dark:focus:ring-blue-400/50
         group
         ${className}
@@ -70,8 +70,7 @@ const ThemeToggle: React.FC<ThemeToggleProps> = ({
           : undefined,
         color: shouldShowHover
           ? (theme === 'light' ? 'var(--text-dark-primary)' : 'var(--text-primary)')
-          : undefined,
-        transform: shouldShowHover ? 'scale(1.02)' : 'scale(1)'
+          : undefined
       }}
       title={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
       aria-label={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
@@ -81,7 +80,7 @@ const ThemeToggle: React.FC<ThemeToggleProps> = ({
         <Sun 
           className={`
             ${iconSizes[size]}
-            absolute transition-all duration-[400ms] ease-in-out
+            absolute transition-all duration-500
           `}
           style={{
             opacity: theme === 'light' 
@@ -100,7 +99,7 @@ const ThemeToggle: React.FC<ThemeToggleProps> = ({
         <Moon 
           className={`
             ${iconSizes[size]}
-            absolute transition-all duration-[400ms] ease-in-out
+            absolute transition-all duration-500
           `}
           style={{
             opacity: theme === 'dark'
