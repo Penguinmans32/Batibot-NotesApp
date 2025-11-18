@@ -1190,7 +1190,7 @@ const Dashboard: React.FC = () => {
                       {favoriteNotes.map((note) => (
                         <div
                           key={`fav-${note.id}`}
-                          className={`bg-background-card dark:bg-background-dark-card rounded-3xl p-6 border border-pink-300 dark:border-pink-500/30 transition-all duration-500 transform hover:scale-[1.02] group cursor-pointer theme-transition relative shadow-[0_0_10px_rgba(0,0,0,0.05)] hover:shadow-[0_0_15px_rgba(0,0,0,0.1)] dark:shadow-[0_0_15px_rgba(0,0,0,0.3)] dark:hover:shadow-[0_0_25px_rgba(0,0,0,0.4)] ${
+                          className={`bg-background-card dark:bg-background-dark-card rounded-3xl p-6 border border-pink-300 dark:border-pink-500/30 transition-all duration-300 ease-out transform hover:scale-[1.01] group cursor-pointer theme-transition relative shadow-[0_0_10px_rgba(0,0,0,0.05)] hover:shadow-[0_0_15px_rgba(0,0,0,0.1)] dark:shadow-[0_0_15px_rgba(0,0,0,0.3)] dark:hover:shadow-[0_0_25px_rgba(0,0,0,0.4)] ${
                             isSelectionMode
                               ? selectedNotes.includes(note.id)
                                 ? 'ring-4 ring-blue-500 dark:ring-blue-400 ring-opacity-50 bg-blue-50/50 dark:bg-blue-900/20 border-blue-400 dark:border-blue-500'
@@ -1302,7 +1302,7 @@ const Dashboard: React.FC = () => {
                   {otherNotes.map((note) => (
                     <div
                       key={note.id}
-                      className={`bg-background-card dark:bg-background-dark-card rounded-3xl p-6 border transition-all duration-500 transform hover:scale-[1.02] group cursor-pointer theme-transition relative shadow-[0_0_10px_rgba(0,0,0,0.05)] hover:shadow-[0_0_15px_rgba(0,0,0,0.1)] dark:shadow-[0_0_15px_rgba(0,0,0,0.3)] dark:hover:shadow-[0_0_25px_rgba(0,0,0,0.4)] ${
+                      className={`bg-background-card dark:bg-background-dark-card rounded-3xl p-6 border transition-all duration-300 ease-out transform hover:scale-[1.01] group cursor-pointer theme-transition relative shadow-[0_0_10px_rgba(0,0,0,0.05)] hover:shadow-[0_0_15px_rgba(0,0,0,0.1)] dark:shadow-[0_0_15px_rgba(0,0,0,0.3)] dark:hover:shadow-[0_0_25px_rgba(0,0,0,0.4)] ${
                         isSelectionMode
                           ? selectedNotes.includes(note.id)
                             ? 'ring-4 ring-blue-500 dark:ring-blue-400 ring-opacity-50 bg-blue-50/50 dark:bg-blue-900/20 border-blue-400 dark:border-blue-500'
@@ -1426,7 +1426,7 @@ const Dashboard: React.FC = () => {
                 filteredTodos.map((todo) => (
                   <div
                     key={todo.id}
-                    className={`bg-background-card dark:bg-background-dark-card rounded-3xl p-6 border transition-all duration-500 transform hover:scale-[1.02] group cursor-pointer theme-transition shadow-[0_0_10px_rgba(0,0,0,0.05)] hover:shadow-[0_0_15px_rgba(0,0,0,0.1)] dark:shadow-[0_0_15px_rgba(0,0,0,0.3)] dark:hover:shadow-[0_0_25px_rgba(0,0,0,0.4)] ${
+                    className={`bg-background-card dark:bg-background-dark-card rounded-3xl p-6 border transition-all duration-300 ease-out transform hover:scale-[1.01] group cursor-pointer theme-transition shadow-[0_0_10px_rgba(0,0,0,0.05)] hover:shadow-[0_0_15px_rgba(0,0,0,0.1)] dark:shadow-[0_0_15px_rgba(0,0,0,0.3)] dark:hover:shadow-[0_0_25px_rgba(0,0,0,0.4)] ${
                       todo.completed
                         ? 'border-green-200 dark:border-green-500/30 bg-green-50/50 dark:bg-green-400/5'
                         : todo.due_date && isOverdue(todo.due_date)
