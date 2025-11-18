@@ -28,8 +28,10 @@ import ThemeToggle from './ThemeToggle';
 import NoteModal from './NoteModal';
 import ViewNoteModal from './ViewNoteModal';
 import TodoModal from './TodoModal';
+import AnimatedSelect from './AnimatedSelect';
 import DeleteConfirmModal from './DeleteConfirmModal';
 import RecycleBinModal from './RecycleBinModal';
+import Toast from './Toast';
 import { Todo, FilterType, SortType } from '../types/Todo';
 import { Note, NoteTag } from '../types/Note';
 import { toggleNoteFavorite } from '../utils/api';
@@ -129,10 +131,9 @@ const Dashboard: React.FC = () => {
                 setPendingBlockchainAction(null);
               } catch (blockchainError: any) {
                 console.error('Bulk blockchain transaction failed:', blockchainError);
-                alert(
-                  `✅ ${selectedNotes.length} notes deleted from database!\n\n` +
-                  `⚠️ Blockchain transactions failed: ${blockchainError?.message || 'Unknown error'}\n\n` +
-                  `💡 Notes are deleted, but deletions not recorded on blockchain.`
+                showToast(
+                  `✅ ${selectedNotes.length} notes deleted from database!\n\n⚠️ Blockchain transactions failed: ${blockchainError?.message || 'Unknown error'}\n\n💡 Notes are deleted, but deletions not recorded on blockchain.`,
+                  'error'
                 );
                 setIsAmountModalOpen(false);
                 setPendingBlockchainAction(null);
@@ -142,7 +143,7 @@ const Dashboard: React.FC = () => {
           setIsAmountModalOpen(true);
         } else {
           // No wallet connected
-          alert(`✅ ${selectedNotes.length} notes deleted successfully!\n\n💡 Connect Cardano wallet for blockchain audit trail!`);
+          showToast(`✅ ${selectedNotes.length} notes deleted successfully!\n\n💡 Connect Cardano wallet for blockchain audit trail!`, 'info');
         }
 
         // 3. UPDATE UI STATE
@@ -152,7 +153,7 @@ const Dashboard: React.FC = () => {
       }
     } catch (error) {
       console.error('Error bulk deleting notes:', error);
-      alert('❌ Failed to delete notes. Please try again.');
+      showToast('❌ Failed to delete notes. Please try again.', 'error');
     } finally {
       setDeleteLoading(false);
       setPendingBulkDelete(false);
@@ -216,6 +217,15 @@ const Dashboard: React.FC = () => {
 
   // Recycle bin modal state
   const [isRecycleBinModalOpen, setIsRecycleBinModalOpen] = useState(false);
+
+  // Toast notification state
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [toastType, setToastType] = useState<'success' | 'info' | 'error'>('success');
+
+  const showToast = (message: string, type: 'success' | 'info' | 'error' = 'success') => {
+    setToastMessage(message);
+    setToastType(type);
+  };
 
   useEffect(() => {
     fetchNotes();
@@ -352,10 +362,9 @@ const Dashboard: React.FC = () => {
                 setPendingBlockchainAction(null);
               } catch (blockchainError: any) {
                 console.error('Blockchain transaction failed:', blockchainError);
-                alert(
-                  `✅ Note ${action} in database!\n\n` +
-                  `⚠️ Blockchain transaction failed: ${blockchainError?.message || 'Unknown error'}\n\n` +
-                  `💡 Your note is saved, but not secured on blockchain.`
+                showToast(
+                  `✅ Note ${action} in database!\n\n⚠️ Blockchain transaction failed: ${blockchainError?.message || 'Unknown error'}\n\n💡 Your note is saved, but not secured on blockchain.`,
+                  'error'
                 );
                 setIsAmountModalOpen(false);
                 setPendingBlockchainAction(null);
@@ -365,7 +374,7 @@ const Dashboard: React.FC = () => {
           setIsAmountModalOpen(true);
         } else {
           // No wallet connected - show regular success
-          alert(`✅ Note ${isEditing ? 'updated' : 'created'} successfully!\n\n💡 Connect Cardano wallet for blockchain security!`);
+          showToast(`✅ Note ${isEditing ? 'updated' : 'created'} successfully!\n\n💡 Connect Cardano wallet for blockchain security!`, 'info');
         }
 
         // 3. UPDATE UI STATE
@@ -379,7 +388,7 @@ const Dashboard: React.FC = () => {
       }
     } catch (error) {
       console.error('Error saving note:', error);
-      alert('❌ Failed to save note. Please try again.');
+      showToast('❌ Failed to save note. Please try again.', 'error');
     } finally {
       setNoteModalLoading(false);
     }
@@ -451,10 +460,9 @@ const Dashboard: React.FC = () => {
                 setPendingBlockchainAction(null);
               } catch (blockchainError: any) {
                 console.error('Blockchain transaction failed:', blockchainError);
-                alert(
-                  `✅ Todo ${action} in database!\n\n` +
-                  `⚠️ Blockchain transaction failed: ${blockchainError?.message || 'Unknown error'}\n\n` +
-                  `💡 Your todo is saved, but not secured on blockchain.`
+                showToast(
+                  `✅ Todo ${action} in database!\n\n⚠️ Blockchain transaction failed: ${blockchainError?.message || 'Unknown error'}\n\n💡 Your todo is saved, but not secured on blockchain.`,
+                  'error'
                 );
                 setIsAmountModalOpen(false);
                 setPendingBlockchainAction(null);
@@ -464,7 +472,7 @@ const Dashboard: React.FC = () => {
           setIsAmountModalOpen(true);
         } else {
           // No wallet connected - show regular success
-          alert(`✅ Todo ${isEditing ? 'updated' : 'created'} successfully!\n\n💡 Connect Cardano wallet for blockchain security!`);
+          showToast(`✅ Todo ${isEditing ? 'updated' : 'created'} successfully!\n\n💡 Connect Cardano wallet for blockchain security!`, 'info');
         }
 
         // 3. UPDATE UI STATE
@@ -478,7 +486,7 @@ const Dashboard: React.FC = () => {
       }
     } catch (error) {
       console.error('Error saving todo:', error);
-      alert('❌ Failed to save todo. Please try again.');
+      showToast('❌ Failed to save todo. Please try again.', 'error');
     } finally {
       setTodoModalLoading(false);
     }
@@ -604,10 +612,9 @@ const Dashboard: React.FC = () => {
                 setPendingBlockchainAction(null);
               } catch (blockchainError: any) {
                 console.error('Blockchain transaction failed:', blockchainError);
-                alert(
-                  `✅ ${itemToDelete.type === 'note' ? 'Note' : 'Todo'} deleted from database!\n\n` +
-                  `⚠️ Blockchain transaction failed: ${blockchainError?.message || 'Unknown error'}\n\n` +
-                  `💡 Item is deleted, but deletion not recorded on blockchain.`
+                showToast(
+                  `✅ ${itemToDelete.type === 'note' ? 'Note' : 'Todo'} deleted from database!\n\n⚠️ Blockchain transaction failed: ${blockchainError?.message || 'Unknown error'}\n\n💡 Item is deleted, but deletion not recorded on blockchain.`,
+                  'error'
                 );
                 setIsAmountModalOpen(false);
                 setPendingBlockchainAction(null);
@@ -617,7 +624,7 @@ const Dashboard: React.FC = () => {
           setIsAmountModalOpen(true);
         } else {
           // No wallet connected
-          alert(`✅ ${itemToDelete.type === 'note' ? 'Note' : 'Todo'} deleted successfully!\n\n💡 Connect Cardano wallet for blockchain audit trail!`);
+          showToast(`✅ ${itemToDelete.type === 'note' ? 'Note' : 'Todo'} deleted successfully!\n\n💡 Connect Cardano wallet for blockchain audit trail!`, 'info');
         }
 
         // 3. UPDATE UI STATE
@@ -632,7 +639,7 @@ const Dashboard: React.FC = () => {
       }
     } catch (error) {
       console.error('Error deleting item:', error);
-      alert('❌ Failed to delete item. Please try again.');
+      showToast('❌ Failed to delete item. Please try again.', 'error');
     } finally {
       setDeleteLoading(false);
     }
@@ -786,7 +793,7 @@ const Dashboard: React.FC = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-background-light dark:bg-background-dark-light flex items-center justify-center theme-transition">
-        <div className="bg-background-card dark:bg-background-dark-card rounded-3xl p-8 shadow-2xl border border-secondary/20 dark:border-text-dark-secondary/20">
+        <div className="bg-background-card dark:bg-background-dark-card rounded-3xl p-8 border border-secondary/20 dark:border-text-dark-secondary/20">
           <div className="flex items-center space-x-3">
             <div className="w-8 h-8 border-4 border-secondary/30 dark:border-text-dark-secondary/30 border-t-primary dark:border-t-blue-400 rounded-full animate-spin"></div>
             <span className="text-text-primary dark:text-text-dark-primary text-xl font-semibold">Loading your workspace...</span>
@@ -801,10 +808,10 @@ const Dashboard: React.FC = () => {
       <div className="min-h-screen bg-background-light dark:bg-background-dark-light theme-transition">
         <div className="relative z-10 max-w-7xl mx-auto px-4 py-8">
           {/* Header */}
-          <div className="bg-background-card dark:bg-background-dark-card rounded-3xl p-6 shadow-2xl border border-secondary/20 dark:border-text-dark-secondary/20 mb-8 theme-transition">
+          <div className="bg-background-card dark:bg-background-dark-card rounded-3xl p-6 border border-secondary/20 dark:border-text-dark-secondary/20 mb-8 theme-transition">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 bg-primary dark:bg-blue-600 rounded-xl flex items-center justify-center shadow-lg">
+                <div className="w-12 h-12 bg-primary dark:bg-blue-600 rounded-xl flex items-center justify-center">
                   <User className="w-6 h-6 text-white" />
                 </div>
                 <div>
@@ -820,7 +827,7 @@ const Dashboard: React.FC = () => {
                 <ThemeToggle />
                 <button
                   onClick={logout}
-                  className="flex items-center space-x-2 bg-error/10 hover:bg-error/20 dark:bg-red-900/20 dark:hover:bg-red-900/30 border border-error/30 dark:border-red-500/30 rounded-xl px-4 py-2 text-error dark:text-red-400 hover:text-white transition-all duration-300"
+                  className="flex items-center space-x-2 bg-error/10 hover:bg-error/20 dark:bg-red-900/20 dark:hover:bg-red-900/30 border border-error/30 dark:border-red-500/30 rounded-xl px-4 py-2 text-error dark:text-red-400 hover:text-error dark:hover:text-red-400 transition-all duration-500 transform hover:scale-[1.02]"
                 >
                   <LogOut className="w-4 h-4" />
                   <span>Logout</span>
@@ -830,13 +837,13 @@ const Dashboard: React.FC = () => {
           </div>
 
           {/* Tab Navigation */}
-          <div className="bg-background-card dark:bg-background-dark-card rounded-3xl p-6 shadow-2xl border border-secondary/20 dark:border-text-dark-secondary/20 mb-8 theme-transition">
+          <div className="bg-background-card dark:bg-background-dark-card rounded-3xl p-6 border border-secondary/20 dark:border-text-dark-secondary/20 mb-8 theme-transition shadow-[0_0_15px_rgba(0,0,0,0.05)] dark:shadow-[0_0_20px_rgba(0,0,0,0.3)]">
             <div className="flex space-x-4 mb-6">
               <button
                 onClick={() => setActiveTab('notes')}
                 className={`flex items-center space-x-2 px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
                   activeTab === 'notes'
-                    ? 'bg-primary dark:bg-blue-600 text-white shadow-lg'
+                    ? 'bg-primary dark:bg-blue-600 text-white'
                     : 'bg-secondary/10 dark:bg-text-dark-secondary/10 text-text-secondary dark:text-text-dark-secondary hover:bg-secondary/20 dark:hover:bg-text-dark-secondary/20'
                 }`}
               >
@@ -848,7 +855,7 @@ const Dashboard: React.FC = () => {
                 onClick={() => setActiveTab('todos')}
                 className={`flex items-center space-x-2 px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
                   activeTab === 'todos'
-                    ? 'bg-primary dark:bg-blue-600 text-white shadow-lg'
+                    ? 'bg-primary dark:bg-blue-600 text-white'
                     : 'bg-secondary/10 dark:bg-text-dark-secondary/10 text-text-secondary dark:text-text-dark-secondary hover:bg-secondary/20 dark:hover:bg-text-dark-secondary/20'
                 }`}
               >
@@ -860,7 +867,7 @@ const Dashboard: React.FC = () => {
                 onClick={() => setActiveTab('cardano')}
                 className={`flex items-center space-x-2 px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
                   activeTab === 'cardano'
-                    ? 'bg-blue-500 dark:bg-blue-600 text-white shadow-lg'
+                    ? 'bg-blue-500 dark:bg-blue-600 text-white'
                     : 'bg-secondary/10 dark:bg-text-dark-secondary/10 text-text-secondary dark:text-text-dark-secondary hover:bg-secondary/20 dark:hover:bg-text-dark-secondary/20'
                 }`}
               >
@@ -914,7 +921,7 @@ const Dashboard: React.FC = () => {
                 <div className="flex flex-col sm:flex-row gap-3">
                   <button
                     onClick={activeTab === 'notes' ? handleCreateNote : handleCreateTodo}
-                    className="bg-primary hover:bg-primary-light rounded-xl px-6 py-3 text-white font-semibold transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl flex items-center justify-center space-x-2"
+                    className="bg-primary hover:bg-primary-light rounded-xl px-6 py-3 text-white font-semibold transition-all duration-500 transform hover:scale-[1.02] flex items-center justify-center space-x-2"
                   >
                     <Plus className="w-5 h-5" />
                     <span>New {activeTab === 'notes' ? 'Note' : 'Todo'}</span>
@@ -924,9 +931,9 @@ const Dashboard: React.FC = () => {
                   {activeTab === 'notes' && (
                     <button
                       onClick={isSelectionMode ? exitSelectionMode : enterSelectionMode}
-                      className={`rounded-xl px-4 py-3 font-semibold transition-all duration-300 flex items-center justify-center space-x-2 whitespace-nowrap ${
+                      className={`rounded-xl px-4 py-3 font-semibold transition-all duration-500 transform hover:scale-[1.02] flex items-center justify-center space-x-2 whitespace-nowrap ${
                         isSelectionMode
-                          ? 'bg-orange-500 hover:bg-orange-600 text-white shadow-lg'
+                          ? 'bg-orange-500 hover:bg-orange-600 text-white'
                           : 'bg-secondary/10 dark:bg-text-dark-secondary/10 hover:bg-secondary/20 dark:hover:bg-text-dark-secondary/20 border border-secondary/30 dark:border-border-dark-primary text-text-primary dark:text-text-dark-primary'
                       }`}
                     >
@@ -948,7 +955,7 @@ const Dashboard: React.FC = () => {
                   {activeTab === 'notes' && (
                     <button
                       onClick={() => setIsRecycleBinModalOpen(true)}
-                      className="bg-red-500/15 hover:bg-red-500/25 dark:bg-red-600/20 dark:hover:bg-red-500/30 border border-red-400/40 dark:border-red-400/50 rounded-xl px-4 py-3 text-red-600 dark:text-red-300 hover:text-red-700 dark:hover:text-red-200 font-semibold transition-all duration-300 flex items-center justify-center space-x-2 whitespace-nowrap hover:scale-105 transform"
+                      className="bg-red-500/15 hover:bg-red-500/25 dark:bg-red-600/20 dark:hover:bg-red-500/30 border border-red-400/40 dark:border-red-400/50 rounded-xl px-4 py-3 text-red-600 dark:text-red-300 hover:text-red-700 dark:hover:text-red-200 font-semibold transition-all duration-500 transform hover:scale-105 flex items-center justify-center space-x-2 whitespace-nowrap"
                       title="Recycle Bin"
                     >
                       <Archive className="w-4 h-4" />
@@ -964,20 +971,19 @@ const Dashboard: React.FC = () => {
                   {/* Note Filters and Sort */}
                   {activeTab === 'notes' && (
                     <>
-                      <div className="flex items-center space-x-2 min-w-0">
-                        <Calendar className="w-5 h-5 text-text-secondary dark:text-text-dark-secondary flex-shrink-0" />
-                        <select
-                          value={noteDateFilter}
-                          onChange={(e) => setNoteDateFilter(e.target.value as 'all' | 'today' | 'week' | 'month' | 'specific')}
-                          className="bg-background-light dark:bg-background-dark-card border border-secondary/20 dark:border-border-dark-primary rounded-xl px-2 py-3 text-text-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-light focus:border-transparent transition-all duration-300"
-                        >
-                          <option value="all">All Time</option>
-                          <option value="today">Today</option>
-                          <option value="week">This Week</option>
-                          <option value="month">This Month</option>
-                          <option value="specific">Specific Date</option>
-                        </select>
-                      </div>
+                      <AnimatedSelect
+                        value={noteDateFilter}
+                        onChange={(value) => setNoteDateFilter(value as 'all' | 'today' | 'week' | 'month' | 'specific')}
+                        options={[
+                          { value: 'all', label: 'All Time' },
+                          { value: 'today', label: 'Today' },
+                          { value: 'week', label: 'This Week' },
+                          { value: 'month', label: 'This Month' },
+                          { value: 'specific', label: 'Specific Date' }
+                        ]}
+                        icon={<Calendar className="w-5 h-5 text-text-secondary dark:text-text-dark-secondary" />}
+                        className="bg-background-light dark:bg-background-dark-card border border-secondary/20 dark:border-border-dark-primary rounded-xl px-2 py-3 text-text-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-light focus:border-transparent"
+                      />
                       
                       {noteDateFilter === 'specific' && (
                         <div className="flex items-center space-x-2">
@@ -990,33 +996,32 @@ const Dashboard: React.FC = () => {
                         </div>
                       )}
                       
-                      <div className="flex items-center space-x-2 min-w-0">
-                        <Flag className="w-5 h-5 text-text-secondary dark:text-text-dark-secondary flex-shrink-0" />
-                        <select
-                          value={selectedTagFilter}
-                          onChange={(e) => setSelectedTagFilter(e.target.value)}
-                          className="bg-background-light dark:bg-background-dark-card border border-secondary/20 dark:border-border-dark-primary rounded-xl px-2 py-3 text-text-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-light focus:border-transparent transition-all duration-300"
-                        >
-                          <option value="all">All Tags</option>
-                          {Array.from(new Set(notes.flatMap(note => note.tags?.map(tag => tag.name) || []))).map(tagName => (
-                            <option key={tagName} value={tagName}>{tagName}</option>
-                          ))}
-                        </select>
-                      </div>
+                      <AnimatedSelect
+                        value={selectedTagFilter}
+                        onChange={(value) => setSelectedTagFilter(value)}
+                        options={[
+                          { value: 'all', label: 'All Tags' },
+                          ...Array.from(new Set(notes.flatMap(note => note.tags?.map(tag => tag.name) || []))).map(tagName => ({
+                            value: tagName,
+                            label: tagName
+                          }))
+                        ]}
+                        icon={<Flag className="w-5 h-5 text-text-secondary dark:text-text-dark-secondary" />}
+                        className="bg-background-light dark:bg-background-dark-card border border-secondary/20 dark:border-border-dark-primary rounded-xl px-2 py-3 text-text-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-light focus:border-transparent"
+                      />
                       
-                      <div className="flex items-center space-x-2 min-w-0">
-                        <SortAsc className="w-5 h-5 text-text-secondary dark:text-text-dark-secondary flex-shrink-0" />
-                        <select
-                          value={noteSortOrder}
-                          onChange={(e) => setNoteSortOrder(e.target.value as 'title-asc' | 'title-desc' | 'recent' | 'oldest')}
-                          className="bg-background-light dark:bg-background-dark-card border border-secondary/20 dark:border-border-dark-primary rounded-xl px-2 py-3 text-text-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-light focus:border-transparent transition-all duration-300"
-                        >
-                          <option value="recent">Recently Added</option>
-                          <option value="oldest">Oldest First</option>
-                          <option value="title-asc">Title A-Z</option>
-                          <option value="title-desc">Title Z-A</option>
-                        </select>
-                      </div>
+                      <AnimatedSelect
+                        value={noteSortOrder}
+                        onChange={(value) => setNoteSortOrder(value as 'title-asc' | 'title-desc' | 'recent' | 'oldest')}
+                        options={[
+                          { value: 'recent', label: 'Recently Added' },
+                          { value: 'oldest', label: 'Oldest First' },
+                          { value: 'title-asc', label: 'Title A-Z' },
+                          { value: 'title-desc', label: 'Title Z-A' }
+                        ]}
+                        icon={<SortAsc className="w-5 h-5 text-text-secondary dark:text-text-dark-secondary" />}
+                        className="bg-background-light dark:bg-background-dark-card border border-secondary/20 dark:border-border-dark-primary rounded-xl px-2 py-3 text-text-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-light focus:border-transparent"
+                      />
                       
                       {(noteDateFilter !== 'all' || noteSortOrder !== 'recent' || searchTerm || selectedTagFilter !== 'all') && (
                         <button
@@ -1040,25 +1045,27 @@ const Dashboard: React.FC = () => {
                   {/* Todo Filters and Sort */}
                   {activeTab === 'todos' && (
                     <>
-                      <select
+                      <AnimatedSelect
                         value={todoFilter}
-                        onChange={(e) => setTodoFilter(e.target.value as FilterType)}
-                        className="bg-background-light dark:bg-background-dark-card border border-secondary/20 dark:border-border-dark-primary rounded-xl px-4 py-3 pr-10 text-text-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-light focus:border-transparent transition-all duration-300"
-                      >
-                        <option value="all">All Todos</option>
-                        <option value="active">Active</option>
-                        <option value="completed">Completed</option>
-                        <option value="overdue">Overdue</option>
-                      </select>
-                      <select
+                        onChange={(value) => setTodoFilter(value as FilterType)}
+                        options={[
+                          { value: 'all', label: 'All Todos' },
+                          { value: 'active', label: 'Active' },
+                          { value: 'completed', label: 'Completed' },
+                          { value: 'overdue', label: 'Overdue' }
+                        ]}
+                        className="bg-background-light dark:bg-background-dark-card border border-secondary/20 dark:border-border-dark-primary rounded-xl px-4 py-3 pr-10 text-text-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-light focus:border-transparent"
+                      />
+                      <AnimatedSelect
                         value={todoSort}
-                        onChange={(e) => setTodoSort(e.target.value as SortType)}
-                        className="bg-background-light dark:bg-background-dark-card border border-secondary/20 dark:border-border-dark-primary rounded-xl px-4 py-3 pr-10 text-text-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-light focus:border-transparent transition-all duration-300"
-                      >
-                        <option value="due_date">Due Date</option>
-                        <option value="priority">Priority</option>
-                        <option value="created_at">Created</option>
-                      </select>
+                        onChange={(value) => setTodoSort(value as SortType)}
+                        options={[
+                          { value: 'due_date', label: 'Due Date' },
+                          { value: 'priority', label: 'Priority' },
+                          { value: 'created_at', label: 'Created' }
+                        ]}
+                        className="bg-background-light dark:bg-background-dark-card border border-secondary/20 dark:border-border-dark-primary rounded-xl px-4 py-3 pr-10 text-text-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-light focus:border-transparent"
+                      />
                     </>
                   )}
                 </div>
@@ -1068,7 +1075,7 @@ const Dashboard: React.FC = () => {
 
           {/* Selection Controls Bar - Only show for notes in selection mode */}
           {activeTab === 'notes' && isSelectionMode && (
-            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border border-blue-200 dark:border-blue-500/30 rounded-3xl p-4 shadow-lg mb-8 theme-transition animate-in slide-in-from-top-2 duration-300">
+            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border border-blue-200 dark:border-blue-500/30 rounded-3xl p-4 mb-8 theme-transition animate-in slide-in-from-top-2 duration-300 shadow-[0_0_15px_rgba(59,130,246,0.15)] dark:shadow-[0_0_20px_rgba(59,130,246,0.3)]">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-4">
                   <div className="flex items-center space-x-3">
@@ -1086,7 +1093,7 @@ const Dashboard: React.FC = () => {
                   {selectedNotes.length < filteredNotes.length && filteredNotes.length > 0 && (
                     <button
                       onClick={selectAllFilteredNotes}
-                      className="bg-blue-100 dark:bg-blue-800/30 hover:bg-blue-200 dark:hover:bg-blue-700/40 border border-blue-300 dark:border-blue-600/50 rounded-xl px-4 py-2 text-blue-800 dark:text-blue-300 font-semibold transition-all duration-300 flex items-center space-x-2 hover:scale-105 transform"
+                      className="bg-blue-100 dark:bg-blue-800/30 hover:bg-blue-200 dark:hover:bg-blue-700/40 border border-blue-300 dark:border-blue-600/50 rounded-xl px-4 py-2 text-blue-800 dark:text-blue-300 font-semibold transition-all duration-500 transform hover:scale-105 flex items-center space-x-2"
                     >
                       <CheckSquare className="w-4 h-4" />
                       <span>Select All ({filteredNotes.length})</span>
@@ -1097,7 +1104,7 @@ const Dashboard: React.FC = () => {
                     <>
                       <button
                         onClick={deselectAllNotes}
-                        className="bg-gray-100 dark:bg-gray-700/30 hover:bg-gray-200 dark:hover:bg-gray-600/40 border border-gray-300 dark:border-gray-600/50 rounded-xl px-4 py-2 text-gray-700 dark:text-gray-300 font-semibold transition-all duration-300 flex items-center space-x-2 hover:scale-105 transform"
+                        className="bg-gray-100 dark:bg-gray-700/30 hover:bg-gray-200 dark:hover:bg-gray-600/40 border border-gray-300 dark:border-gray-600/50 rounded-xl px-4 py-2 text-gray-700 dark:text-gray-300 font-semibold transition-all duration-500 transform hover:scale-105 flex items-center space-x-2"
                       >
                         <Square className="w-4 h-4" />
                         <span>Deselect All</span>
@@ -1105,7 +1112,7 @@ const Dashboard: React.FC = () => {
                       
                       <button
                         onClick={handleBulkDeleteNotes}
-                        className="bg-red-100 dark:bg-red-900/30 hover:bg-red-200 dark:hover:bg-red-800/40 border border-red-300 dark:border-red-600/50 rounded-xl px-4 py-2 text-red-800 dark:text-red-400 hover:text-white dark:hover:text-white font-semibold transition-all duration-300 flex items-center space-x-2 hover:bg-red-500 dark:hover:bg-red-600 hover:scale-105 transform"
+                        className="bg-red-100 dark:bg-red-900/30 hover:bg-red-200 dark:hover:bg-red-800/40 border border-red-300 dark:border-red-600/50 rounded-xl px-4 py-2 text-red-800 dark:text-red-400 hover:text-white dark:hover:text-white font-semibold transition-all duration-500 transform hover:scale-105 flex items-center space-x-2 hover:bg-red-500 dark:hover:bg-red-600"
                       >
                         <Trash2 className="w-4 h-4" />
                         <span>Delete ({selectedNotes.length})</span>
@@ -1147,7 +1154,7 @@ const Dashboard: React.FC = () => {
             {activeTab === 'notes' ? (
               filteredNotes.length === 0 ? (
                 <div className="col-span-full">
-                  <div className="bg-background-card dark:bg-background-dark-card rounded-3xl p-12 shadow-2xl border border-secondary/20 dark:border-text-dark-secondary/20 text-center theme-transition">
+                  <div className="bg-background-card dark:bg-background-dark-card rounded-3xl p-12 border border-secondary/20 dark:border-text-dark-secondary/20 text-center theme-transition shadow-[0_0_15px_rgba(0,0,0,0.05)] dark:shadow-[0_0_20px_rgba(0,0,0,0.3)]">
                     <FileText className="w-16 h-16 text-text-secondary dark:text-text-dark-secondary mx-auto mb-4" />
                     <h3 className="text-2xl font-bold text-text-primary dark:text-text-dark-primary mb-2">No notes yet</h3>
                     <p className="text-text-secondary dark:text-text-dark-secondary mb-6">
@@ -1160,7 +1167,7 @@ const Dashboard: React.FC = () => {
                     {!searchTerm && (
                       <button
                         onClick={handleCreateNote}
-                        className="bg-primary hover:bg-primary-light rounded-xl px-6 py-3 text-white font-semibold transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl flex items-center space-x-2 mx-auto"
+                        className="bg-primary hover:bg-primary-light rounded-xl px-6 py-3 text-white font-semibold transition-all duration-700 transform hover:scale-[1.02] flex items-center space-x-2 mx-auto"
                       >
                         <Plus className="w-5 h-5" />
                         <span>Create Your First Note</span>
@@ -1183,7 +1190,7 @@ const Dashboard: React.FC = () => {
                       {favoriteNotes.map((note) => (
                         <div
                           key={`fav-${note.id}`}
-                          className={`bg-background-card dark:bg-background-dark-card rounded-3xl p-6 shadow-2xl border border-pink-300 dark:border-pink-500/30 transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl group cursor-pointer theme-transition relative ${
+                          className={`bg-background-card dark:bg-background-dark-card rounded-3xl p-6 border border-pink-300 dark:border-pink-500/30 transition-all duration-300 ease-out transform hover:scale-[1.01] group cursor-pointer theme-transition relative shadow-[0_0_10px_rgba(0,0,0,0.05)] hover:shadow-[0_0_15px_rgba(0,0,0,0.1)] dark:shadow-[0_0_15px_rgba(0,0,0,0.3)] dark:hover:shadow-[0_0_25px_rgba(0,0,0,0.4)] ${
                             isSelectionMode
                               ? selectedNotes.includes(note.id)
                                 ? 'ring-4 ring-blue-500 dark:ring-blue-400 ring-opacity-50 bg-blue-50/50 dark:bg-blue-900/20 border-blue-400 dark:border-blue-500'
@@ -1238,7 +1245,7 @@ const Dashboard: React.FC = () => {
                                       e.stopPropagation();
                                       handleDeleteItem(note, 'note');
                                     }}
-                                    className="p-2 bg-error/10 dark:bg-red-500/10 hover:bg-error/20 dark:hover:bg-red-500/20 rounded-lg text-error dark:text-red-400 hover:text-white dark:hover:text-white transition-colors duration-200"
+                                    className="p-2 rounded-lg text-text-secondary dark:text-text-dark-secondary hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 transition-all duration-200"
                                   >
                                     <Trash2 className="w-4 h-4" />
                                   </button>
@@ -1295,7 +1302,7 @@ const Dashboard: React.FC = () => {
                   {otherNotes.map((note) => (
                     <div
                       key={note.id}
-                      className={`bg-background-card dark:bg-background-dark-card rounded-3xl p-6 shadow-2xl border transition-all duration-700 ease-in-out transform hover:scale-[1.02] hover:shadow-xl group cursor-pointer theme-transition relative ${
+                      className={`bg-background-card dark:bg-background-dark-card rounded-3xl p-6 border transition-all duration-300 ease-out transform hover:scale-[1.01] group cursor-pointer theme-transition relative shadow-[0_0_10px_rgba(0,0,0,0.05)] hover:shadow-[0_0_15px_rgba(0,0,0,0.1)] dark:shadow-[0_0_15px_rgba(0,0,0,0.3)] dark:hover:shadow-[0_0_25px_rgba(0,0,0,0.4)] ${
                         isSelectionMode
                           ? selectedNotes.includes(note.id)
                             ? 'ring-4 ring-blue-500 dark:ring-blue-400 ring-opacity-50 bg-blue-50/50 dark:bg-blue-900/20 border-blue-400 dark:border-blue-500'
@@ -1354,7 +1361,7 @@ const Dashboard: React.FC = () => {
                                   e.stopPropagation();
                                   handleDeleteItem(note, 'note');
                                 }}
-                                className="p-2 bg-error/10 dark:bg-red-500/10 hover:bg-error/20 dark:hover:bg-red-500/20 rounded-lg text-error dark:text-red-400 hover:text-white dark:hover:text-white transition-colors duration-200"
+                                className="p-2 rounded-lg text-text-secondary dark:text-text-dark-secondary hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 transition-all duration-200"
                               >
                                 <Trash2 className="w-4 h-4" />
                               </button>
@@ -1398,7 +1405,7 @@ const Dashboard: React.FC = () => {
             ) : activeTab === 'todos' ? (
               filteredTodos.length === 0 ? (
                 <div className="col-span-full">
-                  <div className="bg-background-card dark:bg-background-dark-card rounded-3xl p-12 shadow-2xl border border-secondary/20 dark:border-text-dark-secondary/20 text-center theme-transition">
+                  <div className="bg-background-card dark:bg-background-dark-card rounded-3xl p-12 border border-secondary/20 dark:border-text-dark-secondary/20 text-center theme-transition shadow-[0_0_15px_rgba(0,0,0,0.05)] dark:shadow-[0_0_20px_rgba(0,0,0,0.3)]">
                     <ListTodo className="w-16 h-16 text-text-secondary dark:text-text-dark-secondary mx-auto mb-4" />
                     <h3 className="text-2xl font-bold text-text-primary dark:text-text-dark-primary mb-2">No todos yet</h3>
                     <p className="text-text-secondary dark:text-text-dark-secondary mb-6">
@@ -1407,7 +1414,7 @@ const Dashboard: React.FC = () => {
                     {!searchTerm && (
                       <button
                         onClick={handleCreateTodo}
-                        className="bg-primary dark:bg-blue-600 hover:bg-primary-light dark:hover:bg-blue-500 rounded-xl px-6 py-3 text-white font-semibold transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl flex items-center space-x-2 mx-auto"
+                        className="bg-primary dark:bg-blue-600 hover:bg-primary-light dark:hover:bg-blue-500 rounded-xl px-6 py-3 text-white font-semibold transition-all duration-500 transform hover:scale-[1.02] flex items-center space-x-2 mx-auto"
                       >
                         <Plus className="w-5 h-5" />
                         <span>Create Your First Todo</span>
@@ -1419,7 +1426,7 @@ const Dashboard: React.FC = () => {
                 filteredTodos.map((todo) => (
                   <div
                     key={todo.id}
-                    className={`bg-background-card dark:bg-background-dark-card rounded-3xl p-6 shadow-2xl border transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl group cursor-pointer theme-transition ${
+                    className={`bg-background-card dark:bg-background-dark-card rounded-3xl p-6 border transition-all duration-300 ease-out transform hover:scale-[1.01] group cursor-pointer theme-transition shadow-[0_0_10px_rgba(0,0,0,0.05)] hover:shadow-[0_0_15px_rgba(0,0,0,0.1)] dark:shadow-[0_0_15px_rgba(0,0,0,0.3)] dark:hover:shadow-[0_0_25px_rgba(0,0,0,0.4)] ${
                       todo.completed
                         ? 'border-green-200 dark:border-green-500/30 bg-green-50/50 dark:bg-green-400/5'
                         : todo.due_date && isOverdue(todo.due_date)
@@ -1487,7 +1494,7 @@ const Dashboard: React.FC = () => {
                             e.stopPropagation();
                             handleDeleteItem(todo, 'todo');
                           }}
-                          className="p-2 bg-error/10 dark:bg-red-500/10 hover:bg-error/20 dark:hover:bg-red-500/20 rounded-lg text-error dark:text-red-400 hover:text-white dark:hover:text-white transition-colors duration-200"
+                          className="p-2 rounded-lg text-text-secondary dark:text-text-dark-secondary hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 transition-all duration-200"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
@@ -1499,24 +1506,24 @@ const Dashboard: React.FC = () => {
             ) : activeTab === 'cardano' ? (
               <div className="col-span-full space-y-6">
                 {/* 🔥 NEW ANALYTICS BUTTON */}
-                <div className="bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20 rounded-3xl p-6 border border-purple-200 dark:border-purple-700/50 shadow-xl">
+                <div className="bg-indigo-50/50 dark:bg-indigo-900/10 rounded-3xl p-6 border border-indigo-200/60 dark:border-indigo-700/30 theme-transition shadow-[0_0_20px_rgba(99,102,241,0.15)] dark:shadow-[0_0_25px_rgba(99,102,241,0.3)]">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-4">
-                      <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
+                      <div className="w-12 h-12 bg-indigo-500 dark:bg-indigo-600 rounded-xl flex items-center justify-center">
                         <BarChart3 className="w-6 h-6 text-white" />
                       </div>
                       <div>
-                        <h3 className="text-lg font-bold text-purple-800 dark:text-purple-300">
+                        <h3 className="text-lg font-bold text-indigo-900 dark:text-indigo-200">
                           Blockchain Analytics Dashboard
                         </h3>
-                        <p className="text-purple-600 dark:text-purple-400 text-sm">
+                        <p className="text-indigo-600 dark:text-indigo-400 text-sm">
                           View detailed insights of your Web3 security investments
                         </p>
                       </div>
                     </div>
                     <button
                       onClick={() => navigate('/analytics')}
-                      className="bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl flex items-center space-x-2"
+                      className="bg-indigo-500 hover:bg-indigo-600 dark:bg-indigo-600 dark:hover:bg-indigo-500 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-500 transform hover:scale-[1.02] flex items-center space-x-2"
                     >
                       <BarChart3 className="w-5 h-5" />
                       <span>View Analytics</span>
@@ -1603,6 +1610,15 @@ const Dashboard: React.FC = () => {
         onClose={() => setIsRecycleBinModalOpen(false)}
         onRefresh={fetchNotes}
       />
+
+      {/* Toast Notification */}
+      {toastMessage && (
+        <Toast
+          message={toastMessage}
+          type={toastType}
+          onClose={() => setToastMessage(null)}
+        />
+      )}
     </>
   );
 };

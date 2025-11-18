@@ -19,11 +19,11 @@ const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 dark:bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+    <div className="fixed inset-0 bg-black/30 dark:bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
       <div className="bg-white dark:bg-background-dark-card rounded-3xl w-full max-w-md shadow-2xl border border-gray-100 dark:border-text-dark-secondary/20 theme-transition">
         <div className="flex items-center justify-between p-6 border-b border-gray-100 dark:border-text-dark-secondary/20">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gradient-to-r from-red-500 to-pink-600 dark:from-red-600 dark:to-pink-500 rounded-xl flex items-center justify-center shadow-lg">
+            <div className="w-10 h-10 bg-red-500 dark:bg-red-600 rounded-xl flex items-center justify-center shadow-lg">
               <AlertTriangle className="w-5 h-5 text-white" />
             </div>
             <h2 className="text-xl font-bold text-gray-900 dark:text-text-dark-primary">
@@ -65,7 +65,7 @@ const DeleteConfirmModal: React.FC<DeleteConfirmModalProps> = ({
             <button
               onClick={onConfirm}
               disabled={loading}
-              className="flex-1 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 disabled:from-gray-400 disabled:to-gray-500 rounded-xl py-3 text-white font-semibold transition-all duration-200 shadow-lg hover:shadow-red-500/25 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+              className="flex-1 bg-red-500 hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700 disabled:bg-gray-400 dark:disabled:bg-gray-500 rounded-xl py-3 text-white font-semibold transition-all duration-200 shadow-lg hover:shadow-xl disabled:cursor-not-allowed flex items-center justify-center space-x-2"
             >
               {loading ? (
                 <>
