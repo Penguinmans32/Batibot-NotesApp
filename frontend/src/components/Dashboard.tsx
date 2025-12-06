@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  LogOut, 
   Plus, 
   Search, 
   FileText, 
@@ -160,7 +159,7 @@ const Dashboard: React.FC = () => {
     }
   };
 
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const { wallet, createNoteWithMetadata } = useCardanoContext();
   const [notes, setNotes] = useState<Note[]>([]);
   const [todos, setTodos] = useState<Todo[]>([]);
@@ -816,22 +815,12 @@ const Dashboard: React.FC = () => {
                 </div>
                 <div>
                   <h1 className="text-2xl font-bold text-text-primary dark:text-text-dark-primary">
-                    Welcome back, {user?.name || 'User'}! 👋
+                    Welcome back! 👋
                   </h1>
-                  <p className="text-text-secondary dark:text-text-dark-secondary">
-                    {user?.email}
-                  </p>
                 </div>
               </div>
               <div className="flex items-center space-x-3">
                 <ThemeToggle />
-                <button
-                  onClick={logout}
-                  className="flex items-center space-x-2 bg-error/10 hover:bg-error/20 dark:bg-red-900/20 dark:hover:bg-red-900/30 border border-error/30 dark:border-red-500/30 rounded-xl px-4 py-2 text-error dark:text-red-400 hover:text-error dark:hover:text-red-400 transition-all duration-500 transform hover:scale-[1.02]"
-                >
-                  <LogOut className="w-4 h-4" />
-                  <span>Logout</span>
-                </button>
               </div>
             </div>
           </div>

@@ -21,20 +21,30 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(true);
+  const [user, setUser] = useState<User | null>({
+    id: 1,
+    name: 'Guest User',
+    email: 'guest@batibot.com'
+  });
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
+    // Automatically set user as authenticated
     const token = localStorage.getItem('token');
     const userData = localStorage.getItem('user');
     
-    if (token && userData) {
-      setIsAuthenticated(true);
+    if (!token) {
+      // Create a default token for the guest user
+      localStorage.setItem('token', 'guest-token');
+      localStorage.setItem('user', JSON.stringify({
+        id: 1,
+        name: 'Guest User',
+        email: 'guest@batibot.com'
+      }));
+    } else if (userData) {
       setUser(JSON.parse(userData));
     }
-    
-    setLoading(false);
   }, []);
 
   const login = (token: string, userData: User) => {
@@ -45,18 +55,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const logout = () => {
-    // 🔥 CLEAR ALL DATA FIRST
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    localStorage.removeItem('connectedWallet'); // Also clear wallet connection
-    setIsAuthenticated(false);
-    setUser(null);
-    
-    // 🎯 FORCE REDIRECT TO LOGIN PAGE
-    window.location.href = '/login';
-    
-    // Alternative: Use window.location.replace for no back button
-    // window.location.replace('/login');
+    // Clear wallet connection only
+    localStorage.removeItem('connectedWallet');
+    // Keep user authenticated
   };
 
   return (
