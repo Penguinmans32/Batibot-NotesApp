@@ -208,4 +208,31 @@ const createTables = async () => {
   }
 };
 
-createTables();
+// Create default user for wallet-based auth
+const createDefaultUser = async () => {
+  try {
+    // Check if default user exists
+    const result = await pool.query('SELECT id FROM users WHERE id = 1');
+
+    if (result.rows.length === 0) {
+      // Insert default user
+      await pool.query(`
+        INSERT INTO users (id, email, name, created_at) 
+        VALUES (1, 'wallet@user.com', 'Wallet User', CURRENT_TIMESTAMP)
+        ON CONFLICT (id) DO NOTHING
+      `);
+      console.log('✅ Default user created for wallet-based authentication');
+    } else {
+      console.log('✅ Default user already exists');
+    }
+  } catch (error) {
+    console.error('❌ Error creating default user:', error);
+  }
+};
+
+const initDatabase = async () => {
+  await createTables();
+  await createDefaultUser();
+};
+
+initDatabase();

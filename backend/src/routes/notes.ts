@@ -13,7 +13,8 @@ import {
   bulkRestoreNotes,
   bulkPermanentlyDeleteNotes,
   getPendingNotes,
-  updateNoteStatus
+  updateNoteStatus,
+  updateNoteBlockchainInfo
 } from '../controllers/notesController';
 
 const router = express.Router();
@@ -22,6 +23,7 @@ const router = express.Router();
 router.get('/', authenticateToken, getNotes);
 router.post('/', authenticateToken, createNote);
 router.put('/:id', authenticateToken, updateNote);
+router.patch('/:id', authenticateToken, updateNoteBlockchainInfo); // 🔥 NEW: Update with blockchain info
 router.delete('/:id', authenticateToken, deleteNote);
 
 // Bulk operations

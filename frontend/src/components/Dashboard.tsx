@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Plus, 
-  Search, 
-  FileText, 
-  Edit3, 
-  Trash2, 
+import {
+  Plus,
+  Search,
+  FileText,
+  Edit3,
+  Trash2,
   User,
   Calendar,
   CheckSquare,
@@ -53,8 +53,8 @@ const Dashboard: React.FC = () => {
   };
 
   const toggleNoteSelection = (noteId: number) => {
-    setSelectedNotes(prev => 
-      prev.includes(noteId) 
+    setSelectedNotes(prev =>
+      prev.includes(noteId)
         ? prev.filter(id => id !== noteId)
         : [...prev, noteId]
     );
@@ -76,10 +76,10 @@ const Dashboard: React.FC = () => {
   const confirmBulkDeleteNotes = async () => {
     if (selectedNotes.length === 0) return;
     setDeleteLoading(true);
-    
+
     try {
       const token = localStorage.getItem('token');
-      
+
       // 1. BULK DELETE FROM DATABASE FIRST
       const response = await fetch('http://localhost:5000/api/notes/bulk-delete', {
         method: 'POST',
@@ -89,7 +89,7 @@ const Dashboard: React.FC = () => {
         },
         body: JSON.stringify({ ids: selectedNotes })
       });
-      
+
       if (response.ok) {
         // 2. 🔥 SHOW ADA AMOUNT MODAL FOR BULK DELETE
         if (wallet) {
@@ -101,21 +101,22 @@ const Dashboard: React.FC = () => {
             callback: async (amount: string) => {
               try {
                 console.log(`🔗 Creating blockchain records for bulk delete of ${selectedNotes.length} notes with ${amount} ADA...`);
-                
-                const blockchainPromises = deletedNotes.map(note => 
+
+                const blockchainPromises = deletedNotes.map(note =>
                   createNoteWithMetadata(
-                    note.id, 
-                    `DELETE:${note.title}`, 
+                    note.id,
+                    `DELETE:${note.title}`,
                     amount,
                     note.title, // 🎯 ADD REAL TITLE HERE
-                    'note' // 🎯 ADD ITEM TYPE
+                    'note', // 🎯 ADD ITEM TYPE
+                    note.content  // 🔥 Pass actual note content
                   )
                 );
-                
+
                 const txHashes = await Promise.all(blockchainPromises);
-                
+
                 console.log('✅ Bulk blockchain DELETE completed:', txHashes);
-                
+
                 // Show success modal for first transaction
                 if (txHashes.length > 0) {
                   setBlockchainSuccessData({
@@ -229,6 +230,14 @@ const Dashboard: React.FC = () => {
   useEffect(() => {
     fetchNotes();
     fetchTodos();
+
+    // 🔥 AUTO-REFRESH: Poll for status updates every 30 seconds
+    const refreshInterval = setInterval(() => {
+      fetchNotes(); // Silently refresh to update pending → confirmed status
+      fetchTodos();
+    }, 30000); // 30 seconds
+
+    return () => clearInterval(refreshInterval);
   }, []);
 
   const fetchNotes = async () => {
@@ -266,6 +275,35 @@ const Dashboard: React.FC = () => {
       }
     } catch (error) {
       console.error('Error fetching todos:', error);
+    }
+  };
+
+  // 🔥 Helper function to update note with tx_hash and address
+  const updateNoteWithTxHash = async (noteId: number, txHash: string, address: string) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`http://localhost:5000/api/notes/${noteId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          tx_hash: txHash,
+          address: address,
+          status: 'pending'
+        })
+      });
+
+      if (response.ok) {
+        const updatedNote = await response.json();
+        console.log(`✅ Note ${noteId} updated with tx_hash: ${txHash}`);
+        // Update local state
+        setNotes(prev => prev.map(n => n.id === noteId ? updatedNote : n));
+        return updatedNote;
+      }
+    } catch (error) {
+      console.error('Error updating note with tx_hash:', error);
     }
   };
 
@@ -338,17 +376,21 @@ const Dashboard: React.FC = () => {
             callback: async (amount: string) => {
               try {
                 console.log(`🔗 Creating blockchain record for ${isEditing ? 'UPDATE' : 'CREATE'}: ${savedNote.title} with ${amount} ADA`);
-                
+
                 const txHash = await createNoteWithMetadata(
                   savedNote.id,
                   `${isEditing ? 'UPDATE' : 'CREATE'}:${savedNote.title}`,
                   amount,
                   savedNote.title,
-                  'note'
+                  'note',
+                  savedNote.content  // 🔥 Pass actual note content
                 );
-                
+
                 console.log(`✅ Blockchain ${isEditing ? 'UPDATE' : 'CREATE'} completed:`, txHash);
-                
+
+                // 🔥 UPDATE NOTE WITH TX_HASH AND ADDRESS
+                await updateNoteWithTxHash(savedNote.id, txHash, wallet.address);
+
                 // Show success modal
                 setBlockchainSuccessData({
                   txHash,
@@ -436,17 +478,18 @@ const Dashboard: React.FC = () => {
             callback: async (amount: string) => {
               try {
                 console.log(`🔗 Creating blockchain record for TODO ${isEditing ? 'UPDATE' : 'CREATE'}: ${savedTodo.title} with ${amount} ADA`);
-                
+
                 const txHash = await createNoteWithMetadata(
                   savedTodo.id,
                   `TODO_${isEditing ? 'UPDATE' : 'CREATE'}:${savedTodo.title}`,
                   amount,
                   savedTodo.title,
-                  'todo'
+                  'todo',
+                  savedTodo.description || ''  // 🔥 Pass todo description
                 );
-                
+
                 console.log(`✅ Blockchain TODO ${isEditing ? 'UPDATE' : 'CREATE'} completed:`, txHash);
-                
+
                 // Show success modal
                 setBlockchainSuccessData({
                   txHash,
@@ -494,7 +537,7 @@ const Dashboard: React.FC = () => {
   const handleToggleTodo = async (todoId: number) => {
     try {
       const token = localStorage.getItem('token');
-      
+
       // 1. TOGGLE IN DATABASE FIRST
       const response = await fetch(`http://localhost:5000/api/todos/${todoId}/toggle`, {
         method: 'PATCH',
@@ -516,17 +559,18 @@ const Dashboard: React.FC = () => {
             callback: async (amount: string) => {
               try {
                 console.log(`🔗 Creating blockchain record for TODO ${action}: ${updatedTodo.title} with ${amount} ADA`);
-                
+
                 const txHash = await createNoteWithMetadata(
                   updatedTodo.id,
                   `TODO_${action.toUpperCase()}:${updatedTodo.title}`,
                   amount,
                   updatedTodo.title,
-                  'todo'
+                  'todo',
+                  updatedTodo.description || ''  // 🔥 Pass todo description
                 );
-                
+
                 console.log(`✅ Blockchain TODO ${action} completed:`, txHash);
-                
+
                 // Show success modal
                 setBlockchainSuccessData({
                   txHash,
@@ -568,7 +612,7 @@ const Dashboard: React.FC = () => {
     try {
       const token = localStorage.getItem('token');
       const endpoint = itemToDelete.type === 'note' ? 'notes' : 'todos';
-      
+
       // 1. DELETE FROM DATABASE FIRST
       const response = await fetch(`http://localhost:5000/api/${endpoint}/${itemToDelete.id}`, {
         method: 'DELETE',
@@ -588,17 +632,18 @@ const Dashboard: React.FC = () => {
               try {
                 const itemType = itemToDelete.type === 'note' ? 'NOTE' : 'TODO';
                 console.log(`🔗 Creating blockchain record for ${itemType} DELETE: ${itemToDelete.title} with ${amount} ADA`);
-                
+
                 const txHash = await createNoteWithMetadata(
                   itemToDelete.id,
                   `DELETE:${itemToDelete.title}`,
                   amount,
                   itemToDelete.title,
-                  itemToDelete.type
+                  itemToDelete.type,
+                  'content' in itemToDelete ? itemToDelete.content : (itemToDelete as any).description || ''  // 🔥 Pass content
                 );
-                
+
                 console.log(`✅ Blockchain ${itemType} DELETE completed:`, txHash);
-                
+
                 // Show success modal
                 setBlockchainSuccessData({
                   txHash,
@@ -632,7 +677,7 @@ const Dashboard: React.FC = () => {
         } else {
           setTodos(todos.filter(todo => todo.id !== itemToDelete.id));
         }
-        
+
         setIsDeleteModalOpen(false);
         setItemToDelete(null);
       }
@@ -653,7 +698,7 @@ const Dashboard: React.FC = () => {
   const getFilteredAndSortedTodos = () => {
     let filtered = todos.filter(todo => {
       const matchesSearch = todo.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           (todo.description && todo.description.toLowerCase().includes(searchTerm.toLowerCase()));
+        (todo.description && todo.description.toLowerCase().includes(searchTerm.toLowerCase()));
 
       if (!matchesSearch) return false;
 
@@ -695,8 +740,8 @@ const Dashboard: React.FC = () => {
     let filtered = notes.filter(note => {
       // Search filter
       const matchesSearch = note.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          note.content.toLowerCase().includes(searchTerm.toLowerCase());
-      
+        note.content.toLowerCase().includes(searchTerm.toLowerCase());
+
       if (!matchesSearch) return false;
 
       // Tag filter
@@ -710,7 +755,7 @@ const Dashboard: React.FC = () => {
         const noteDate = new Date(note.created_at);
         const now = new Date();
         const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-        
+
         switch (noteDateFilter) {
           case 'today':
             const todayEnd = new Date(today);
@@ -830,11 +875,10 @@ const Dashboard: React.FC = () => {
             <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4 mb-4 sm:mb-6">
               <button
                 onClick={() => setActiveTab('notes')}
-                className={`flex items-center space-x-2 px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
-                  activeTab === 'notes'
-                    ? 'bg-primary dark:bg-blue-600 text-white'
-                    : 'bg-secondary/10 dark:bg-text-dark-secondary/10 text-text-secondary dark:text-text-dark-secondary hover:bg-secondary/20 dark:hover:bg-text-dark-secondary/20'
-                }`}
+                className={`flex items-center space-x-2 px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${activeTab === 'notes'
+                  ? 'bg-primary dark:bg-blue-600 text-white'
+                  : 'bg-secondary/10 dark:bg-text-dark-secondary/10 text-text-secondary dark:text-text-dark-secondary hover:bg-secondary/20 dark:hover:bg-text-dark-secondary/20'
+                  }`}
               >
                 <FileText className="w-5 h-5" />
                 <span>Notes</span>
@@ -842,11 +886,10 @@ const Dashboard: React.FC = () => {
               </button>
               <button
                 onClick={() => setActiveTab('todos')}
-                className={`flex items-center justify-center sm:justify-start space-x-2 px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg sm:rounded-xl font-semibold text-sm sm:text-base transition-all duration-300 ${
-                  activeTab === 'todos'
-                    ? 'bg-primary dark:bg-blue-600 text-white'
-                    : 'bg-secondary/10 dark:bg-text-dark-secondary/10 text-text-secondary dark:text-text-dark-secondary hover:bg-secondary/20 dark:hover:bg-text-dark-secondary/20'
-                }`}
+                className={`flex items-center justify-center sm:justify-start space-x-2 px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg sm:rounded-xl font-semibold text-sm sm:text-base transition-all duration-300 ${activeTab === 'todos'
+                  ? 'bg-primary dark:bg-blue-600 text-white'
+                  : 'bg-secondary/10 dark:bg-text-dark-secondary/10 text-text-secondary dark:text-text-dark-secondary hover:bg-secondary/20 dark:hover:bg-text-dark-secondary/20'
+                  }`}
               >
                 <ListTodo className="w-5 h-5" />
                 <span>Todos</span>
@@ -854,11 +897,10 @@ const Dashboard: React.FC = () => {
               </button>
               <button
                 onClick={() => setActiveTab('cardano')}
-                className={`flex items-center justify-center sm:justify-start space-x-2 px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg sm:rounded-xl font-semibold text-sm sm:text-base transition-all duration-300 ${
-                  activeTab === 'cardano'
-                    ? 'bg-blue-500 dark:bg-blue-600 text-white'
-                    : 'bg-secondary/10 dark:bg-text-dark-secondary/10 text-text-secondary dark:text-text-dark-secondary hover:bg-secondary/20 dark:hover:bg-text-dark-secondary/20'
-                }`}
+                className={`flex items-center justify-center sm:justify-start space-x-2 px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg sm:rounded-xl font-semibold text-sm sm:text-base transition-all duration-300 ${activeTab === 'cardano'
+                  ? 'bg-blue-500 dark:bg-blue-600 text-white'
+                  : 'bg-secondary/10 dark:bg-text-dark-secondary/10 text-text-secondary dark:text-text-dark-secondary hover:bg-secondary/20 dark:hover:bg-text-dark-secondary/20'
+                  }`}
               >
                 <Wallet className="w-5 h-5" />
                 <span>Cardano</span>
@@ -920,11 +962,10 @@ const Dashboard: React.FC = () => {
                   {activeTab === 'notes' && (
                     <button
                       onClick={isSelectionMode ? exitSelectionMode : enterSelectionMode}
-                      className={`rounded-lg sm:rounded-xl px-3 sm:px-4 py-2.5 sm:py-3 font-semibold text-sm sm:text-base transition-all duration-500 transform hover:scale-[1.02] flex items-center justify-center space-x-1 sm:space-x-2 whitespace-nowrap ${
-                        isSelectionMode
-                          ? 'bg-orange-500 hover:bg-orange-600 text-white'
-                          : 'bg-secondary/10 dark:bg-text-dark-secondary/10 hover:bg-secondary/20 dark:hover:bg-text-dark-secondary/20 border border-secondary/30 dark:border-border-dark-primary text-text-primary dark:text-text-dark-primary'
-                      }`}
+                      className={`rounded-lg sm:rounded-xl px-3 sm:px-4 py-2.5 sm:py-3 font-semibold text-sm sm:text-base transition-all duration-500 transform hover:scale-[1.02] flex items-center justify-center space-x-1 sm:space-x-2 whitespace-nowrap ${isSelectionMode
+                        ? 'bg-orange-500 hover:bg-orange-600 text-white'
+                        : 'bg-secondary/10 dark:bg-text-dark-secondary/10 hover:bg-secondary/20 dark:hover:bg-text-dark-secondary/20 border border-secondary/30 dark:border-border-dark-primary text-text-primary dark:text-text-dark-primary'
+                        }`}
                     >
                       {isSelectionMode ? (
                         <>
@@ -973,7 +1014,7 @@ const Dashboard: React.FC = () => {
                         icon={<Calendar className="w-5 h-5 text-text-secondary dark:text-text-dark-secondary" />}
                         className="bg-background-light dark:bg-background-dark-card border border-secondary/20 dark:border-border-dark-primary rounded-xl px-2 py-3 text-text-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-light focus:border-transparent"
                       />
-                      
+
                       {noteDateFilter === 'specific' && (
                         <div className="flex items-center space-x-2">
                           <input
@@ -984,7 +1025,7 @@ const Dashboard: React.FC = () => {
                           />
                         </div>
                       )}
-                      
+
                       <AnimatedSelect
                         value={selectedTagFilter}
                         onChange={(value) => setSelectedTagFilter(value)}
@@ -998,7 +1039,7 @@ const Dashboard: React.FC = () => {
                         icon={<Flag className="w-5 h-5 text-text-secondary dark:text-text-dark-secondary" />}
                         className="bg-background-light dark:bg-background-dark-card border border-secondary/20 dark:border-border-dark-primary rounded-xl px-2 py-3 text-text-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-light focus:border-transparent"
                       />
-                      
+
                       <AnimatedSelect
                         value={noteSortOrder}
                         onChange={(value) => setNoteSortOrder(value as 'title-asc' | 'title-desc' | 'recent' | 'oldest')}
@@ -1011,7 +1052,7 @@ const Dashboard: React.FC = () => {
                         icon={<SortAsc className="w-5 h-5 text-text-secondary dark:text-text-dark-secondary" />}
                         className="bg-background-light dark:bg-background-dark-card border border-secondary/20 dark:border-border-dark-primary rounded-xl px-2 py-3 text-text-primary dark:text-text-dark-primary focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-light focus:border-transparent"
                       />
-                      
+
                       {(noteDateFilter !== 'all' || noteSortOrder !== 'recent' || searchTerm || selectedTagFilter !== 'all') && (
                         <button
                           onClick={() => {
@@ -1077,7 +1118,7 @@ const Dashboard: React.FC = () => {
                     </span>
                   </div>
                 </div>
-                
+
                 <div className="flex items-center space-x-3">
                   {selectedNotes.length < filteredNotes.length && filteredNotes.length > 0 && (
                     <button
@@ -1088,7 +1129,7 @@ const Dashboard: React.FC = () => {
                       <span>Select All ({filteredNotes.length})</span>
                     </button>
                   )}
-                  
+
                   {selectedNotes.length > 0 && (
                     <>
                       <button
@@ -1098,7 +1139,7 @@ const Dashboard: React.FC = () => {
                         <Square className="w-4 h-4" />
                         <span>Deselect All</span>
                       </button>
-                      
+
                       <button
                         onClick={handleBulkDeleteNotes}
                         className="bg-red-100 dark:bg-red-900/30 hover:bg-red-200 dark:hover:bg-red-800/40 border border-red-300 dark:border-red-600/50 rounded-xl px-4 py-2 text-red-800 dark:text-red-400 hover:text-white dark:hover:text-white font-semibold transition-all duration-500 transform hover:scale-105 flex items-center space-x-2 hover:bg-red-500 dark:hover:bg-red-600"
@@ -1129,9 +1170,9 @@ const Dashboard: React.FC = () => {
                 <div className="text-xs text-text-light">
                   Sorted by: {
                     noteSortOrder === 'recent' ? 'Recently Added' :
-                    noteSortOrder === 'oldest' ? 'Oldest First' :
-                    noteSortOrder === 'title-asc' ? 'Title A-Z' :
-                    'Title Z-A'
+                      noteSortOrder === 'oldest' ? 'Oldest First' :
+                        noteSortOrder === 'title-asc' ? 'Title A-Z' :
+                          'Title Z-A'
                   }
                 </div>
               )}
@@ -1150,8 +1191,8 @@ const Dashboard: React.FC = () => {
                       {noteDateFilter === 'specific' && specificDate
                         ? 'No existing notes on this day.'
                         : searchTerm
-                        ? 'No notes match your search.'
-                        : 'Start by creating your first note!'}
+                          ? 'No notes match your search.'
+                          : 'Start by creating your first note!'}
                     </p>
                     {!searchTerm && (
                       <button
@@ -1179,23 +1220,21 @@ const Dashboard: React.FC = () => {
                       {favoriteNotes.map((note) => (
                         <div
                           key={`fav-${note.id}`}
-                          className={`bg-background-card dark:bg-background-dark-card rounded-3xl p-6 border border-pink-300 dark:border-pink-500/30 transition-all duration-300 ease-out transform hover:scale-[1.01] group cursor-pointer theme-transition relative shadow-[0_0_10px_rgba(0,0,0,0.05)] hover:shadow-[0_0_15px_rgba(0,0,0,0.1)] dark:shadow-[0_0_15px_rgba(0,0,0,0.3)] dark:hover:shadow-[0_0_25px_rgba(0,0,0,0.4)] ${
-                            isSelectionMode
-                              ? selectedNotes.includes(note.id)
-                                ? 'ring-4 ring-blue-500 dark:ring-blue-400 ring-opacity-50 bg-blue-50/50 dark:bg-blue-900/20 border-blue-400 dark:border-blue-500'
-                                : 'hover:ring-2 hover:ring-blue-300 dark:hover:ring-blue-500 hover:ring-opacity-30'
-                              : 'hover:bg-secondary/5 dark:hover:bg-text-dark-secondary/5'
-                          }`}
+                          className={`bg-background-card dark:bg-background-dark-card rounded-3xl p-6 border border-pink-300 dark:border-pink-500/30 transition-all duration-300 ease-out transform hover:scale-[1.01] group cursor-pointer theme-transition relative shadow-[0_0_10px_rgba(0,0,0,0.05)] hover:shadow-[0_0_15px_rgba(0,0,0,0.1)] dark:shadow-[0_0_15px_rgba(0,0,0,0.3)] dark:hover:shadow-[0_0_25px_rgba(0,0,0,0.4)] ${isSelectionMode
+                            ? selectedNotes.includes(note.id)
+                              ? 'ring-4 ring-blue-500 dark:ring-blue-400 ring-opacity-50 bg-blue-50/50 dark:bg-blue-900/20 border-blue-400 dark:border-blue-500'
+                              : 'hover:ring-2 hover:ring-blue-300 dark:hover:ring-blue-500 hover:ring-opacity-30'
+                            : 'hover:bg-secondary/5 dark:hover:bg-text-dark-secondary/5'
+                            }`}
                           style={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}
                           onClick={() => isSelectionMode ? toggleNoteSelection(note.id) : handleViewNote(note)}
                         >
                           {/* Selection Indicator */}
                           {isSelectionMode && (
-                            <div className={`absolute top-4 right-4 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
-                              selectedNotes.includes(note.id)
-                                ? 'bg-blue-500 border-blue-500 text-white'
-                                : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700'
-                            }`}>
+                            <div className={`absolute top-4 right-4 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${selectedNotes.includes(note.id)
+                              ? 'bg-blue-500 border-blue-500 text-white'
+                              : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700'
+                              }`}>
                               {selectedNotes.includes(note.id) && (
                                 <CheckSquare className="w-4 h-4" />
                               )}
@@ -1304,27 +1343,25 @@ const Dashboard: React.FC = () => {
                   {otherNotes.map((note) => (
                     <div
                       key={note.id}
-                      className={`bg-background-card dark:bg-background-dark-card rounded-2xl sm:rounded-3xl p-4 sm:p-6 border transition-all duration-300 ease-out transform hover:scale-[1.01] group cursor-pointer theme-transition relative shadow-[0_0_10px_rgba(0,0,0,0.05)] hover:shadow-[0_0_15px_rgba(0,0,0,0.1)] dark:shadow-[0_0_15px_rgba(0,0,0,0.3)] dark:hover:shadow-[0_0_25px_rgba(0,0,0,0.4)] ${
-                        isSelectionMode
-                          ? selectedNotes.includes(note.id)
-                            ? 'ring-4 ring-blue-500 dark:ring-blue-400 ring-opacity-50 bg-blue-50/50 dark:bg-blue-900/20 border-blue-400 dark:border-blue-500'
-                            : 'hover:ring-2 hover:ring-blue-300 dark:hover:ring-blue-500 hover:ring-opacity-30 border-primary/30 dark:border-primary-dark/30'
-                          : 'border-primary/30 dark:border-primary-dark/30 hover:bg-secondary/5 dark:hover:bg-text-dark-secondary/5'
-                      }`}
-                      style={{ 
-                        wordBreak: 'break-word', 
-                        overflowWrap: 'break-word', 
-                        border: isSelectionMode && selectedNotes.includes(note.id) ? undefined : '2px solid #3B82F6' 
+                      className={`bg-background-card dark:bg-background-dark-card rounded-2xl sm:rounded-3xl p-4 sm:p-6 border transition-all duration-300 ease-out transform hover:scale-[1.01] group cursor-pointer theme-transition relative shadow-[0_0_10px_rgba(0,0,0,0.05)] hover:shadow-[0_0_15px_rgba(0,0,0,0.1)] dark:shadow-[0_0_15px_rgba(0,0,0,0.3)] dark:hover:shadow-[0_0_25px_rgba(0,0,0,0.4)] ${isSelectionMode
+                        ? selectedNotes.includes(note.id)
+                          ? 'ring-4 ring-blue-500 dark:ring-blue-400 ring-opacity-50 bg-blue-50/50 dark:bg-blue-900/20 border-blue-400 dark:border-blue-500'
+                          : 'hover:ring-2 hover:ring-blue-300 dark:hover:ring-blue-500 hover:ring-opacity-30 border-primary/30 dark:border-primary-dark/30'
+                        : 'border-primary/30 dark:border-primary-dark/30 hover:bg-secondary/5 dark:hover:bg-text-dark-secondary/5'
+                        }`}
+                      style={{
+                        wordBreak: 'break-word',
+                        overflowWrap: 'break-word',
+                        border: isSelectionMode && selectedNotes.includes(note.id) ? undefined : '2px solid #3B82F6'
                       }}
                       onClick={() => isSelectionMode ? toggleNoteSelection(note.id) : handleViewNote(note)}
                     >
                       {/* Selection Indicator */}
                       {isSelectionMode && (
-                        <div className={`absolute top-4 right-4 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-300 z-10 ${
-                          selectedNotes.includes(note.id)
-                            ? 'bg-blue-500 border-blue-500 text-white'
-                            : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700'
-                        }`}>
+                        <div className={`absolute top-4 right-4 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-300 z-10 ${selectedNotes.includes(note.id)
+                          ? 'bg-blue-500 border-blue-500 text-white'
+                          : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700'
+                          }`}>
                           {selectedNotes.includes(note.id) && (
                             <CheckSquare className="w-4 h-4" />
                           )}
@@ -1441,13 +1478,12 @@ const Dashboard: React.FC = () => {
                 filteredTodos.map((todo) => (
                   <div
                     key={todo.id}
-                    className={`bg-background-card dark:bg-background-dark-card rounded-2xl sm:rounded-3xl p-4 sm:p-6 border transition-all duration-300 ease-out transform hover:scale-[1.01] group cursor-pointer theme-transition shadow-[0_0_10px_rgba(0,0,0,0.05)] hover:shadow-[0_0_15px_rgba(0,0,0,0.1)] dark:shadow-[0_0_15px_rgba(0,0,0,0.3)] dark:hover:shadow-[0_0_25px_rgba(0,0,0,0.4)] ${
-                      todo.completed
-                        ? 'border-green-200 dark:border-green-500/30 bg-green-50/50 dark:bg-green-400/5'
-                        : todo.due_date && isOverdue(todo.due_date)
+                    className={`bg-background-card dark:bg-background-dark-card rounded-2xl sm:rounded-3xl p-4 sm:p-6 border transition-all duration-300 ease-out transform hover:scale-[1.01] group cursor-pointer theme-transition shadow-[0_0_10px_rgba(0,0,0,0.05)] hover:shadow-[0_0_15px_rgba(0,0,0,0.1)] dark:shadow-[0_0_15px_rgba(0,0,0,0.3)] dark:hover:shadow-[0_0_25px_rgba(0,0,0,0.4)] ${todo.completed
+                      ? 'border-green-200 dark:border-green-500/30 bg-green-50/50 dark:bg-green-400/5'
+                      : todo.due_date && isOverdue(todo.due_date)
                         ? 'border-red-200 dark:border-red-500/30 bg-red-50/50 dark:bg-red-400/5'
                         : 'border-secondary/20 dark:border-border-dark-primary hover:bg-secondary/5 dark:hover:bg-text-dark-secondary/5'
-                    }`}
+                      }`}
                     onClick={() => handleEditTodo(todo)}
                   >
                     <div className="flex items-start space-x-3 mb-4">
@@ -1456,9 +1492,8 @@ const Dashboard: React.FC = () => {
                           e.stopPropagation();
                           handleToggleTodo(todo.id);
                         }}
-                        className={`mt-1 flex-shrink-0 transition-all duration-200 ${
-                          todo.completed ? 'text-green-600 dark:text-green-400' : 'text-text-secondary dark:text-text-dark-secondary hover:text-primary dark:hover:text-primary-light'
-                        }`}
+                        className={`mt-1 flex-shrink-0 transition-all duration-200 ${todo.completed ? 'text-green-600 dark:text-green-400' : 'text-text-secondary dark:text-text-dark-secondary hover:text-primary dark:hover:text-primary-light'
+                          }`}
                       >
                         {todo.completed ? (
                           <CheckSquare className="w-6 h-6" />
@@ -1468,9 +1503,8 @@ const Dashboard: React.FC = () => {
                       </button>
 
                       <div className="flex-1 min-w-0">
-                        <h3 className={`text-lg font-bold truncate ${
-                          todo.completed ? 'text-text-secondary dark:text-text-dark-secondary line-through' : 'text-text-primary dark:text-text-dark-primary'
-                        }`}>
+                        <h3 className={`text-lg font-bold truncate ${todo.completed ? 'text-text-secondary dark:text-text-dark-secondary line-through' : 'text-text-primary dark:text-text-dark-primary'
+                          }`}>
                           {todo.title}
                         </h3>
 
@@ -1481,13 +1515,12 @@ const Dashboard: React.FC = () => {
                           </span>
 
                           {todo.due_date && (
-                            <span className={`px-2 py-1 rounded-lg text-xs font-medium ${
-                              todo.completed
-                                ? 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 border-gray-200 dark:border-gray-600'
-                                : isOverdue(todo.due_date)
+                            <span className={`px-2 py-1 rounded-lg text-xs font-medium ${todo.completed
+                              ? 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 border-gray-200 dark:border-gray-600'
+                              : isOverdue(todo.due_date)
                                 ? 'bg-red-100 dark:bg-red-400/10 text-red-800 dark:text-red-400 border-red-200 dark:border-red-500/30'
                                 : 'bg-blue-100 dark:bg-blue-400/10 text-blue-800 dark:text-blue-400 border-blue-200 dark:border-blue-500/30'
-                            }`}>
+                              }`}>
                               <Clock className="w-3 h-3 inline mr-1" />
                               {new Date(todo.due_date).toLocaleDateString()}
                             </span>
@@ -1495,9 +1528,8 @@ const Dashboard: React.FC = () => {
                         </div>
 
                         {todo.description && (
-                          <p className={`text-sm mt-2 line-clamp-2 ${
-                            todo.completed ? 'text-text-light dark:text-text-dark-tertiary' : 'text-text-secondary dark:text-text-dark-secondary'
-                          }`}>
+                          <p className={`text-sm mt-2 line-clamp-2 ${todo.completed ? 'text-text-light dark:text-text-dark-tertiary' : 'text-text-secondary dark:text-text-dark-secondary'
+                            }`}>
                             {todo.description}
                           </p>
                         )}
@@ -1545,9 +1577,9 @@ const Dashboard: React.FC = () => {
                     </button>
                   </div>
                 </div>
-                
+
                 {/* Your existing CardanoWallet component */}
-                <CardanoWallet 
+                <CardanoWallet
                   notes={notes || []}
                   onRefreshNotes={fetchNotes}
                 />
@@ -1563,7 +1595,7 @@ const Dashboard: React.FC = () => {
           setIsAmountModalOpen(false);
           setPendingBlockchainAction(null);
         }}
-        onConfirm={pendingBlockchainAction?.callback || (async () => {})}
+        onConfirm={pendingBlockchainAction?.callback || (async () => { })}
         action={pendingBlockchainAction?.action || ''}
         title={pendingBlockchainAction?.data?.title || ''}
         itemType={pendingBlockchainAction?.type === 'note' ? 'Note' : 'Todo'}

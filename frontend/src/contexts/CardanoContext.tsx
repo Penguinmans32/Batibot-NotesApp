@@ -26,11 +26,12 @@ interface CardanoContextType {
     noteTitle?: string
   ) => Promise<string>;
   createNoteWithMetadata: (
-    noteId: number, 
-    noteHash: string, 
+    noteId: number,
+    noteHash: string,
     customAmount?: string,
     itemTitle?: string,
-    itemType?: 'note' | 'todo'
+    itemType?: 'note' | 'todo',
+    noteContent?: string  // 🔥 NEW: Note content parameter
   ) => Promise<string>;
 }
 

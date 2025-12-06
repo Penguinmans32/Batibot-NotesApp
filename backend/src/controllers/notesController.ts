@@ -233,7 +233,7 @@ export const cleanupExpiredNotes = async () => {
     const result = await pool.query(
       'DELETE FROM notes WHERE deleted_at IS NOT NULL AND deleted_at < NOW() - INTERVAL \'30 days\' RETURNING id'
     );
-    
+
     console.log(`Cleaned up ${result.rows.length} expired notes`);
     return result.rows.length;
   } catch (error) {
@@ -308,6 +308,33 @@ export const updateNoteStatus = async (req: AuthRequest, res: Response) => {
     res.json(result.rows[0]);
   } catch (error) {
     console.error('Error updating note status:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+// Update note with blockchain transaction info (tx_hash, address)
+export const updateNoteBlockchainInfo = async (req: AuthRequest, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { tx_hash, address, status } = req.body;
+
+    if (!tx_hash || !address) {
+      return res.status(400).json({ message: 'tx_hash and address are required' });
+    }
+
+    const result = await pool.query(
+      'UPDATE notes SET tx_hash = $1, address = $2, status = $3, updated_at = CURRENT_TIMESTAMP WHERE id = $4 AND user_id = $5 RETURNING *',
+      [tx_hash, address, status || 'pending', id, req.user.id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: 'Note not found' });
+    }
+
+    console.log(`📝 Note ${id} updated with blockchain info: tx_hash=${tx_hash}`);
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error('Error updating note blockchain info:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };
