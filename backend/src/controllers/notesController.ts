@@ -21,15 +21,15 @@ export const getNotes = async (req: AuthRequest, res: Response) => {
 
 export const createNote = async (req: AuthRequest, res: Response) => {
   try {
-    const { title, content, tags = [] } = req.body;
+    const { title, content, tags = [], address, tx_hash } = req.body;
 
     if (!title || !content) {
       return res.status(400).json({ message: 'Title and content are required' });
     }
 
     const result = await pool.query(
-      'INSERT INTO notes (user_id, title, content, tags) VALUES ($1, $2, $3, $4) RETURNING *',
-      [req.user.id, title, content, JSON.stringify(tags)]
+      'INSERT INTO notes (user_id, title, content, tags, status, address, tx_hash) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
+      [req.user.id, title, content, JSON.stringify(tags), 'pending', address, tx_hash]
     );
 
     res.status(201).json(result.rows[0]);
@@ -42,7 +42,7 @@ export const createNote = async (req: AuthRequest, res: Response) => {
 export const updateNote = async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
-    const { title, content, tags = [] } = req.body;
+    const { title, content, tags = [], address, tx_hash } = req.body;
 
     if (!title || !content) {
       return res.status(400).json({ message: 'Title and content are required' });
@@ -59,8 +59,8 @@ export const updateNote = async (req: AuthRequest, res: Response) => {
     }
 
     const result = await pool.query(
-      'UPDATE notes SET title = $1, content = $2, tags = $3, updated_at = CURRENT_TIMESTAMP WHERE id = $4 AND user_id = $5 RETURNING *',
-      [title, content, JSON.stringify(tags), id, req.user.id]
+      'UPDATE notes SET title = $1, content = $2, tags = $3, status = $4, address = $5, tx_hash = $6, updated_at = CURRENT_TIMESTAMP WHERE id = $7 AND user_id = $8 RETURNING *',
+      [title, content, JSON.stringify(tags), 'pending', address, tx_hash, id, req.user.id]
     );
 
     res.json(result.rows[0]);
@@ -73,6 +73,7 @@ export const updateNote = async (req: AuthRequest, res: Response) => {
 export const deleteNote = async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
+    const { address, tx_hash } = req.body;
 
     // Check if note belongs to user and is not already deleted
     const noteCheck = await pool.query(
@@ -84,10 +85,10 @@ export const deleteNote = async (req: AuthRequest, res: Response) => {
       return res.status(404).json({ message: 'Note not found' });
     }
 
-    // Soft delete - set deleted_at timestamp
+    // Soft delete - set deleted_at timestamp and update blockchain fields
     const result = await pool.query(
-      'UPDATE notes SET deleted_at = CURRENT_TIMESTAMP WHERE id = $1 AND user_id = $2 RETURNING *',
-      [id, req.user.id]
+      'UPDATE notes SET deleted_at = CURRENT_TIMESTAMP, status = $1, address = $2, tx_hash = $3 WHERE id = $4 AND user_id = $5 RETURNING *',
+      ['pending', address, tx_hash, id, req.user.id]
     );
 
     res.json({ message: 'Note moved to recycle bin', note: result.rows[0] });
@@ -266,6 +267,47 @@ export const toggleNoteFavorite = async (req: AuthRequest, res: Response) => {
     res.json(result.rows[0]);
   } catch (error) {
     console.error('Error toggling note favorite:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+// Get all pending notes for blockchain sync
+export const getPendingNotes = async (req: AuthRequest, res: Response) => {
+  try {
+    const result = await pool.query(
+      'SELECT * FROM notes WHERE user_id = $1 AND status = $2 ORDER BY created_at DESC',
+      [req.user.id, 'pending']
+    );
+
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Error fetching pending notes:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+// Update note status to confirmed
+export const updateNoteStatus = async (req: AuthRequest, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    if (!status || !['pending', 'confirmed'].includes(status)) {
+      return res.status(400).json({ message: 'Invalid status' });
+    }
+
+    const result = await pool.query(
+      'UPDATE notes SET status = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 AND user_id = $3 RETURNING *',
+      [status, id, req.user.id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: 'Note not found' });
+    }
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error('Error updating note status:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };

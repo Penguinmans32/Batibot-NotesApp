@@ -1204,9 +1204,22 @@ const Dashboard: React.FC = () => {
 
                           <div className="flex-1 min-w-0">
                             <div className="flex items-start justify-between mb-4">
-                              <h3 className="text-xl font-bold text-text-primary dark:text-text-dark-primary truncate pr-2">
-                                {note.title}
-                              </h3>
+                              <div className="flex items-center gap-2 flex-1 min-w-0">
+                                <h3 className="text-xl font-bold text-text-primary dark:text-text-dark-primary truncate">
+                                  {note.title}
+                                </h3>
+                                {note.status === 'pending' && (
+                                  <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 border border-yellow-300 dark:border-yellow-700">
+                                    <Clock className="w-3 h-3" />
+                                    Pending
+                                  </span>
+                                )}
+                                {note.status === 'confirmed' && (
+                                  <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 border border-green-300 dark:border-green-700">
+                                    ✓ Confirmed
+                                  </span>
+                                )}
+                              </div>
                               {!isSelectionMode && (
                                 <div className="flex space-x-2 opacity-100 transition-opacity duration-300">
                                   <button
@@ -1320,9 +1333,22 @@ const Dashboard: React.FC = () => {
 
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between mb-4">
-                          <h3 className="text-xl font-bold text-text-primary dark:text-text-dark-primary truncate pr-2">
-                            {note.title}
-                          </h3>
+                          <div className="flex items-center gap-2 flex-1 min-w-0">
+                            <h3 className="text-xl font-bold text-text-primary dark:text-text-dark-primary truncate">
+                              {note.title}
+                            </h3>
+                            {note.status === 'pending' && (
+                              <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 border border-yellow-300 dark:border-yellow-700">
+                                <Clock className="w-3 h-3" />
+                                Pending
+                              </span>
+                            )}
+                            {note.status === 'confirmed' && (
+                              <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 border border-green-300 dark:border-green-700">
+                                ✓ Confirmed
+                              </span>
+                            )}
+                          </div>
                           {!isSelectionMode && (
                             <div className="flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                               <button

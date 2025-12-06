@@ -17,6 +17,14 @@ interface CardanoContextType {
   connectWallet: (walletName: string) => Promise<void>;
   disconnectWallet: () => void;
   sendADA: (recipient: string, amount: string) => Promise<string>;
+  sendTransaction: (
+    targetAddress: string,
+    lovelaceAmount: string,
+    noteContent: string,
+    action: 'CREATE' | 'UPDATE' | 'DELETE',
+    noteId?: number,
+    noteTitle?: string
+  ) => Promise<string>;
   createNoteWithMetadata: (
     noteId: number, 
     noteHash: string, 

@@ -11,7 +11,9 @@ import {
   restoreNote,
   permanentlyDeleteNote,
   bulkRestoreNotes,
-  bulkPermanentlyDeleteNotes
+  bulkPermanentlyDeleteNotes,
+  getPendingNotes,
+  updateNoteStatus
 } from '../controllers/notesController';
 
 const router = express.Router();
@@ -27,6 +29,10 @@ router.post('/bulk-delete', authenticateToken, bulkDeleteNotes);
 
 // Favorite toggle
 router.patch('/:id/favorite', authenticateToken, toggleNoteFavorite);
+
+// Blockchain sync routes
+router.get('/pending', authenticateToken, getPendingNotes);
+router.patch('/:id/status', authenticateToken, updateNoteStatus);
 
 // Recycle bin routes
 router.get('/recycle-bin', authenticateToken, getDeletedNotes);

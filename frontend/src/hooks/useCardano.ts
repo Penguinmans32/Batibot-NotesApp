@@ -248,6 +248,149 @@ export const useCardano = () => {
     }
   };
 
+  // 🔥 NEW: Helper function to format content for metadata (handles 64-byte limit)
+  const formatContent = (content: string): any => {
+    // CASE 1: SHORT STRING (FITS IN ONE CHUNK)
+    if (content.length <= 64) {
+      return Core.Metadatum.newText(content);
+    }
+    
+    // CASE 2: LONG STRING (NEEDS SPLITTING)
+    // REGEX SPLITS THE STRING EVERY 64 CHARACTERS
+    const chunks = content.match(/.{1,64}/g) || [];
+    const list = new Core.MetadatumList();
+    
+    chunks.forEach(chunk => {
+      list.add(Core.Metadatum.newText(chunk));
+    });
+    
+    return Core.Metadatum.newList(list);
+  };
+
+  // 🔥 NEW: Send transaction with metadata for note operations
+  const sendTransaction = async (
+    targetAddress: string,
+    lovelaceAmount: string,
+    noteContent: string,
+    action: 'CREATE' | 'UPDATE' | 'DELETE',
+    noteId?: number,
+    noteTitle?: string
+  ): Promise<string> => {
+    if (!wallet) throw new Error('No wallet connected');
+
+    setLoading(true);
+    setError('');
+
+    try {
+      console.log('🚀 Building transaction with metadata...');
+      console.log('📍 Action:', action);
+      console.log('📝 Note ID:', noteId);
+      console.log('💰 Amount:', lovelaceAmount, 'ADA');
+
+      // Initialize wallet and Blaze provider
+      const webWallet = new WebWallet(wallet.api);
+      const blaze = await Blaze.from(provider, webWallet);
+
+      // Convert ADA to Lovelace
+      const amountLovelace = BigInt(Math.floor(parseFloat(lovelaceAmount) * 1000000));
+
+      // Start building the transaction
+      let tx = blaze
+        .newTransaction()
+        .payLovelace(
+          Core.Address.fromBech32(targetAddress),
+          amountLovelace
+        );
+
+      // --- METADATA CONSTRUCTION STARTS HERE ---
+      // STEP 1: Initialize the top-level container
+      const metadata = new Map();
+      
+      // STEP 2: Choose a unique label for your app
+      const label = 42819n; // Must be a BigInt
+      
+      // STEP 3: Create the inner data structure
+      const metadatumMap = new Core.MetadatumMap();
+      
+      // STEP 4: Insert key-value pairs into the inner map
+      // Insert ACTION
+      metadatumMap.insert(
+        Core.Metadatum.newText("action"),
+        Core.Metadatum.newText(action)
+      );
+      
+      // Insert NOTE CONTENT (with chunking support)
+      metadatumMap.insert(
+        Core.Metadatum.newText("note"),
+        formatContent(noteContent || "")
+      );
+      
+      // Insert NOTE TITLE (with chunking support)
+      if (noteTitle) {
+        metadatumMap.insert(
+          Core.Metadatum.newText("title"),
+          formatContent(noteTitle)
+        );
+      }
+      
+      // Insert NOTE ID
+      if (noteId) {
+        metadatumMap.insert(
+          Core.Metadatum.newText("note_id"),
+          Core.Metadatum.newInteger(BigInt(noteId))
+        );
+      }
+      
+      // Insert TIMESTAMP
+      metadatumMap.insert(
+        Core.Metadatum.newText("created_at"),
+        Core.Metadatum.newText(new Date().toISOString())
+      );
+      
+      // Insert WALLET ADDRESS
+      metadatumMap.insert(
+        Core.Metadatum.newText("address"),
+        formatContent(wallet.address)
+      );
+      
+      // STEP 5: Wrap the inner MetadatumMap into a generic Metadatum object
+      const metadatum = Core.Metadatum.newMap(metadatumMap);
+      
+      // STEP 6: Assign the data to your specific label
+      metadata.set(label, metadatum);
+      
+      // STEP 7: Convert the JavaScript Map to the final Metadata type
+      const finalMetadata = new Core.Metadata(metadata);
+      
+      // STEP 8: Attach the metadata to the transaction
+      tx.setMetadata(finalMetadata);
+
+      // --- FINALIZATION ---
+      // Build, sign, and submit the transaction
+      const completedTx = await tx.complete();
+      console.log('✅ Transaction built with metadata');
+      
+      const signedTx = await blaze.signTransaction(completedTx);
+      console.log('✅ Transaction signed');
+      
+      const txId = await blaze.provider.postTransactionToChain(signedTx);
+      console.log('🎉 Transaction submitted to blockchain!');
+      console.log('🔗 Transaction Hash:', txId);
+      console.log('🌐 View on CardanoScan:', `https://preview.cardanoscan.io/transaction/${txId}`);
+
+      // Refresh balance after transaction
+      setTimeout(refreshBalance, 5000);
+
+      return txId;
+    } catch (err: any) {
+      console.error('❌ Transaction failed:', err);
+      setError(`Transaction failed: ${err.message}`);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const saveBlockchainTransaction = async (
     itemId: number,
     itemType: 'note' | 'todo',
@@ -288,8 +431,9 @@ export const useCardano = () => {
     connectWallet,
     disconnectWallet,
     sendADA,
+    sendTransaction,
     createNoteWithMetadata,
     refreshBalance,
-    saveBlockchainTransaction // 🔥 EXPORT NEW FUNCTION
+    saveBlockchainTransaction
   };
 };

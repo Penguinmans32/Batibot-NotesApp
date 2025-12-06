@@ -108,8 +108,44 @@ const createTables = async () => {
       END $$;
     `);
 
+    // Add blockchain tracking columns to notes table
+    await pool.query(`
+      DO $$
+      BEGIN
+        IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='notes' AND column_name='status') THEN
+          ALTER TABLE notes ADD COLUMN status VARCHAR(20) DEFAULT 'pending' CHECK (status IN ('pending', 'confirmed'));
+        END IF;
+      END $$;
+    `);
+
+    await pool.query(`
+      DO $$
+      BEGIN
+        IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='notes' AND column_name='address') THEN
+          ALTER TABLE notes ADD COLUMN address VARCHAR(255);
+        END IF;
+      END $$;
+    `);
+
+    await pool.query(`
+      DO $$
+      BEGIN
+        IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='notes' AND column_name='tx_hash') THEN
+          ALTER TABLE notes ADD COLUMN tx_hash VARCHAR(128);
+        END IF;
+      END $$;
+    `);
+
     await pool.query(`
       CREATE INDEX IF NOT EXISTS idx_notes_deleted_at ON notes(deleted_at);
+    `);
+
+    await pool.query(`
+      CREATE INDEX IF NOT EXISTS idx_notes_status ON notes(status);
+    `);
+
+    await pool.query(`
+      CREATE INDEX IF NOT EXISTS idx_notes_tx_hash ON notes(tx_hash);
     `);
 
     await pool.query(`

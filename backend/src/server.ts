@@ -10,6 +10,7 @@ import notesRoutes from './routes/notes';
 import todoRoutes from './routes/todoRoutes';
 import { cleanupExpiredNotes } from './controllers/notesController';
 import blockchainRoutes from './routes/blockchain';
+import { startBlockchainSyncWorker } from './workers/blockchainSync';
 
 dotenv.config();
 
@@ -46,4 +47,7 @@ app.listen(PORT, () => {
   setInterval(() => {
     cleanupExpiredNotes();
   }, 24 * 60 * 60 * 1000);
+  
+  // 🔥 START BLOCKCHAIN SYNC WORKER
+  startBlockchainSyncWorker();
 });
