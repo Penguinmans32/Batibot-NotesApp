@@ -71,7 +71,7 @@ export const useCardano = () => {
         try {
           const balanceValue = await api.getBalance();
           const lovelaceAmount = parseInt(balanceValue, 16);
-          balance = Math.min(parseFloat((lovelaceAmount / 1000000).toFixed(6)), 9999999).toFixed(6);
+          balance = (lovelaceAmount / 1000000).toFixed(6);
         } catch (balanceError) {
           console.warn('Could not fetch balance:', balanceError);
         }
@@ -115,7 +115,7 @@ export const useCardano = () => {
     try {
       const balanceValue = await wallet.api.getBalance();
       const lovelaceAmount = parseInt(balanceValue, 16);
-      const newBalance = Math.min(parseFloat((lovelaceAmount / 1000000).toFixed(6)), 9999999).toFixed(6);
+      const newBalance = (lovelaceAmount / 1000000).toFixed(6);
 
       setWallet(prev => prev ? { ...prev, balance: newBalance } : null);
       console.log('💰 Balance refreshed:', newBalance, 'ADA');
